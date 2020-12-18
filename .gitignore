@@ -1,0 +1,6 @@
+# Python related stuff
+*.python-version
+
+# IDE and editor stuff
+.idea/
+.vscode/
