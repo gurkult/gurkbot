@@ -1,2 +1,2 @@
 # bot
-The official bot for our [Discord server](https://bit.ly/Gurkan-Discord).
+The official bot for our [Discord server](https://bit.ly/Gurkult-Discord).
