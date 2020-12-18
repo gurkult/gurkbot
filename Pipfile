@@ -14,3 +14,7 @@ pre-commit = "~=2.1"
 
 [requires]
 python_version = "3.8"
+
+[scripts]
+start = "python -m bot"
+precommit = "pre-commit install"
