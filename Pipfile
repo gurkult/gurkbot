@@ -5,6 +5,7 @@ verify_ssl = true
 
 [packages]
 "discord.py" = "~=1.5.1"
+loguru = "*"
 
 [dev-packages]
 flake8 = "~=3.8.4"
