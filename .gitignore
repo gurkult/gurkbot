@@ -1,0 +1,7 @@
+# IDE and Editors
+.vscode/
+.idea/
+
+# Python Stuff
+*.python-version
+*__pycache__/
