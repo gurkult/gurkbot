@@ -106,3 +106,6 @@ venv.bak/
 # IDE and Editors
 .vscode/
 .idea/
+
+# MACOS Files and Property file
+.DS_Store
