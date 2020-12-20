@@ -26,6 +26,6 @@ class Bot(commands.Bot):
         logger.info("starting bot")
         super().run(constants.TOKEN)
 
-    def on_ready(self) -> None:
+    async def on_ready(self) -> None:
         """Ran when the bot has connected to discord and is ready."""
         logger.info("bot online")
