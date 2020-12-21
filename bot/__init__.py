@@ -19,6 +19,7 @@ def should_rotate(message: loguru.Message, file: typing.TextIO) -> bool:
         return True
     if now - creation > max_time:
         return True
+    return False
 
 
 logger.add(LOG_FILE, rotation=should_rotate)
