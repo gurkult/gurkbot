@@ -1,4 +1,6 @@
+from __future__ import annotations
 import os
+import typing
 
 import loguru
 from loguru import logger
@@ -6,7 +8,7 @@ from loguru import logger
 from .constants import LOG_FILE
 
 
-def should_rotate(message: loguru.Message, file):
+def should_rotate(message: loguru.Message, file: typing.TextIO) -> bool:
     """When should the bot rotate : Once in 1 week or if the size is greater than 5 MB."""
     filepath = os.path.abspath(file.name)
     creation = os.path.getmtime(filepath)
