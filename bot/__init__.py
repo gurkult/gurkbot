@@ -1,5 +1,6 @@
 from loguru import logger
 import os
+import loguru
 
 # set up logging
 
@@ -8,8 +9,8 @@ log_file = log_dir + os.sep + 'gurkbot.log'
 os.makedirs(log_dir, exist_ok=True)
 
 
-def should_rotate(message, file):
-    """When should the bot rotate : Once in 1 week or if the size is greater than 5 MB"""
+def should_rotate(message: loguru.Message, file):
+    """When should the bot rotate : Once in 1 week or if the size is greater than 5 MB."""
     filepath = os.path.abspath(file.name)
     creation = os.path.getmtime(filepath)
     now = message.record["time"].timestamp()
