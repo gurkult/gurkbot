@@ -1,12 +1,9 @@
-from loguru import logger
 import os
+
 import loguru
+from loguru import logger
 
-# set up logging
-
-log_dir = 'log'
-log_file = log_dir + os.sep + 'gurkbot.log'
-os.makedirs(log_dir, exist_ok=True)
+from .constants import LOG_FILE
 
 
 def should_rotate(message: loguru.Message, file):
@@ -21,5 +18,5 @@ def should_rotate(message: loguru.Message, file):
         return True
 
 
-logger.add(log_file, rotation=should_rotate)
+logger.add(LOG_FILE, rotation=should_rotate)
 logger.info('Logging Process Started')
