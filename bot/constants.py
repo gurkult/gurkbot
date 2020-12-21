@@ -6,4 +6,5 @@ PREFIX = os.getenv("PREFIX") or "!"
 TOKEN = os.getenv("TOKEN")
 
 # paths
-EXTENIONS = pathlib.Path("bot/exts/")
+EXTENSIONS = pathlib.Path("bot/exts/")
+LOG_FILE = pathlib.Path("log/gurkbot.log")
