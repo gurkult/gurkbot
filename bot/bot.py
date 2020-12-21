@@ -12,8 +12,8 @@ class Bot(commands.Bot):
         self.load_extensions()
 
     def load_extensions(self) -> None:
-        """Load all the extensions in the exts/ foler."""
-        for extension in constants.EXTENIONS.glob("*/*.py"):
+        """Load all the extensions in the exts/ folder."""
+        for extension in constants.EXTENSIONS.glob("*/*.py"):
             dot_path = str(extension).replace("/", ".")[:-3]  # remove the .py
             if "__init__" in dot_path:  # the __init__.py
                 continue
