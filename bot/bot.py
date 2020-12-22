@@ -15,7 +15,7 @@ class Bot(commands.Bot):
         """Load all the extensions in the exts/ folder."""
         logger.info('Start loading extensions from ./exts/')
         for extension in constants.EXTENSIONS.glob("*/*.py"):
-            if extension.name[0] == "_":
+            if extension.name.startswith("_"):
                 continue  # ignore files starting with _
             dot_path = str(extension).replace("/", ".")[:-3]  # remove the .py
 
