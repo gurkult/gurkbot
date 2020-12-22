@@ -165,7 +165,6 @@ class Eval(Cog):
                 # Ensures code isn't empty after removing options
                 raise commands.MissingRequiredArgument(ctx.command.clean_params['code'])
 
-
             # common identifiers, also used in highlight.js and thus discord codeblocks
             quick_map = {
                 'asm': 'assembly',
