@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Optional
 
 import aiohttp
-import discord
 from bot.bot import Bot
 from discord import Message
 from discord.ext import commands, tasks
