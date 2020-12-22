@@ -64,7 +64,7 @@ def get_raw(link: str) -> str:
         'https://gist.githubusercontent.com'
     )
 
-    if not any([link.startswith(url) for url in authorized]):
+    if not any(link.startswith(url) for url in authorized):
         raise commands.BadArgument(message=f"I only accept links from {', '.join(authorized)}. "
                                            f"(Starting with 'http').")
 
