@@ -23,4 +23,4 @@ def should_rotate(message: loguru.Message, file: typing.TextIO) -> bool:
 
 
 logger.add(LOG_FILE, rotation=should_rotate)
-logger.info('Logging Process Started')
+logger.info("Logging Process Started")
