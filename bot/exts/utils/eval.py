@@ -89,7 +89,7 @@ class Eval(Cog):
 
         Return the bot response.
         """
-        logger.info(f"Received code from {ctx.author} for evaluation:\n{code}")
+        logger.info(f"Received code from {ctx.author} for evaluation.")
 
         options = {"--stats": False, "--wrapped": False}
         lang = language.strip("`").lower()
@@ -172,10 +172,7 @@ class Eval(Cog):
 
             if text is None:
                 # Ensures code isn't empty after removing options
-                logger.info(
-                    f"{ctx.author}'s job returned a MissingRequiredArgument - missing code"
-                )
-                return await ctx.send("Missing Required Argument Code.")
+                raise commands.MissingRequiredArgument(ctx.command.clean_params["code"])
 
             # common identifiers, also used in highlight.js and thus discord codeblocks
             quick_map = {
@@ -199,15 +196,26 @@ class Eval(Cog):
             if lang in self.default_languages:
                 lang = self.default_languages[lang]
             if lang not in self.languages:
-                matches = "\n".join(
-                    [language for language in self.languages if lang in language][:10]
-                )
                 lang = escape_mentions(lang)
-                message = f"`{lang}` not available."
-                if matches:
-                    message += f" Did you mean:\n{matches}"
-
-                return await ctx.send(message)
+                if not lang:
+                    embed = Embed(
+                        title="MissingRequiredArgument",
+                        description=f"Missing Argument Language.\n\nUsage:\n"
+                        f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                        color=0xCD6D6D,
+                    )
+                else:
+                    embed = Embed(
+                        title="Language Not Supported",
+                        description=f"Your language was invalid: {lang}\n"
+                        f"All Suported languages: [here](https://tio.run/languages)\n\nUsage:\n"
+                        f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                        color=0xCD6D6D,
+                    )
+                    await ctx.send(embed=embed)
+                    return
+                await ctx.send(embed=embed)
+                return
 
             if options["--wrapped"]:
                 if not (
