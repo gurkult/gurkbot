@@ -23,20 +23,20 @@ class Eval(Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        with Path("bot/resources/default_langs.yml").open(encoding="utf8") as file:
-            self.default = yaml_load(file)
+        with Path("bot/resources/eval/default_langs.yml").open(encoding="utf8") as file:
+            self.default_languages = yaml_load(file)
         self.languages_url = 'https://tio.run/languages.json'
         self.languages = None
         self.update_languages.start()
 
     @tasks.loop(hours=5)
     async def update_languages(self) -> None:
-        """Update list of languages supported by api every 1 hour."""
+        """Update list of languages supported by api every 5 hour."""
         logger.info("Updating List Of Languages")
         async with aiohttp.ClientSession() as client_session:
             async with client_session.get(self.languages_url) as response:
                 if response.status != 200:
-                    print(f"Couldn't reach languages.json (status code: {response.status}).")
+                    logger.warning(f"Couldn't reach languages.json (status code: {response.status}).")
                 languages = tuple(sorted(json.loads(await response.text())))
 
                 # Rare reassignments
@@ -101,7 +101,7 @@ class Eval(Cog):
                 options[option] = True
                 i = code.index(option)
                 code.pop(i)
-                code.pop(i)  # remove following whitespace character
+                code.pop(i)  # Remove following whitespace character
 
         code = ''.join(code)
 
@@ -139,7 +139,7 @@ class Eval(Cog):
                 text = buffer.read().decode('utf-8')
 
             elif code.split(' ')[-1].startswith('link='):
-                # Code in a webpage
+                # Code in a paste service (gist or a hastebin link)
                 base_url = urllib.parse.quote_plus(code.split(' ')[-1][5:].strip('/'), safe=';/?:@&=$,><-[]')
                 url = get_raw(base_url)
 
@@ -184,8 +184,8 @@ class Eval(Cog):
             if lang in quick_map:
                 lang = quick_map[lang]
 
-            if lang in self.default:
-                lang = self.default[lang]
+            if lang in self.default_languages:
+                lang = self.default_languages[lang]
             if lang not in self.languages:
                 matches = '\n'.join([language for language in self.languages if lang in language][:10])
                 lang = escape_mentions(lang)
@@ -209,7 +209,7 @@ class Eval(Cog):
                       command_line_options=command_line_options,
                       args=args)
 
-            result = await tio.send()
+            result = await tio.get_result()
 
             if not options['--stats']:
                 try:

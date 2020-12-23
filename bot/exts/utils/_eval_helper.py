@@ -10,11 +10,16 @@ to_bytes = partial(bytes, encoding='utf-8')
 
 
 def _to_tio_string(couple: tuple) -> Any:
-    name, obj = couple[0], couple[1]
+    """
+    Return a tio api compatible string, for example:
+    (language) bash -> b'Vlang\x001\x00bash\x00'
+    (code) echo "bash" -> b'F.code.tio\x0019\x00echo "bash"\n\x00'
+    """
+    name, obj = couple
     if not obj:
         return b''
-    elif type(obj) == list:
-        content = ['V' + name, str(len(obj))] + obj
+    elif isinstance(obj, list):
+        content = [f'V{name}', str(len(obj))] + obj
         return to_bytes('\x00'.join(content) + '\x00')
     else:
         return to_bytes(f"F{name}\x00{len(to_bytes(obj))}\x00{obj}\x00")
@@ -24,7 +29,14 @@ class Tio:
     """Helper class for eval command."""
 
     def __init__(self, language: str, code: str, inputs: str = '',
-                 compiler_flags: list = [], command_line_options: list = [], args: list = []):
+                 compiler_flags: Optional[list] = None, command_line_options: Optional[list] = None,
+                 args: Optional[list] = None):
+        if args is None:
+            args = []
+        if command_line_options is None:
+            command_line_options = []
+        if compiler_flags is None:
+            compiler_flags = []
         self.backend = "https://tio.run/cgi-bin/run/api/"
         self.json = "https://tio.run/languages.json"
 
@@ -37,13 +49,18 @@ class Tio:
             'args': args
         }
 
-        bytes_ = b''.join(map(_to_tio_string, zip(strings.keys(), strings.values()))) + b'R'
+        bytes_ = b''.join(
+            map(
+                _to_tio_string, # func
+                zip(strings.keys(), strings.values()) # iterables
+            )
+        ) + b'R'
 
         # This returns a DEFLATE-compressed byte-string, which is what the API requires
         self.request = zlib.compress(bytes_, 9)[2:-4]
 
-    async def send(self) -> Any:
-        """Send Request to Tio Run API."""
+    async def get_result(self) -> Any:
+        """Send Request to Tio Run API And Get Result."""
         async with aiohttp.ClientSession() as client_session:
             async with client_session.post(self.backend, data=self.request) as res:
                 if res.status != 200:
@@ -55,7 +72,7 @@ class Tio:
 
 
 def get_raw(link: str) -> str:
-    """Returns the url for raw version on a hastebin-like."""
+    """Returns the url to raw text version of certain pastebin services."""
     link = link.strip('<>/')  # Allow for no-embed links
 
     authorized = (
@@ -66,7 +83,7 @@ def get_raw(link: str) -> str:
 
     if not any(link.startswith(url) for url in authorized):
         raise commands.BadArgument(message=f"I only accept links from {', '.join(authorized)}. "
-                                           f"(Starting with 'http').")
+                                           f"(Starting with 'https').")
 
     domain = link.split('/')[2]
 
