@@ -13,7 +13,7 @@ class Bot(commands.Bot):
 
     def load_extensions(self) -> None:
         """Load all the extensions in the exts/ folder."""
-        logger.info('Start loading extensions from ./exts/')
+        logger.info("Start loading extensions from ./exts/")
         for extension in constants.EXTENSIONS.glob("*/*.py"):
             if extension.name.startswith("_"):
                 continue  # ignore files starting with _
