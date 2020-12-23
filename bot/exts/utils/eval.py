@@ -136,7 +136,8 @@ class Eval(Cog):
                 # Code in file
                 file = ctx.message.attachments[0]
                 if file.size > 20000:
-                    return await ctx.send("File must be smaller than 20 kio.")
+                    await ctx.send("File must be smaller than 20 kio.")
+                    return
                 buffer = BytesIO()
                 await ctx.message.attachments[0].save(buffer)
                 text = buffer.read().decode("utf-8")
@@ -151,17 +152,20 @@ class Eval(Cog):
                 async with aiohttp.ClientSession() as client_session:
                     async with client_session.get(url) as response:
                         if response.status == 404:
-                            return await ctx.send("Nothing found. Check your link")
+                            await ctx.send("Nothing found. Check your link")
+                            return
                         elif response.status != 200:
-                            return await ctx.send(
+                            await ctx.send(
                                 f"An error occurred (status code: {response.status}). "
                                 f"Retry later."
                             )
+                            return
                         text = await response.text()
                         if len(text) > 20000:
-                            return await ctx.send(
+                            await ctx.send(
                                 "Code must be shorter than 20,000 characters."
                             )
+                            return
 
             elif code.strip("`"):
                 # Code in message
@@ -221,7 +225,8 @@ class Eval(Cog):
                 if not (
                     any(map(lambda x: lang.split("-")[0] == x, self.wrapping))
                 ) or lang in ("cs-mono-shell", "cs-csi"):
-                    return await ctx.send(f"`{lang}` cannot be wrapped")
+                    await ctx.send(f"`{lang}` cannot be wrapped")
+                    return
 
                 for beginning in self.wrapping:
                     if lang.split("-")[0] == beginning:
@@ -255,14 +260,16 @@ class Eval(Cog):
                 link = await paste(result)
 
                 if link is None:
-                    return await ctx.send(
+                    await ctx.send(
                         "Your output was too long, but "
                         "I couldn't make an online bin out of it"
                     )
-                return await ctx.send(
+                    return
+                await ctx.send(
                     f"Output was too long (more than 2000 characters or 40 lines) "
                     f"so I put it here: {link}"
                 )
+                return
 
             logger.info("Formatting output...")
 
