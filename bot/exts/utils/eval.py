@@ -265,25 +265,42 @@ class Eval(Cog):
                         "I couldn't make an online bin out of it"
                     )
                     return
-                await ctx.send(
-                    f"Output was too long (more than 2000 characters or 40 lines) "
-                    f"so I put it here: {link}"
+
+                embed = Embed(
+                    title=f"{lang.capitalize()} - Compilation Results",
+                    colour=0x1F8B4C,
                 )
+                embed.add_field(
+                    name="Program Output",
+                    value=f"Output was too long (more than 2000 characters or "
+                    f"40 lines) so I put it here:\n{link}",
+                )
+                embed.set_footer(
+                    text=f"Requested by: {ctx.author} | Powered by https://tio.run/#"
+                )
+                await ctx.send(embed=embed)
                 return
 
             logger.info("Formatting output...")
 
             zero = "\N{zero width space}"
             result = re.sub("```", f"{zero}`{zero}`{zero}`{zero}", result)
-
             result, exit_code = result.split("Exit code: ")
-
             icon = ":white_check_mark:" if exit_code == "0" else ":warning:"
             msg = f"Your eval job has completed with return code {exit_code}"
-
             logger.info(f"{ctx.author}'s job had a return code of {exit_code}")
-            output = '[No output]' if result == '\n' else result
-            await ctx.send(f"{ctx.author.mention} {icon} {msg}.\n\n```\n{output}```")
+            output = "[No output]" if result == "\n" else result
+
+            embed = Embed(
+                title=f"{lang.capitalize()} - Compilation Results",
+                colour=0x1F8B4C,
+                description=f"{ctx.author.mention} {icon} {msg}",
+            )
+            embed.add_field(name="Program Output", value=f"```\n{output}```")
+            embed.set_footer(
+                text=f"Requested by: {ctx.author} | Powered by https://tio.run/#"
+            )
+            await ctx.send(embed=embed)
 
     @eval_command.error
     async def eval_command_error(self, ctx: Context, error: CommandError) -> None:
