@@ -13,9 +13,35 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Cog, CommandError, Context, command
 from discord.utils import escape_mentions
 from loguru import logger
-from yaml import safe_load as yaml_load
+from yaml import safe_load
 
 from ._eval_helper import Tio, get_raw, paste
+
+WRAPPING = {
+    "c": "#include <stdio.h>\nint main() {code}",
+    "cpp": "#include <iostream>\nint main() {code}",
+    "cs": "using System;class Program {static void Main(string[] args) {code}}",
+    "java": "public class Main {public static void main(String[] args) {code}}",
+    "rust": "fn main() {code}",
+    "d": "import std.stdio; void main(){code}",
+    "kotlin": "fun main(args: Array<String>) {code}",
+}
+QUICK_MAP = {
+    "asm": "assembly",
+    "c#": "cs",
+    "c++": "cpp",
+    "csharp": "cs",
+    "f#": "fs",
+    "fsharp": "fs",
+    "js": "javascript",
+    "nimrod": "nim",
+    "py": "python",
+    "q#": "qs",
+    "rs": "rust",
+    "sh": "bash",
+}
+SOFT_RED = 0xCD6D6D
+GREEN = 0x1F8B4C
 
 
 class Eval(Cog):
@@ -24,9 +50,8 @@ class Eval(Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
         with Path("bot/resources/eval/default_langs.yml").open(encoding="utf8") as file:
-            self.default_languages = yaml_load(file)
+            self.default_languages = safe_load(file)
         self.languages_url = "https://tio.run/languages.json"
-        self.languages = None
         self.update_languages.start()
 
     @tasks.loop(hours=5)
@@ -40,23 +65,10 @@ class Eval(Cog):
                         f"Couldn't reach languages.json (status code: {response.status})."
                     )
                 languages = tuple(sorted(json.loads(await response.text())))
-
-                # Rare reassignments
-                if self.languages != languages:
-                    self.languages = languages
+                self.languages = languages
         logger.info(
             f"Successfully Updated List Of Languages To Date: {datetime.datetime.now()}"
         )
-
-    wrapping = {
-        "c": "#include <stdio.h>\nint main() {code}",
-        "cpp": "#include <iostream>\nint main() {code}",
-        "cs": "using System;class Program {static void Main(string[] args) {code}}",
-        "java": "public class Main {public static void main(String[] args) {code}}",
-        "rust": "fn main() {code}",
-        "d": "import std.stdio; void main(){code}",
-        "kotlin": "fun main(args: Array<String>) {code}",
-    }
 
     @command(
         help="""eval <language> [--wrapped] [--stats] <code>
@@ -65,8 +77,8 @@ class Eval(Cog):
             add a line starting with this argument, and after a space add
             your options, flags or args.
 
-            stats option displays more information on execution consumption
-            wrapped allows you to not put main function in some languages
+            stats  - option displays more information on execution consumption
+            wrapped  - allows you to not put main function in some languages
 
             <code> may be normal code, but also an attached file, or a link from  \
             [hastebin](https://hastebin.com) or [Github gist](https://gist.github.com)
@@ -89,8 +101,6 @@ class Eval(Cog):
 
         Return the bot response.
         """
-        logger.info(f"Received code from {ctx.author} for evaluation.")
-
         options = {"--stats": False, "--wrapped": False}
         lang = language.strip("`").lower()
         options_amount = len(options)
@@ -98,14 +108,12 @@ class Eval(Cog):
         # Setting options and removing them from the beginning of the command
         # options may be separated by any single whitespace, which we keep in the list
         code = re.split(r"(\s)", code, maxsplit=options_amount)
-
         for option in options:
             if option in code[: options_amount * 2]:
                 options[option] = True
                 i = code.index(option)
                 code.pop(i)
                 code.pop(i)  # Remove following whitespace character
-
         code = "".join(code)
 
         compiler_flags = []
@@ -155,17 +163,16 @@ class Eval(Cog):
                             await ctx.send("Nothing found. Check your link")
                             return
                         elif response.status != 200:
+                            logger.warning(
+                                f"An error occurred | status code: "
+                                f"{response.status} | on request by: {ctx.author}"
+                            )
                             await ctx.send(
                                 f"An error occurred (status code: {response.status}). "
                                 f"Retry later."
                             )
                             return
                         text = await response.text()
-                        if len(text) > 20000:
-                            await ctx.send(
-                                "Code must be shorter than 20,000 characters."
-                            )
-                            return
 
             elif code.strip("`"):
                 # Code in message
@@ -178,35 +185,17 @@ class Eval(Cog):
                 # Ensures code isn't empty after removing options
                 raise commands.MissingRequiredArgument(ctx.command.clean_params["code"])
 
-            # common identifiers, also used in highlight.js and thus discord codeblocks
-            quick_map = {
-                "asm": "assembly",
-                "c#": "cs",
-                "c++": "cpp",
-                "csharp": "cs",
-                "f#": "fs",
-                "fsharp": "fs",
-                "js": "javascript",
-                "nimrod": "nim",
-                "py": "python",
-                "q#": "qs",
-                "rs": "rust",
-                "sh": "bash",
-            }
-
-            if lang in quick_map:
-                lang = quick_map[lang]
-
+            if lang in QUICK_MAP:
+                lang = QUICK_MAP[lang]
             if lang in self.default_languages:
                 lang = self.default_languages[lang]
             if lang not in self.languages:
-                lang = escape_mentions(lang)
-                if not lang:
+                if not escape_mentions(lang):
                     embed = Embed(
                         title="MissingRequiredArgument",
                         description=f"Missing Argument Language.\n\nUsage:\n"
                         f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
-                        color=0xCD6D6D,
+                        color=SOFT_RED,
                     )
                 else:
                     embed = Embed(
@@ -214,23 +203,21 @@ class Eval(Cog):
                         description=f"Your language was invalid: {lang}\n"
                         f"All Suported languages: [here](https://tio.run)\n\nUsage:\n"
                         f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
-                        color=0xCD6D6D,
+                        color=SOFT_RED,
                     )
-                    await ctx.send(embed=embed)
-                    return
                 await ctx.send(embed=embed)
                 return
 
             if options["--wrapped"]:
                 if not (
-                    any(map(lambda x: lang.split("-")[0] == x, self.wrapping))
+                    any(map(lambda x: lang.split("-")[0] == x, WRAPPING))
                 ) or lang in ("cs-mono-shell", "cs-csi"):
                     await ctx.send(f"`{lang}` cannot be wrapped")
                     return
 
-                for beginning in self.wrapping:
+                for beginning in WRAPPING:
                     if lang.split("-")[0] == beginning:
-                        text = self.wrapping[beginning].replace("code", text)
+                        text = WRAPPING[beginning].replace("code", text)
                         break
 
             tio = Tio(
@@ -241,7 +228,6 @@ class Eval(Cog):
                 command_line_options=command_line_options,
                 args=args,
             )
-
             result = await tio.get_result()
 
             if not options["--stats"]:
@@ -250,12 +236,10 @@ class Eval(Cog):
                     end = result.rindex("%\nExit code: ")
                     result = result[:start] + result[end + 2 :]
                 except ValueError:
-                    # Too much output removes this markers
                     pass
 
             if len(result) > 1991 or result.count("\n") > 40:
-                # If it exceeds 2000 characters (Discord longest message), counting ` and ph\n characters
-                # Or if it floods with more than 40 lines
+                # If it exceeds 2000 characters or floods more than 40 lines
                 # Create a hastebin and send it back
                 link = await paste(result)
 
@@ -268,7 +252,7 @@ class Eval(Cog):
 
                 embed = Embed(
                     title=f"{lang.capitalize()} - Compilation Results",
-                    colour=0x1F8B4C,
+                    colour=GREEN,
                 )
                 embed.add_field(
                     name="Program Output",
@@ -287,14 +271,14 @@ class Eval(Cog):
             result = re.sub("```", f"{zero}`{zero}`{zero}`{zero}", result)
             result, exit_code = result.split("Exit code: ")
             icon = ":white_check_mark:" if exit_code == "0" else ":warning:"
-            msg = f"Your eval job has completed with return code {exit_code}"
             logger.info(f"{ctx.author}'s job had a return code of {exit_code}")
             output = "[No output]" if result == "\n" else result
 
             embed = Embed(
                 title=f"{lang.capitalize()} - Compilation Results",
-                colour=0x1F8B4C,
-                description=f"{ctx.author.mention} {icon} {msg}",
+                colour=GREEN,
+                description=f"{ctx.author.mention} {icon} Your eval job "
+                f"has completed with return code {exit_code}",
             )
             embed.add_field(name="Program Output", value=f"```\n{output}```")
             embed.set_footer(
@@ -310,7 +294,7 @@ class Eval(Cog):
                 title="MissingRequiredArgument",
                 description=f"Your input was invalid: {error}\n\nUsage:\n"
                 f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
-                color=0xCD6D6D,
+                color=SOFT_RED,
             )
             await ctx.send(embed=embed)
             return
