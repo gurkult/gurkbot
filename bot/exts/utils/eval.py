@@ -212,7 +212,7 @@ class Eval(Cog):
                     embed = Embed(
                         title="Language Not Supported",
                         description=f"Your language was invalid: {lang}\n"
-                        f"All Suported languages: [here](https://tio.run/languages)\n\nUsage:\n"
+                        f"All Suported languages: [here](https://tio.run)\n\nUsage:\n"
                         f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
                         color=0xCD6D6D,
                     )
@@ -283,7 +283,7 @@ class Eval(Cog):
 
             logger.info(f"{ctx.author}'s job had a return code of {exit_code}")
             await ctx.send(
-                f"{ctx.author.mention} {icon} {msg}.\n\n```{lang}\n{result}```"
+                f"{ctx.author.mention} {icon} {msg}.\n\n```\n{result}```"
             )
 
     @eval_command.error
