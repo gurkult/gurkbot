@@ -282,9 +282,7 @@ class Eval(Cog):
             msg = f"Your eval job has completed with return code {exit_code}"
 
             logger.info(f"{ctx.author}'s job had a return code of {exit_code}")
-            await ctx.send(
-                f"{ctx.author.mention} {icon} {msg}.\n\n```\n{result}```"
-            )
+            await ctx.send(f"{ctx.author.mention} {icon} {msg}.\n\n```\n{result}```")
 
     @eval_command.error
     async def eval_command_error(self, ctx: Context, error: CommandError) -> None:
