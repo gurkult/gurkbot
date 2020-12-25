@@ -318,7 +318,8 @@ class Eval(Cog):
         if isinstance(error, commands.CommandOnCooldown):
             embed = Embed(
                 title="Cooldown",
-                description=f"You’re on a cooldown for this command. Please wait **{int(error.retry_after)}s** "
+                description=f"You’re on a cooldown for this command. Please "
+                f"wait **{int(error.retry_after)}s** "
                 "until you use it again.",
                 color=SOFT_RED,
             )
