@@ -62,7 +62,7 @@ class Eval(Cog):
             async with client_session.get(self.languages_url) as response:
                 if response.status != 200:
                     logger.warning(
-                        f"Couldn't reach languages.json (status code: {response.status})."
+                        f"Couldn't  reach languages.json (status code: {response.status})."
                     )
                 languages = tuple(sorted(json.loads(await response.text())))
                 self.languages = languages
@@ -93,6 +93,7 @@ class Eval(Cog):
         name="eval",
         aliases=("e",),
     )
+    @commands.cooldown(3, 10, commands.BucketType.user)
     async def eval_command(
         self, ctx: Context, language: str, *, code: str = ""
     ) -> Optional[Message]:
@@ -145,6 +146,7 @@ class Eval(Cog):
                 file = ctx.message.attachments[0]
                 if file.size > 20000:
                     await ctx.send("File must be smaller than 20 kio.")
+                    logger.info("Exiting | File bigger than 20 kio.")
                     return
                 buffer = BytesIO()
                 await ctx.message.attachments[0].save(buffer)
@@ -161,6 +163,7 @@ class Eval(Cog):
                     async with client_session.get(url) as response:
                         if response.status == 404:
                             await ctx.send("Nothing found. Check your link")
+                            logger.info("Exiting | Nothing found in link.")
                             return
                         elif response.status != 200:
                             logger.warning(
@@ -201,11 +204,12 @@ class Eval(Cog):
                     embed = Embed(
                         title="Language Not Supported",
                         description=f"Your language was invalid: {lang}\n"
-                        f"All Suported languages: [here](https://tio.run)\n\nUsage:\n"
+                        f"All Supported languages: [here](https://tio.run)\n\nUsage:\n"
                         f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
                         color=SOFT_RED,
                     )
                 await ctx.send(embed=embed)
+                logger.info("Exiting | Language not found.")
                 return
 
             if options["--wrapped"]:
@@ -220,15 +224,9 @@ class Eval(Cog):
                         text = WRAPPING[beginning].replace("code", text)
                         break
 
-            tio = Tio(
-                lang,
-                text,
-                compiler_flags=compiler_flags,
-                inputs=inputs,
-                command_line_options=command_line_options,
-                args=args,
-            )
+            tio = Tio(lang, text, inputs, compiler_flags, command_line_options, args)
             result = await tio.get_result()
+            result = result.rstrip("\n")
 
             if not options["--stats"]:
                 try:
@@ -239,30 +237,33 @@ class Eval(Cog):
                     pass
 
             if len(result) > 1991 or result.count("\n") > 40:
-                # If it exceeds 2000 characters or floods more than 40 lines
-                # Create a hastebin and send it back
-                link = await paste(result)
+                output = await paste(result)
 
-                if link is None:
-                    await ctx.send(
-                        "Your output was too long, but "
-                        "I couldn't make an online bin out of it"
+                if result.count("\n") > 40:
+                    result = [
+                        f"{i:03d} | {line}"
+                        for i, line in enumerate(result.split("\n"), 1)
+                    ]
+                    result = result[:11]  # Limiting to only 11 lines
+                    program_output = (
+                        "\n".join(result) + "\n... (truncated - too many lines)"
                     )
-                    return
+                elif len(result) > 1991:
+                    program_output = result[:500] + "\n... (truncated - too many lines)"
 
                 embed = Embed(
-                    title=f"{lang.capitalize()} - Compilation Results",
+                    title="Eval Results",
                     colour=GREEN,
+                    description=f"{output['icon']} Your {lang} eval job has "
+                    f"completed with return code `{output['exit_code']}`",
                 )
                 embed.add_field(
-                    name="Program Output",
-                    value=f"Output was too long (more than 2000 characters or "
-                    f"40 lines) so I put it here:\n{link}",
+                    name="Output",
+                    value=f"```\n{program_output}```\nYou can find the complete "
+                    f"output [here]({output['link']})",
                 )
-                embed.set_footer(
-                    text=f"Requested by: {ctx.author} | Powered by https://tio.run/#"
-                )
-                await ctx.send(embed=embed)
+                await ctx.send(content=f"{ctx.author.mention}", embed=embed)
+                logger.info("Result Sent.")
                 return
 
             logger.info("Formatting output...")
@@ -271,20 +272,35 @@ class Eval(Cog):
             result = re.sub("```", f"{zero}`{zero}`{zero}`{zero}", result)
             result, exit_code = result.split("Exit code: ")
             icon = ":white_check_mark:" if exit_code == "0" else ":warning:"
-            logger.info(f"{ctx.author}'s job had a return code of {exit_code}")
-            output = "[No output]" if result == "\n" else result
+            result = result.rstrip("\n")
+            lines = result.count("\n")
+            if lines > 0:
+                result = [
+                    f"{i:03d} | {line}" for i, line in enumerate(result.split("\n"), 1)
+                ]
+                result = result[:11]  # Limiting to only 11 lines
+                result = "\n".join(result)
+            if lines > 10:
+                if len(result) >= 1000:
+                    result = (
+                        f"{result[:1000]}\n... (truncated - too long, too many lines)"
+                    )
+                else:
+                    result = f"{result}\n... (truncated - too many lines)"
+            elif len(result) >= 1000:
+                result = f"{result[:1000]}\n... (truncated - too long)"
+
+            output = "[No output]" if result == "" else result
 
             embed = Embed(
-                title=f"{lang.capitalize()} - Compilation Results",
+                title="Eval Results",
                 colour=GREEN,
-                description=f"{ctx.author.mention} {icon} Your eval job "
-                f"has completed with return code {exit_code}",
+                description=f"{icon} Your {lang} eval job has completed with return code `{exit_code}`.",
             )
-            embed.add_field(name="Program Output", value=f"```\n{output}```")
-            embed.set_footer(
-                text=f"Requested by: {ctx.author} | Powered by https://tio.run/#"
-            )
-            await ctx.send(embed=embed)
+            embed.add_field(name="Output", value=f"```\n{output}```")
+            await ctx.send(content=f"{ctx.author.mention}", embed=embed)
+            logger.info(f"{ctx.author}'s job had a return code of {exit_code}")
+            logger.info("Result Sent.")
 
     @eval_command.error
     async def eval_command_error(self, ctx: Context, error: CommandError) -> None:
@@ -294,6 +310,16 @@ class Eval(Cog):
                 title="MissingRequiredArgument",
                 description=f"Your input was invalid: {error}\n\nUsage:\n"
                 f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                color=SOFT_RED,
+            )
+            await ctx.send(embed=embed)
+            return
+
+        if isinstance(error, commands.CommandOnCooldown):
+            embed = Embed(
+                title="Cooldown",
+                description=f"You’re on a cooldown for this command. Please wait **{int(error.retry_after)}s** "
+                "until you use it again.",
                 color=SOFT_RED,
             )
             await ctx.send(embed=embed)

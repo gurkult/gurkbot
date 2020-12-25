@@ -1,6 +1,6 @@
 import zlib
 from functools import partial
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import aiohttp
 from discord.ext import commands
@@ -118,16 +118,27 @@ def get_raw(link: str) -> str:
         return link + "/raw"
 
 
-async def paste(text: str) -> Optional[str]:
+async def paste(text: str) -> Union[str, dict]:
     """Upload the eval output to a paste service and return a URL to it if successful."""
     logger.info("Uploading full output to paste service...")
+    result = dict()
+    text, exit_code = text.split("Exit code: ")
+    if "The output exceeded 128 KiB and was truncated." in exit_code:
+        exit_code = exit_code.replace(
+            "The output exceeded 128 KiB and was truncated.", ""
+        )
+    result["exit_code"] = exit_code
+    result["icon"] = ":white_check_mark:" if exit_code == "0" else ":warning:"
+
     async with aiohttp.ClientSession() as session:
         post = await session.post("https://hastebin.com/documents", data=text)
         if post.status == 200:
             response = await post.text()
-            return f"https://hastebin.com/{response[8:-2]}"
+            result["link"] = f"https://hastebin.com/{response[8:-2]}"
+            return result
 
         # Rollback bin
         post = await session.post("https://bin.drlazor.be", data={"val": text})
         if post.status == 200:
-            return post.url
+            result["link"] = post.url
+            return result
