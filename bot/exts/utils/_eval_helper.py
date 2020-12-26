@@ -1,11 +1,14 @@
 import re
+import urllib.parse
 import zlib
 from functools import partial
-from typing import Any, Optional, Union
+from io import BytesIO
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import aiohttp
 from discord import Embed
 from discord.ext import commands
+from discord.ext.commands import Context
 from loguru import logger
 
 to_bytes = partial(bytes, encoding="utf-8")
@@ -87,63 +90,161 @@ class Tio:
                 return data.replace(data[:16], "")  # remove token
 
 
-def get_raw(link: str) -> str:
-    """Returns the url to raw text version of certain pastebin services."""
-    link = link.strip("<>/")  # Allow for no-embed links
+class EvalHelper:
+    """Eval Helper class."""
 
-    authorized = (
-        "https://hastebin.com",
-        "https://gist.github.com",
-        "https://gist.githubusercontent.com",
-    )
+    def __init__(self, language: str):
+        self.lang = language.strip("`").lower()
+        self.authorized = (
+            "https://hastebin.com",
+            "https://gist.github.com",
+            "https://gist.githubusercontent.com",
+        )
+        self.max_file_size = 20000
+        self.truncated_error = "The output exceeded 128 KiB and was truncated."
+        self.hastebin_link = "https://hastebin.com"
+        self.bin_link = "https://bin.drlazor.be/"
 
-    if not any(link.startswith(url) for url in authorized):
-        raise commands.BadArgument(
-            message=f"I only accept links from {', '.join(authorized)}. "
-            f"(Starting with 'https')."
+    async def parse(
+        self, code: str
+    ) -> Tuple[
+        str, str, str, Dict[Union[str, Any], bool], List[str], List[str], List[str]
+    ]:
+        """Returned parsed data."""
+        options = {"--stats": False, "--wrapped": False}
+        options_amount = len(options)
+
+        # Setting options and removing them from the beginning of the command
+        # options may be separated by any single whitespace, which we keep in the list
+        code = re.split(r"(\s)", code, maxsplit=options_amount)
+        for option in options:
+            if option in code[: options_amount * 2]:
+                options[option] = True
+                i = code.index(option)
+                code.pop(i)
+                code.pop(i)  # Remove following whitespace character
+        code = "".join(code)
+
+        compiler_flags = []
+        command_line_options = []
+        args = []
+        inputs = []
+
+        lines = code.split("\n")
+        code = []
+        for line in lines:
+            if line.startswith("input "):
+                inputs.append(" ".join(line.split(" ")[1:]).strip("`"))
+            elif line.startswith("compiler-flags "):
+                compiler_flags.extend(line[15:].strip("`").split(" "))
+            elif line.startswith("command-line-options "):
+                command_line_options.extend(line[21:].strip("`").split(" "))
+            elif line.startswith("arguments "):
+                args.extend(line[10:].strip("`").split(" "))
+            else:
+                code.append(line)
+
+        inputs = "\n".join(inputs)
+        code = "\n".join(code)
+        return (
+            inputs,
+            code,
+            self.lang,
+            options,
+            compiler_flags,
+            command_line_options,
+            args,
         )
 
-    domain = link.split("/")[2]
+    async def code_from_attachments(self, ctx: Context) -> Optional[str]:
+        """Code in file."""
+        file = ctx.message.attachments[0]
+        if file.size > self.max_file_size:
+            await ctx.send("File must be smaller than 20 kio.")
+            logger.info("Exiting | File bigger than 20 kio.")
+            return None
+        buffer = BytesIO()
+        await ctx.message.attachments[0].save(buffer)
+        text = buffer.read().decode("utf-8")
+        return text
 
-    if domain == "hastebin.com":
-        if "/raw/" in link:
-            return link
-        token = link.split("/")[-1]
-        if "." in token:
-            token = token[: token.rfind(".")]  # removes extension
-        return f"https://hastebin.com/raw/{token}"
-    else:
-        # Github uses redirection so raw -> user content and no raw -> normal
-        # We still need to ensure we get a raw version after this potential redirection
-        if "/raw" in link:
-            return link
-        return link + "/raw"
-
-
-async def paste(text: str) -> Union[str, dict]:
-    """Upload the eval output to a paste service and return a URL to it if successful."""
-    logger.info("Uploading full output to paste service...")
-    result = dict()
-    text, exit_code = text.split("Exit code: ")
-    if "The output exceeded 128 KiB and was truncated." in exit_code:
-        exit_code = exit_code.replace(
-            "The output exceeded 128 KiB and was truncated.", ""
+    async def code_from_url(self, ctx: Context, code: str) -> Optional[str]:
+        """Get code from url."""
+        base_url = urllib.parse.quote_plus(
+            code.split(" ")[-1][5:].strip("/"), safe=";/?:@&=$,><-[]"
         )
-    result["exit_code"] = exit_code
-    result["icon"] = ":white_check_mark:" if exit_code == "0" else ":warning:"
+        print(base_url)
+        url = self.get_raw(base_url)
+        print(url)
 
-    async with aiohttp.ClientSession() as session:
-        post = await session.post("https://hastebin.com/documents", data=text)
-        if post.status == 200:
-            response = await post.text()
-            result["link"] = f"https://hastebin.com/{response[8:-2]}"
-            return result
+        async with aiohttp.ClientSession() as client_session:
+            async with client_session.get(url) as response:
+                print(response.status)
+                if response.status == 404:
+                    await ctx.send("Nothing found. Check your link")
+                    logger.info("Exiting | Nothing found in link.")
+                    return
+                elif response.status != 200:
+                    logger.warning(
+                        f"An error occurred | status code: "
+                        f"{response.status} | on request by: {ctx.author}"
+                    )
+                    await ctx.send(
+                        f"An error occurred (status code: {response.status}). "
+                        f"Retry later."
+                    )
+                    return
+                text = await response.text()
+                return text
 
-        # Rollback bin
-        post = await session.post("https://bin.drlazor.be", data={"val": text})
-        if post.status == 200:
-            result["link"] = post.url
-            return result
+    async def paste(self, text: str) -> Union[str, dict]:
+        """Upload the eval output to a paste service and return a URL to it if successful."""
+        logger.info("Uploading full output to paste service...")
+        result = dict()
+        text, exit_code = text.split("Exit code: ")
+        if self.truncated_error in exit_code:
+            exit_code = exit_code.replace(self.truncated_error, "")
+        result["exit_code"] = exit_code
+        result["icon"] = ":white_check_mark:" if exit_code == "0" else ":warning:"
+
+        async with aiohttp.ClientSession() as session:
+            post = await session.post(f"{self.hastebin_link}/documents", data=text)
+            if post.status == 200:
+                response = await post.text()
+                result["link"] = f"{self.hastebin_link}{response[8:-2]}"
+                return result
+
+            # Rollback bin
+            post = await session.post(f"{self.bin_link}", data={"val": text})
+            if post.status == 200:
+                result["link"] = post.url
+                return result
+
+    def get_raw(self, link: str) -> str:
+        """Returns the url to raw text version of certain pastebin services."""
+        link = link.strip("<>/")  # Allow for no-embed links
+
+        if not any(link.startswith(url) for url in self.authorized):
+            raise commands.BadArgument(
+                message=f"Only links from the following domains are accepted: {', '.join(self.authorized)}. "
+                f"(Starting with 'https')."
+            )
+
+        domain = link.split("/")[2]
+
+        if domain == f"{self.hastebin_link}":
+            if "/raw/" in link:
+                return link
+            token = link.split("/")[-1]
+            if "." in token:
+                token = token[: token.rfind(".")]  # removes extension
+            return f"{self.hastebin_link}/raw/{token}"
+        else:
+            # Github uses redirection so raw -> user content and no raw -> normal
+            # We still need to ensure we get a raw version after this potential redirection
+            if "/raw" in link:
+                return link
+            return link + "/raw"
 
 
 class FormatOutput:
@@ -183,8 +284,9 @@ class FormatOutput:
             program_output = "\n".join(result) + "\n... (truncated - too many lines)"
 
         elif len(result) > 1991:
-            program_output = result[:1000] + "\n... (truncated - too many lines)"
+            program_output = result[:500] + "\n... (truncated - too many lines)"
 
+        print(program_output)
         embed = self.embed_helper(
             description=f"{output['icon']} Your {self.language} eval job has "
             f"completed with return code `{output['exit_code']}`",

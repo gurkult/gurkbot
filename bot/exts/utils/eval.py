@@ -1,8 +1,6 @@
 import datetime
 import json
 import re
-import urllib.parse
-from io import BytesIO
 from pathlib import Path
 from typing import Optional
 
@@ -15,31 +13,8 @@ from discord.utils import escape_mentions
 from loguru import logger
 from yaml import safe_load
 
-from ._eval_helper import FormatOutput, Tio, get_raw, paste
+from ._eval_helper import EvalHelper, FormatOutput, Tio
 
-WRAPPING = {
-    "c": "#include <stdio.h>\nint main() {code}",
-    "cpp": "#include <iostream>\nint main() {code}",
-    "cs": "using System;class Program {static void Main(string[] args) {code}}",
-    "java": "public class Main {public static void main(String[] args) {code}}",
-    "rust": "fn main() {code}",
-    "d": "import std.stdio; void main(){code}",
-    "kotlin": "fun main(args: Array<String>) {code}",
-}
-QUICK_MAP = {
-    "asm": "assembly",
-    "c#": "cs",
-    "c++": "cpp",
-    "csharp": "cs",
-    "f#": "fs",
-    "fsharp": "fs",
-    "js": "javascript",
-    "nimrod": "nim",
-    "py": "python",
-    "q#": "qs",
-    "rs": "rust",
-    "sh": "bash",
-}
 SOFT_RED = 0xCD6D6D
 GREEN = 0x1F8B4C
 
@@ -53,6 +28,10 @@ class Eval(Cog):
             self.default_languages = safe_load(file)
         self.languages_url = "https://tio.run/languages.json"
         self.update_languages.start()
+        with Path("bot/resources/eval/wrapping.yml").open(encoding="utf8") as file:
+            self.wrapping = safe_load(file)
+        with Path("bot/resources/eval/quick_map.yml").open(encoding="utf8") as file:
+            self.quick_map = safe_load(file)
 
     @tasks.loop(hours=5)
     async def update_languages(self) -> None:
@@ -102,143 +81,94 @@ class Eval(Cog):
 
         Return the bot response.
         """
-        options = {"--stats": False, "--wrapped": False}
-        lang = language.strip("`").lower()
-        options_amount = len(options)
+        eval_helper = EvalHelper(language)
 
-        # Setting options and removing them from the beginning of the command
-        # options may be separated by any single whitespace, which we keep in the list
-        code = re.split(r"(\s)", code, maxsplit=options_amount)
-        for option in options:
-            if option in code[: options_amount * 2]:
-                options[option] = True
-                i = code.index(option)
-                code.pop(i)
-                code.pop(i)  # Remove following whitespace character
-        code = "".join(code)
-
-        compiler_flags = []
-        command_line_options = []
-        args = []
-        inputs = []
-
-        lines = code.split("\n")
-        code = []
-        for line in lines:
-            if line.startswith("input "):
-                inputs.append(" ".join(line.split(" ")[1:]).strip("`"))
-            elif line.startswith("compiler-flags "):
-                compiler_flags.extend(line[15:].strip("`").split(" "))
-            elif line.startswith("command-line-options "):
-                command_line_options.extend(line[21:].strip("`").split(" "))
-            elif line.startswith("arguments "):
-                args.extend(line[10:].strip("`").split(" "))
-            else:
-                code.append(line)
-
-        inputs = "\n".join(inputs)
-        code = "\n".join(code)
+        parsed_data = await eval_helper.parse(code)
+        (
+            inputs,
+            code,
+            lang,
+            options,
+            compiler_flags,
+            command_line_options,
+            args,
+        ) = parsed_data
         text = None
 
-        async with ctx.typing():
-            if ctx.message.attachments:
-                # Code in file
-                file = ctx.message.attachments[0]
-                if file.size > 20000:
-                    await ctx.send("File must be smaller than 20 kio.")
-                    logger.info("Exiting | File bigger than 20 kio.")
-                    return
-                buffer = BytesIO()
-                await ctx.message.attachments[0].save(buffer)
-                text = buffer.read().decode("utf-8")
-
-            elif code.split(" ")[-1].startswith("link="):
-                # Code in a paste service (gist or a hastebin link)
-                base_url = urllib.parse.quote_plus(
-                    code.split(" ")[-1][5:].strip("/"), safe=";/?:@&=$,><-[]"
-                )
-                url = get_raw(base_url)
-
-                async with aiohttp.ClientSession() as client_session:
-                    async with client_session.get(url) as response:
-                        if response.status == 404:
-                            await ctx.send("Nothing found. Check your link")
-                            logger.info("Exiting | Nothing found in link.")
-                            return
-                        elif response.status != 200:
-                            logger.warning(
-                                f"An error occurred | status code: "
-                                f"{response.status} | on request by: {ctx.author}"
-                            )
-                            await ctx.send(
-                                f"An error occurred (status code: {response.status}). "
-                                f"Retry later."
-                            )
-                            return
-                        text = await response.text()
-
-            elif code.strip("`"):
-                # Code in message
-                text = code.strip("`")
-                first_line = text.splitlines()[0]
-                if re.fullmatch(r"( |[0-9A-z]*)\b", first_line):
-                    text = text[len(first_line) + 1 :]
-
-            if text is None:
-                # Ensures code isn't empty after removing options
-                raise commands.MissingRequiredArgument(ctx.command.clean_params["code"])
-
-            if lang in QUICK_MAP:
-                lang = QUICK_MAP[lang]
-            if lang in self.default_languages:
-                lang = self.default_languages[lang]
-            if lang not in self.languages:
-                if not escape_mentions(lang):
-                    embed = Embed(
-                        title="MissingRequiredArgument",
-                        description=f"Missing Argument Language.\n\nUsage:\n"
-                        f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
-                        color=SOFT_RED,
-                    )
-                else:
-                    embed = Embed(
-                        title="Language Not Supported",
-                        description=f"Your language was invalid: {lang}\n"
-                        f"All Supported languages: [here](https://tio.run)\n\nUsage:\n"
-                        f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
-                        color=SOFT_RED,
-                    )
-                await ctx.send(embed=embed)
-                logger.info("Exiting | Language not found.")
+        if ctx.message.attachments:
+            text = await eval_helper.code_from_attachments(ctx)
+            if not text:
                 return
 
-            if options["--wrapped"]:
-                if not (
-                    any(map(lambda x: lang.split("-")[0] == x, WRAPPING))
-                ) or lang in ("cs-mono-shell", "cs-csi"):
-                    await ctx.send(f"`{lang}` cannot be wrapped")
-                    return
+        elif code.split(" ")[-1].startswith("link="):
+            # Code in a paste service (gist or a hastebin link)
+            text = await eval_helper.code_from_url(ctx, code)
+            if not text:
+                return
 
-                for beginning in WRAPPING:
-                    if lang.split("-")[0] == beginning:
-                        text = WRAPPING[beginning].replace("code", text)
-                        break
+        elif code.strip("`"):
+            # Code in message
+            text = code.strip("`")
+            first_line = text.splitlines()[0]
+            if re.fullmatch(r"( |[0-9A-z]*)\b", first_line):
+                text = text[len(first_line) + 1 :]
 
-            tio = Tio(lang, text, inputs, compiler_flags, command_line_options, args)
-            result = await tio.get_result()
-            result = result.rstrip("\n")
+        if text is None:
+            # Ensures code isn't empty after removing options
+            raise commands.MissingRequiredArgument(ctx.command.clean_params["code"])
 
-            if not options["--stats"]:
-                try:
-                    start, end = result.rindex("Real time: "), result.rindex(
-                        "%\nExit code: "
-                    )
-                    result = result[:start] + result[end + 2 :]
-                except ValueError:
-                    pass
+        if lang in self.quick_map:
+            lang = self.quick_map[lang]
+        if lang in self.default_languages:
+            lang = self.default_languages[lang]
+        if lang not in self.languages:
+            if not escape_mentions(lang):
+                embed = Embed(
+                    title="MissingRequiredArgument",
+                    description=f"Missing Argument Language.\n\nUsage:\n"
+                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                    color=SOFT_RED,
+                )
+            else:
+                embed = Embed(
+                    title="Language Not Supported",
+                    description=f"Your language was invalid: {lang}\n"
+                    f"All Supported languages: [here](https://tio.run)\n\nUsage:\n"
+                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                    color=SOFT_RED,
+                )
+            await ctx.send(embed=embed)
+            logger.info("Exiting | Language not found.")
+            return
 
+        if options["--wrapped"]:
+            if not (
+                any(map(lambda x: lang.split("-")[0] == x, self.wrapping))
+            ) or lang in ("cs-mono-shell", "cs-csi"):
+                await ctx.send(f"`{lang}` cannot be wrapped")
+                return
+
+            for beginning in self.wrapping:
+                if lang.split("-")[0] == beginning:
+                    text = self.wrapping[beginning].replace("code", text)
+                    break
+
+        tio = Tio(lang, text, inputs, compiler_flags, command_line_options, args)
+        result = await tio.get_result()
+        result = result.rstrip("\n")
+
+        if not options["--stats"]:
+            try:
+                start, end = result.rindex("Real time: "), result.rindex(
+                    "%\nExit code: "
+                )
+                result = result[:start] + result[end + 2 :]
+            except ValueError:
+                pass
+
+        async with ctx.typing():
             if len(result) > 1991 or result.count("\n") > 40:
-                output = await paste(result)
+                output = await eval_helper.paste(result)
 
                 format_output = FormatOutput(language=lang)
                 embed = format_output.format_hastebin_output(output, result)
@@ -248,7 +178,7 @@ class Eval(Cog):
                 return
 
             format_output = FormatOutput(language=lang)
-            embed = format_output.format_message_output(result)
+            embed = format_output.format_code_output(result)
 
             await ctx.send(content=f"{ctx.author.mention}", embed=embed)
             logger.info("Result Sent.")
