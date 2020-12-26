@@ -74,99 +74,99 @@ class Eval(Cog):
     )
     @commands.cooldown(3, 10, commands.BucketType.user)
     async def eval_command(
-        self, ctx: Context, language: str, *, code: str = ""
+            self, ctx: Context, language: str, *, code: str = ""
     ) -> Optional[Message]:
         """
         Evaluate code, format it, and send the output to the corresponding channel.
 
         Return the bot response.
         """
-        eval_helper = EvalHelper(language)
-
-        parsed_data = await eval_helper.parse(code)
-        (
-            inputs,
-            code,
-            lang,
-            options,
-            compiler_flags,
-            command_line_options,
-            args,
-        ) = parsed_data
-        text = None
-
-        if ctx.message.attachments:
-            text = await eval_helper.code_from_attachments(ctx)
-            if not text:
-                return
-
-        elif code.split(" ")[-1].startswith("link="):
-            # Code in a paste service (gist or a hastebin link)
-            text = await eval_helper.code_from_url(ctx, code)
-            if not text:
-                return
-
-        elif code.strip("`"):
-            # Code in message
-            text = code.strip("`")
-            first_line = text.splitlines()[0]
-            if re.fullmatch(r"( |[0-9A-z]*)\b", first_line):
-                text = text[len(first_line) + 1 :]
-
-        if text is None:
-            # Ensures code isn't empty after removing options
-            raise commands.MissingRequiredArgument(ctx.command.clean_params["code"])
-
-        if lang in self.quick_map:
-            lang = self.quick_map[lang]
-        if lang in self.default_languages:
-            lang = self.default_languages[lang]
-        if lang not in self.languages:
-            if not escape_mentions(lang):
-                embed = Embed(
-                    title="MissingRequiredArgument",
-                    description=f"Missing Argument Language.\n\nUsage:\n"
-                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
-                    color=SOFT_RED,
-                )
-            else:
-                embed = Embed(
-                    title="Language Not Supported",
-                    description=f"Your language was invalid: {lang}\n"
-                    f"All Supported languages: [here](https://tio.run)\n\nUsage:\n"
-                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
-                    color=SOFT_RED,
-                )
-            await ctx.send(embed=embed)
-            logger.info("Exiting | Language not found.")
-            return
-
-        if options["--wrapped"]:
-            if not (
-                any(map(lambda x: lang.split("-")[0] == x, self.wrapping))
-            ) or lang in ("cs-mono-shell", "cs-csi"):
-                await ctx.send(f"`{lang}` cannot be wrapped")
-                return
-
-            for beginning in self.wrapping:
-                if lang.split("-")[0] == beginning:
-                    text = self.wrapping[beginning].replace("code", text)
-                    break
-
-        tio = Tio(lang, text, inputs, compiler_flags, command_line_options, args)
-        result = await tio.get_result()
-        result = result.rstrip("\n")
-
-        if not options["--stats"]:
-            try:
-                start, end = result.rindex("Real time: "), result.rindex(
-                    "%\nExit code: "
-                )
-                result = result[:start] + result[end + 2 :]
-            except ValueError:
-                pass
-
         async with ctx.typing():
+            eval_helper = EvalHelper(language)
+
+            parsed_data = await eval_helper.parse(code)
+            (
+                inputs,
+                code,
+                lang,
+                options,
+                compiler_flags,
+                command_line_options,
+                args,
+            ) = parsed_data
+            text = None
+
+            if ctx.message.attachments:
+                text = await eval_helper.code_from_attachments(ctx)
+                if not text:
+                    return
+
+            elif code.split(" ")[-1].startswith("link="):
+                # Code in a paste service (gist or a hastebin link)
+                text = await eval_helper.code_from_url(ctx, code)
+                if not text:
+                    return
+
+            elif code.strip("`"):
+                # Code in message
+                text = code.strip("`")
+                first_line = text.splitlines()[0]
+                if re.fullmatch(r"( |[0-9A-z]*)\b", first_line):
+                    text = text[len(first_line) + 1:]
+
+            if text is None:
+                # Ensures code isn't empty after removing options
+                raise commands.MissingRequiredArgument(ctx.command.clean_params["code"])
+
+            if lang in self.quick_map:
+                lang = self.quick_map[lang]
+            if lang in self.default_languages:
+                lang = self.default_languages[lang]
+            if lang not in self.languages:
+                if not escape_mentions(lang):
+                    embed = Embed(
+                        title="MissingRequiredArgument",
+                        description=f"Missing Argument Language.\n\nUsage:\n"
+                                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                        color=SOFT_RED,
+                    )
+                else:
+                    embed = Embed(
+                        title="Language Not Supported",
+                        description=f"Your language was invalid: {lang}\n"
+                                    f"All Supported languages: [here](https://tio.run)\n\nUsage:\n"
+                                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                        color=SOFT_RED,
+                    )
+                await ctx.send(embed=embed)
+                logger.info("Exiting | Language not found.")
+                return
+
+            if options["--wrapped"]:
+                if not (
+                        any(map(lambda x: lang.split("-")[0] == x, self.wrapping))
+                ) or lang in ("cs-mono-shell", "cs-csi"):
+                    await ctx.send(f"`{lang}` cannot be wrapped")
+                    return
+
+                for beginning in self.wrapping:
+                    if lang.split("-")[0] == beginning:
+                        text = self.wrapping[beginning].replace("code", text)
+                        break
+
+            tio = Tio(lang, text, inputs, compiler_flags, command_line_options, args)
+            result = await tio.get_result()
+            result = result.rstrip("\n")
+
+            if not options["--stats"]:
+                try:
+                    start, end = result.rindex("Real time: "), result.rindex(
+                        "%\nExit code: "
+                    )
+                    result = result[:start] + result[end + 2:]
+                except ValueError:
+                    pass
+
             if len(result) > 1991 or result.count("\n") > 40:
                 output = await eval_helper.paste(result)
 
@@ -190,7 +190,7 @@ class Eval(Cog):
             embed = Embed(
                 title="MissingRequiredArgument",
                 description=f"Your input was invalid: {error}\n\nUsage:\n"
-                f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                            f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
                 color=SOFT_RED,
             )
             await ctx.send(embed=embed)
@@ -200,8 +200,8 @@ class Eval(Cog):
             embed = Embed(
                 title="Cooldown",
                 description=f"You’re on a cooldown for this command. Please "
-                f"wait **{int(error.retry_after)}s** "
-                "until you use it again.",
+                            f"wait **{int(error.retry_after)}s** "
+                            "until you use it again.",
                 color=SOFT_RED,
             )
             await ctx.send(embed=embed)

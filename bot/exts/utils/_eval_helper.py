@@ -232,7 +232,7 @@ class EvalHelper:
 
         domain = link.split("/")[2]
 
-        if domain == f"{self.hastebin_link}":
+        if domain == "hastebin.com":
             if "/raw/" in link:
                 return link
             token = link.split("/")[-1]
@@ -253,6 +253,7 @@ class FormatOutput:
     def __init__(self, language: str):
         self.language = language
         self.GREEN = 0x1F8B4C
+        self.max_lines = 11
 
     @staticmethod
     def get_icon(exit_code: str) -> str:
@@ -278,9 +279,9 @@ class FormatOutput:
         logger.info("Formatting hastebin output...")
         if result.count("\n") > 40:
             result = [
-                f"{i:03d} | {line}" for i, line in enumerate(result.split("\n"), 1)
+                f"{i:02d} | {line}" for i, line in enumerate(result.split("\n"), 1)
             ]
-            result = result[:11]  # Limiting to only 11 lines
+            result = result[:self.max_lines]  # Limiting to only 11 lines
             program_output = "\n".join(result) + "\n... (truncated - too many lines)"
 
         elif len(result) > 1991:
@@ -315,11 +316,11 @@ class FormatOutput:
 
         if lines > 0:
             result = [
-                f"{i:03d} | {line}" for i, line in enumerate(result.split("\n"), 1)
+                f"{i:02d} | {line}" for i, line in enumerate(result.split("\n"), 1)
             ]
-            result = result[:11]  # Limiting to only 11 lines
+            result = result[:self.max_lines]  # Limiting to only 11 lines
             result = "\n".join(result)
-        if lines > 10:
+        if lines > self.max_lines-1:
             if len(result) >= 1000:
                 result = f"{result[:1000]}\n... (truncated - too long, too many lines)"
             else:
