@@ -74,7 +74,7 @@ class Eval(Cog):
     )
     @commands.cooldown(3, 10, commands.BucketType.user)
     async def eval_command(
-            self, ctx: Context, language: str, *, code: str = ""
+        self, ctx: Context, language: str, *, code: str = ""
     ) -> Optional[Message]:
         """
         Evaluate code, format it, and send the output to the corresponding channel.
@@ -112,7 +112,7 @@ class Eval(Cog):
                 text = code.strip("`")
                 first_line = text.splitlines()[0]
                 if re.fullmatch(r"( |[0-9A-z]*)\b", first_line):
-                    text = text[len(first_line) + 1:]
+                    text = text[len(first_line) + 1 :]
 
             if text is None:
                 # Ensures code isn't empty after removing options
@@ -127,15 +127,15 @@ class Eval(Cog):
                     embed = Embed(
                         title="MissingRequiredArgument",
                         description=f"Missing Argument Language.\n\nUsage:\n"
-                                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                        f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
                         color=SOFT_RED,
                     )
                 else:
                     embed = Embed(
                         title="Language Not Supported",
                         description=f"Your language was invalid: {lang}\n"
-                                    f"All Supported languages: [here](https://tio.run)\n\nUsage:\n"
-                                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                        f"All Supported languages: [here](https://tio.run)\n\nUsage:\n"
+                        f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
                         color=SOFT_RED,
                     )
                 await ctx.send(embed=embed)
@@ -144,7 +144,7 @@ class Eval(Cog):
 
             if options["--wrapped"]:
                 if not (
-                        any(map(lambda x: lang.split("-")[0] == x, self.wrapping))
+                    any(map(lambda x: lang.split("-")[0] == x, self.wrapping))
                 ) or lang in ("cs-mono-shell", "cs-csi"):
                     await ctx.send(f"`{lang}` cannot be wrapped")
                     return
@@ -163,7 +163,7 @@ class Eval(Cog):
                     start, end = result.rindex("Real time: "), result.rindex(
                         "%\nExit code: "
                     )
-                    result = result[:start] + result[end + 2:]
+                    result = result[:start] + result[end + 2 :]
                 except ValueError:
                     pass
 
@@ -190,7 +190,7 @@ class Eval(Cog):
             embed = Embed(
                 title="MissingRequiredArgument",
                 description=f"Your input was invalid: {error}\n\nUsage:\n"
-                            f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
+                f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
                 color=SOFT_RED,
             )
             await ctx.send(embed=embed)
@@ -200,8 +200,8 @@ class Eval(Cog):
             embed = Embed(
                 title="Cooldown",
                 description=f"You’re on a cooldown for this command. Please "
-                            f"wait **{int(error.retry_after)}s** "
-                            "until you use it again.",
+                f"wait **{int(error.retry_after)}s** "
+                "until you use it again.",
                 color=SOFT_RED,
             )
             await ctx.send(embed=embed)

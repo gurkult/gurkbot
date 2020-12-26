@@ -281,7 +281,7 @@ class FormatOutput:
             result = [
                 f"{i:02d} | {line}" for i, line in enumerate(result.split("\n"), 1)
             ]
-            result = result[:self.max_lines]  # Limiting to only 11 lines
+            result = result[: self.max_lines]  # Limiting to only 11 lines
             program_output = "\n".join(result) + "\n... (truncated - too many lines)"
 
         elif len(result) > 1991:
@@ -318,9 +318,9 @@ class FormatOutput:
             result = [
                 f"{i:02d} | {line}" for i, line in enumerate(result.split("\n"), 1)
             ]
-            result = result[:self.max_lines]  # Limiting to only 11 lines
+            result = result[: self.max_lines]  # Limiting to only 11 lines
             result = "\n".join(result)
-        if lines > self.max_lines-1:
+        if lines > self.max_lines - 1:
             if len(result) >= 1000:
                 result = f"{result[:1000]}\n... (truncated - too long, too many lines)"
             else:
