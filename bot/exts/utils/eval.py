@@ -15,7 +15,7 @@ from discord.utils import escape_mentions
 from loguru import logger
 from yaml import safe_load
 
-from ._eval_helper import Tio, get_raw, paste
+from ._eval_helper import FormatOutput, Tio, get_raw, paste
 
 WRAPPING = {
     "c": "#include <stdio.h>\nint main() {code}",
@@ -230,8 +230,9 @@ class Eval(Cog):
 
             if not options["--stats"]:
                 try:
-                    start = result.rindex("Real time: ")
-                    end = result.rindex("%\nExit code: ")
+                    start, end = result.rindex("Real time: "), result.rindex(
+                        "%\nExit code: "
+                    )
                     result = result[:start] + result[end + 2 :]
                 except ValueError:
                     pass
@@ -239,67 +240,17 @@ class Eval(Cog):
             if len(result) > 1991 or result.count("\n") > 40:
                 output = await paste(result)
 
-                if result.count("\n") > 40:
-                    result = [
-                        f"{i:03d} | {line}"
-                        for i, line in enumerate(result.split("\n"), 1)
-                    ]
-                    result = result[:11]  # Limiting to only 11 lines
-                    program_output = (
-                        "\n".join(result) + "\n... (truncated - too many lines)"
-                    )
-                elif len(result) > 1991:
-                    program_output = result[:500] + "\n... (truncated - too many lines)"
+                format_output = FormatOutput(language=lang)
+                embed = format_output.format_hastebin_output(output, result)
 
-                embed = Embed(
-                    title="Eval Results",
-                    colour=GREEN,
-                    description=f"{output['icon']} Your {lang} eval job has "
-                    f"completed with return code `{output['exit_code']}`",
-                )
-                embed.add_field(
-                    name="Output",
-                    value=f"```\n{program_output}```\nYou can find the complete "
-                    f"output [here]({output['link']})",
-                )
                 await ctx.send(content=f"{ctx.author.mention}", embed=embed)
                 logger.info("Result Sent.")
                 return
 
-            logger.info("Formatting output...")
+            format_output = FormatOutput(language=lang)
+            embed = format_output.format_message_output(result)
 
-            zero = "\N{zero width space}"
-            result = re.sub("```", f"{zero}`{zero}`{zero}`{zero}", result)
-            result, exit_code = result.split("Exit code: ")
-            icon = ":white_check_mark:" if exit_code == "0" else ":warning:"
-            result = result.rstrip("\n")
-            lines = result.count("\n")
-            if lines > 0:
-                result = [
-                    f"{i:03d} | {line}" for i, line in enumerate(result.split("\n"), 1)
-                ]
-                result = result[:11]  # Limiting to only 11 lines
-                result = "\n".join(result)
-            if lines > 10:
-                if len(result) >= 1000:
-                    result = (
-                        f"{result[:1000]}\n... (truncated - too long, too many lines)"
-                    )
-                else:
-                    result = f"{result}\n... (truncated - too many lines)"
-            elif len(result) >= 1000:
-                result = f"{result[:1000]}\n... (truncated - too long)"
-
-            output = "[No output]" if result == "" else result
-
-            embed = Embed(
-                title="Eval Results",
-                colour=GREEN,
-                description=f"{icon} Your {lang} eval job has completed with return code `{exit_code}`.",
-            )
-            embed.add_field(name="Output", value=f"```\n{output}```")
             await ctx.send(content=f"{ctx.author.mention}", embed=embed)
-            logger.info(f"{ctx.author}'s job had a return code of {exit_code}")
             logger.info("Result Sent.")
 
     @eval_command.error

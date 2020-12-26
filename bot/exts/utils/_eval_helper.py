@@ -1,8 +1,10 @@
+import re
 import zlib
 from functools import partial
 from typing import Any, Optional, Union
 
 import aiohttp
+from discord import Embed
 from discord.ext import commands
 from loguru import logger
 
@@ -142,3 +144,91 @@ async def paste(text: str) -> Union[str, dict]:
         if post.status == 200:
             result["link"] = post.url
             return result
+
+
+class FormatOutput:
+    """Format Output sent by the Tio.run Api and return embed."""
+
+    def __init__(self, language: str):
+        self.language = language
+        self.GREEN = 0x1F8B4C
+
+    @staticmethod
+    def get_icon(exit_code: str) -> str:
+        """Get icon depending on what is the exit code."""
+        return ":white_check_mark:" if exit_code == "0" else ":warning:"
+
+    def embed_helper(self, description: str, field: str) -> Embed:
+        """Embed helper function."""
+        embed = Embed(title="Eval Results", colour=self.GREEN, description=description)
+        embed.add_field(
+            name="Output",
+            value=field,
+        )
+        return embed
+
+    def format_hastebin_output(self, output: dict, result: str) -> Embed:
+        """
+        Format Hastebin Output.
+
+        Helper function to format output to return embed if the result,
+        is more than 1991 characters or 40 lines.
+        """
+        logger.info("Formatting hastebin output...")
+        if result.count("\n") > 40:
+            result = [
+                f"{i:03d} | {line}" for i, line in enumerate(result.split("\n"), 1)
+            ]
+            result = result[:11]  # Limiting to only 11 lines
+            program_output = "\n".join(result) + "\n... (truncated - too many lines)"
+
+        elif len(result) > 1991:
+            program_output = result[:1000] + "\n... (truncated - too many lines)"
+
+        embed = self.embed_helper(
+            description=f"{output['icon']} Your {self.language} eval job has "
+            f"completed with return code `{output['exit_code']}`",
+            field=f"```\n{program_output}```\nYou can find the complete "
+            f"output [here]({output['link']})",
+        )
+
+        logger.info("Output Formatted")
+        return embed
+
+    def format_code_output(self, result: str) -> Embed:
+        """
+        Format Code Output.
+
+        Helper function to format output to return embed if the result
+        is less than 1991 characters or 40 lines.
+        """
+        logger.info("Formatting message output...")
+
+        zero = "\N{zero width space}"
+        result = re.sub("```", f"{zero}`{zero}`{zero}`{zero}", result)
+        result, exit_code = result.split("Exit code: ")
+        icon = self.get_icon(exit_code)
+        result = result.rstrip("\n")
+        lines = result.count("\n")
+
+        if lines > 0:
+            result = [
+                f"{i:03d} | {line}" for i, line in enumerate(result.split("\n"), 1)
+            ]
+            result = result[:11]  # Limiting to only 11 lines
+            result = "\n".join(result)
+        if lines > 10:
+            if len(result) >= 1000:
+                result = f"{result[:1000]}\n... (truncated - too long, too many lines)"
+            else:
+                result = f"{result}\n... (truncated - too many lines)"
+        elif len(result) >= 1000:
+            result = f"{result[:1000]}\n... (truncated - too long)"
+
+        embed = self.embed_helper(
+            description=f"{icon} Your {self.language} eval job has completed with return code `{exit_code}`.",
+            field=f"```\n{'[No output]' if result == '' else result}```",
+        )
+
+        logger.info("Output Formatted")
+        return embed
