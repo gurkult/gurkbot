@@ -254,6 +254,7 @@ class FormatOutput:
         self.language = language
         self.GREEN = 0x1F8B4C
         self.max_lines = 11
+        self.max_output_length = 500
 
     @staticmethod
     def get_icon(exit_code: str) -> str:
@@ -285,9 +286,10 @@ class FormatOutput:
             program_output = "\n".join(result) + "\n... (truncated - too many lines)"
 
         elif len(result) > 1991:
-            program_output = result[:500] + "\n... (truncated - too many lines)"
+            program_output = (
+                result[: self.max_output_length] + "\n... (truncated - too long)"
+            )
 
-        print(program_output)
         embed = self.embed_helper(
             description=f"{output['icon']} Your {self.language} eval job has "
             f"completed with return code `{output['exit_code']}`",
@@ -322,11 +324,11 @@ class FormatOutput:
             result = "\n".join(result)
         if lines > self.max_lines - 1:
             if len(result) >= 1000:
-                result = f"{result[:1000]}\n... (truncated - too long, too many lines)"
+                result = f"{result[:self.max_output_length]}\n... (truncated - too long, too many lines)"
             else:
                 result = f"{result}\n... (truncated - too many lines)"
         elif len(result) >= 1000:
-            result = f"{result[:1000]}\n... (truncated - too long)"
+            result = f"{result[:self.max_output_length]}\n... (truncated - too long)"
 
         embed = self.embed_helper(
             description=f"{icon} Your {self.language} eval job has completed with return code `{exit_code}`.",
