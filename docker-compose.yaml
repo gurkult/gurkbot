@@ -13,6 +13,7 @@ services:
       - TOKEN
       - PREFIX
       - CHANNEL_DEVLOG
+      - CHANNEL_DEVALERTS
 
     volumes:
       - .:/bot
