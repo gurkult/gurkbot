@@ -1,6 +1,9 @@
 import re
 
 from bot.bot import Bot
+from typing import Union
+from fuzzywuzzy import process
+from discord import Embed, Color, Member
 from discord.ext.commands import Cog, command, Context
 
 RATE_DICT = {
@@ -51,6 +54,38 @@ class GurkanStats(Cog):
         rate_msg = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
 
         await ctx.send(f"About {rate}% ({gurkans}/ {len(members)}) of members are gurkans, That's {rate_msg}")
+
+    @command(
+        help="""isgurkan [user/text (optional)]
+
+                Get an embed based on the gurkan rate of the person.
+            """,
+        brief="Get an embed on the rate of gurkanity of a user",
+        aliases=("gurkrate", "gr", "isgurk", "gurkanrate", "gurkanr8", "gurkr8")
+    )
+    async def isgurkan(self, ctx: Context, user: Union[Member, str] = None):
+        """
+        Uses fuzzywuzzy module to get a rate on how much the sub string matches the original string,
+        The rate is then sent in a color embed, the color depending on how high the rate is.
+        Can be used on other members, or even text.
+        """
+        if not isinstance(user, str):
+            user = ctx.author.display_name if not user else user.display_name
+
+        gurk_rate = process.extractOne("gurkan", [user])[1]
+        rate_embed = Embed(title=f"{user}'s gurk rate is {gurk_rate}%")
+        color = ""
+
+        if gurk_rate < 40:
+            color = Color.red()
+        elif 70 > gurk_rate > 40:
+            color = Color.gold()
+        elif gurk_rate > 70:
+            color = Color.green()
+
+        rate_embed.color = color
+
+        await ctx.send(embed=rate_embed)
 
 
 def setup(bot: Bot) -> None:
