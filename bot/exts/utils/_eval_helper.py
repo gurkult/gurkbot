@@ -14,7 +14,7 @@ from loguru import logger
 to_bytes = partial(bytes, encoding="utf-8")
 
 
-def _to_tio_string(couple: tuple) -> Any:
+def _to_tio_string(couple: tuple) -> bytes:
     """
     Return a tio api compatible string.
 
@@ -43,7 +43,7 @@ class Tio:
         compiler_flags: Optional[list] = None,
         command_line_options: Optional[list] = None,
         args: Optional[list] = None,
-    ):
+    ) -> None:
         if args is None:
             args = []
         if command_line_options is None:
@@ -75,7 +75,7 @@ class Tio:
         # This returns a DEFLATE-compressed byte-string, which is what the API requires
         self.request = zlib.compress(bytes_, 9)[2:-4]
 
-    async def get_result(self) -> Any:
+    async def get_result(self) -> str:
         """Send Request to Tio Run API And Get Result."""
         async with aiohttp.ClientSession() as client_session:
             async with client_session.post(self.backend, data=self.request) as res:
@@ -93,7 +93,7 @@ class Tio:
 class EvalHelper:
     """Eval Helper class."""
 
-    def __init__(self, language: str):
+    def __init__(self, language: str) -> None:
         self.lang = language.strip("`").lower()
         self.authorized = (
             "https://hastebin.com",
@@ -162,7 +162,7 @@ class EvalHelper:
         if file.size > self.max_file_size:
             await ctx.send("File must be smaller than 20 kio.")
             logger.info("Exiting | File bigger than 20 kio.")
-            return None
+            return
         buffer = BytesIO()
         await ctx.message.attachments[0].save(buffer)
         text = buffer.read().decode("utf-8")
@@ -250,7 +250,7 @@ class EvalHelper:
 class FormatOutput:
     """Format Output sent by the Tio.run Api and return embed."""
 
-    def __init__(self, language: str):
+    def __init__(self, language: str) -> None:
         self.language = language
         self.GREEN = 0x1F8B4C
         self.max_lines = 11

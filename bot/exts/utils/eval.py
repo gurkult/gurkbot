@@ -22,7 +22,7 @@ GREEN = 0x1F8B4C
 class Eval(Cog):
     """Safe evaluation of Code using Tio Run Api."""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
         with Path("bot/resources/eval/default_langs.yml").open(encoding="utf8") as file:
             self.default_languages = safe_load(file)
