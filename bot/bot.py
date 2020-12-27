@@ -1,14 +1,19 @@
 from discord.ext import commands
+from discord import Intents
 from loguru import logger
 
 from . import constants
+
+
+intents = Intents.default()
+intents.members = True
 
 
 class Bot(commands.Bot):
     """The core of the bot."""
 
     def __init__(self) -> None:
-        super().__init__(command_prefix=constants.PREFIX)
+        super().__init__(command_prefix=constants.PREFIX, intents=intents)
         self.load_extensions()
 
     def load_extensions(self) -> None:
