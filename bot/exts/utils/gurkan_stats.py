@@ -12,7 +12,7 @@ RATE_DICT = {
     tuple(range(30, 60)): "Good",
     tuple(range(60, 80)): "Cool!",
     tuple(range(80, 95)): "So Epic!!",
-    tuple(range(95, 100)): "Just wow, superb!"
+    tuple(range(95, 100)): "Just wow, superb!",
 }
 
 
@@ -29,18 +29,20 @@ class GurkanStats(Cog):
             To get the count of people who have gurk/urkan in their names i.e,
             they are valid gurkans
             """,
-        aliases=("gurkanc", "gcount", "gc", "gurkcount", "gurkc")
+        aliases=("gurkanc", "gcount", "gc", "gurkcount", "gurkc"),
     )
     async def gurkancount(self, ctx: Context):
         """Goes through an array of all the members and uses regex to check if the member is a gurkan.
-           If the member is not a gurkan, they are not added to the new array and the length of the new array
-           with a message denoting the quality depending on the rate of total members and total gurkans
-           is returned in the end.
+        If the member is not a gurkan, they are not added to the new array and the length of the new array
+        with a message denoting the quality depending on the rate of total members and total gurkans
+        is returned in the end.
         """
 
         members = ctx.guild.members
 
-        gurkans = len([1 for i in members if re.search(r"gurk|urkan", i.display_name.lower())])
+        gurkans = len(
+            [1 for i in members if re.search(r"gurk|urkan", i.display_name.lower())]
+        )
 
         rate = round((gurkans / len(members)) * 100)
 
@@ -53,7 +55,9 @@ class GurkanStats(Cog):
 
         rate_msg = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
 
-        await ctx.send(f"About {rate}% ({gurkans}/ {len(members)}) of members are gurkans, That's {rate_msg}")
+        await ctx.send(
+            f"About {rate}% ({gurkans}/ {len(members)}) of members are gurkans, That's {rate_msg}"
+        )
 
     @command(
         help="""isgurkan [user/text (optional)]
@@ -61,7 +65,7 @@ class GurkanStats(Cog):
                 Get an embed based on the gurkan rate of the person.
             """,
         brief="Get an embed on the rate of gurkanity of a user",
-        aliases=("gurkrate", "gr", "isgurk", "gurkanrate", "gurkanr8", "gurkr8")
+        aliases=("gurkrate", "gr", "isgurk", "gurkanrate", "gurkanr8", "gurkr8"),
     )
     async def isgurkan(self, ctx: Context, user: Union[Member, str] = None):
         """
