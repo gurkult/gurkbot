@@ -1,3 +1,5 @@
+import os
+
 from discord.ext import commands
 from loguru import logger
 
@@ -17,7 +19,7 @@ class Bot(commands.Bot):
         for extension in constants.EXTENSIONS.glob("*/*.py"):
             if extension.name.startswith("_"):
                 continue  # ignore files starting with _
-            dot_path = str(extension).replace("/", ".")[:-3]  # remove the .py
+            dot_path = str(extension).replace(os.sep, ".")[:-3]  # remove the .py
 
             self.load_extension(dot_path)
             logger.info(f"Successfully loaded extension:  {dot_path}")
