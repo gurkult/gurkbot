@@ -255,6 +255,7 @@ class FormatOutput:
         self.GREEN = 0x1F8B4C
         self.max_lines = 11
         self.max_output_length = 500
+        self.eval_helper = EvalHelper(self.language)
 
     @staticmethod
     def get_icon(exit_code: str) -> str:
@@ -278,14 +279,14 @@ class FormatOutput:
         is more than 1991 characters or 40 lines.
         """
         logger.info("Formatting hastebin output...")
-        if result.count("\n") > 40:
+        if result.count("\n") > self.max_lines:
             result = [
                 f"{i:02d} | {line}" for i, line in enumerate(result.split("\n"), 1)
             ]
             result = result[: self.max_lines]  # Limiting to only 11 lines
             program_output = "\n".join(result) + "\n... (truncated - too many lines)"
 
-        elif len(result) > 1991:
+        elif len(result) > 1000:
             program_output = (
                 result[: self.max_output_length] + "\n... (truncated - too long)"
             )
@@ -322,13 +323,6 @@ class FormatOutput:
             ]
             result = result[: self.max_lines]  # Limiting to only 11 lines
             result = "\n".join(result)
-        if lines > self.max_lines - 1:
-            if len(result) >= 1000:
-                result = f"{result[:self.max_output_length]}\n... (truncated - too long, too many lines)"
-            else:
-                result = f"{result}\n... (truncated - too many lines)"
-        elif len(result) >= 1000:
-            result = f"{result[:self.max_output_length]}\n... (truncated - too long)"
 
         embed = self.embed_helper(
             description=f"{icon} Your {self.language} eval job has completed with return code `{exit_code}`.",
