@@ -211,7 +211,7 @@ class EvalHelper:
             post = await session.post(f"{self.hastebin_link}/documents", data=text)
             if post.status == 200:
                 response = await post.text()
-                result["link"] = f"{self.hastebin_link}{response[8:-2]}"
+                result["link"] = f"{self.hastebin_link}/{response[8:-2]}.txt"
                 return result
 
             # Rollback bin
