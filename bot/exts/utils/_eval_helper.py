@@ -286,7 +286,7 @@ class FormatOutput:
             result = result[: self.max_lines]  # Limiting to only 11 lines
             program_output = "\n".join(result) + "\n... (truncated - too many lines)"
 
-        elif len(result) > 1000:
+        elif len(result) > self.max_output_length:
             program_output = (
                 result[: self.max_output_length] + "\n... (truncated - too long)"
             )

@@ -169,7 +169,10 @@ class Eval(Cog):
 
             format_output = FormatOutput(language=lang)
 
-            if len(result) > 1000 or result.count("\n") > format_output.max_lines:
+            if (
+                len(result) > format_output.max_output_length
+                or result.count("\n") > format_output.max_lines
+            ):
                 output = await eval_helper.paste(result)
 
                 embed = format_output.format_hastebin_output(output, result)
