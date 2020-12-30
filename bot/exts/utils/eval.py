@@ -167,19 +167,21 @@ class Eval(Cog):
                 except ValueError:
                     pass
 
-            if len(result) > 1991 or result.count("\n") > 40:
+            format_output = FormatOutput(language=lang)
+
+            if (
+                len(result) > format_output.max_output_length
+                or result.count("\n") > format_output.max_lines
+            ):
                 output = await eval_helper.paste(result)
 
-                format_output = FormatOutput(language=lang)
                 embed = format_output.format_hastebin_output(output, result)
 
                 await ctx.send(content=f"{ctx.author.mention}", embed=embed)
                 logger.info("Result Sent.")
                 return
 
-            format_output = FormatOutput(language=lang)
             embed = format_output.format_code_output(result)
-
             await ctx.send(content=f"{ctx.author.mention}", embed=embed)
             logger.info("Result Sent.")
 
