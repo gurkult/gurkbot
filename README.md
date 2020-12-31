@@ -26,8 +26,6 @@ To get a **token**, go to [Discord Developer Portal](https://discord.com/develop
    TOKEN = <Your token> # See Discord Setup above
    PREFIX = "!" # the prefix the bot should use, will default to "!" if this is not present
 
-   ```
-
 4. Install pipenv: `pip install pipenv` and run the following:
 
    ```sh
