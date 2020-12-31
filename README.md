@@ -18,7 +18,7 @@ To get a **token**, go to [Discord Developer Portal](https://discord.com/develop
 
 1. Traditional way: `git clone <url>`.
    Using Github CLI: `gh repo clone gurkult/gurkbot`. Then navigate to the directory `cd gurkbot/`
-2. Create a new branch by `git branch -b <name of new branch> main` or `git switch -c <name of new branch> main`. Make sure the new branch name is related to feature or fix you have in mind.
+2. Create a new branch by `git branch -b <name of new branch> main` or `git switch -c <name of new branch> main`. Make sure the new branch name is related to the feature or the fix you have in mind.
 
 3. Create a `.env` file with following contents:
 
