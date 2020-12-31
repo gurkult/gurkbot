@@ -29,7 +29,7 @@ class Bot(commands.Bot):
         logger.info("Starting bot")
         if constants.TOKEN is None:
             raise EnvironmentError(
-                "token value is None, make sure you have it set in .env"
+                "token value is None. Make sure you have configured the TOKEN field in .env"
             )
         super().run(constants.TOKEN)
 
