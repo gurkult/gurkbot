@@ -45,4 +45,4 @@ To get a **token**, go to [Discord Developer Portal](https://discord.com/develop
    pipenv run python -m bot
 
    ```
-5. Lint and format your code properly (use black or flake8), and push changes `git push origin <name of new remote branch>`
+5. Lint and format your code properly (use black or flake8), and push changes `git push -u origin <name of new remote branch>`
