@@ -33,16 +33,13 @@ To get a **token**, go to [Discord Developer Portal](https://discord.com/develop
    pipenv sync --dev
 
    # This will install the pre-commit hooks.
-   pipenv run pre-commit install
+   pipenv run precommit
 
    # Optionally: run pre-commit hooks to initialize them.
-   pipenv run pre-commit run --all-files
-
-   # Enter pipenv shell.
-   pipenv shell
-
+   pipenv run lint
+   
    # Run the bot
-   pipenv run python -m bot
+   pipenv run start
 
    ```
 5. Lint and format your code properly (use black or flake8), and push changes `git push -u origin <name of new remote branch>`
