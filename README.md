@@ -6,7 +6,7 @@ The official bot for [**THE GURKULT OPEN SOURCE COMMUNITY - DISCORD SERVER**](ht
 
 ## Contribute
 
-If you want to contribute, report a problem, add a fix or want a new feature added, you can either [open a new issue](https://github.com/gurkult/gurkbot/issues/new/choose) or [open a new pull request](https://github.com/gurkult/gurkbot/compare). For those who want to contribute see [Dev Installation](#Dev-Installation).
+If you want to contribute, report a problem, add a fix or want a new feature added, you can either [open a new issue](https://github.com/gurkult/gurkbot/issues/new/choose) or [open a new pull request](https://github.com/gurkult/gurkbot/compare). For those who want to contribute, see [Dev Installation](#Dev-Installation).
 
 ---
 
