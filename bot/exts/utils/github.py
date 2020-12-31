@@ -22,7 +22,7 @@ class GitHub(Cog):
 		em.add_field(name='You Can Contribute Too!', value="Here's our [GitHub Repo](https://github.com/gurkult/gurkbot)")
 		await ctx.send(embed=em)
 
-	@commands.command()
+	@commands.command(help=f'{PREFIX}gitsearch users <username> to search users and {PREFIX}gitsearch repos <reponame> to search repos.')
 	async def gitsearch(self, ctx, what,*,term):
 		if what.lower() == 'users':
 			response = requests.get(f'https://api.github.com/search/users?q={term}').json()
