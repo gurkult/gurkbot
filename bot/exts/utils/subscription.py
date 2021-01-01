@@ -49,7 +49,11 @@ class Subscription(Cog):
 				await ctx.send(content=ctx.author.mention, embed=embed)
 			else:
 				await ctx.author.add_roles(discord.Object(announcements_id), reason="Subscribed to announcements")
+<<<<<<< HEAD
 				embed = Embed(title=f"{yes_emoji} Subscribed", description=f"You've subscribed to {ctx.guild}'s announcements.", color = color)
+=======
+				embed = Embed(title=f"{yes_emoji} Subscribed!", description=f"You've subscribed to {ctx.guild}'s announcements.", color = color)
+>>>>>>> 5079ae5c21bae179a208d534c9453e4ef5ef123f
 				await ctx.send(content=ctx.author.mention, embed=embed)
 		
 		elif ctx.message.content == 'a!subscribe polls' or ctx.message.content == 'a!subscribe poll':
@@ -58,7 +62,11 @@ class Subscription(Cog):
 				await ctx.send(content=ctx.author.mention, embed=embed)
 			else:
 				await ctx.author.add_roles(discord.Object(polls_id), reason="Subscribed to polls")
+<<<<<<< HEAD
 				embed = Embed(title=f"{yes_emoji} Subscribed", description=f"You've subscribed to {ctx.guild}'s polls.", color = color)
+=======
+				embed = Embed(title=f"{yes_emoji} subscribed", description=f"You've subscribed to {ctx.guild}'s polls.", color = color)
+>>>>>>> 5079ae5c21bae179a208d534c9453e4ef5ef123f
 				await ctx.send(content=ctx.author.mention, embed=embed)
 
 	@client.command()
