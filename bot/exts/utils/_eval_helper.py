@@ -142,7 +142,7 @@ class EvalHelper:
             elif line.startswith("arguments "):
                 args.extend(line[10:].strip("`").split(" "))
             else:
-                code.append(line)
+                code.append(line.strip("`"))
 
         inputs = "\n".join(inputs)
         code = "\n".join(code)
