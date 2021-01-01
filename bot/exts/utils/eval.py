@@ -3,7 +3,6 @@ import json
 import re
 from pathlib import Path
 from typing import Optional
-
 import aiohttp
 from bot.bot import Bot
 from discord import Embed, Message

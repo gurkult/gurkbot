@@ -7,6 +7,7 @@ verify_ssl = true
 "discord.py" = "~=1.5.1"
 loguru = "*"
 pyyaml = "*"
+aiohttp-requests = "*"
 requests = "*"
 
 [dev-packages]
