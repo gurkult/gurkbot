@@ -4,8 +4,14 @@ import os
 # env vars
 PREFIX = os.getenv("PREFIX") or "!"
 TOKEN = os.getenv("TOKEN")
-ANNOUNCEMENTS_ID = os.getenv("ANNOUNCEMENTS_ID", "789978290844598272")
-POLLS_ID = os.getenv("POLLS_ID", "790043110360350740")
+ANNOUNCEMENTS_ID = int(os.getenv("ANNOUNCEMENTS_ID", "789978290844598272"))
+POLLS_ID = int(os.getenv("POLLS_ID", "790043110360350740"))
+
+# Emojis
+class Emojis:
+    confirmation_emoji = "<:yes:794231332770938901>"
+    warning_emoji = "\u26a0"
+
 
 # paths
 EXTENSIONS = pathlib.Path("bot/exts/")

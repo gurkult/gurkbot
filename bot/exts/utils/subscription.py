@@ -1,12 +1,10 @@
 import discord
 from bot.bot import Bot
-from bot.constants import ANNOUNCEMENTS_ID, POLLS_ID
+from bot.constants import ANNOUNCEMENTS_ID, Emojis, POLLS_ID
 from discord import Embed
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
 
-yes_emoji = "<:yes:794231332770938901>"
-no_emoji = "⚠️"
 color = 0x32A05A
 
 
@@ -29,7 +27,7 @@ class Subscription(Cog):
                     has_polls = True
             if has_announcements and has_polls:
                 embed = Embed(
-                    title=f"{no_emoji} Already subscribed",
+                    title=f"{Emojis.warning_emoji} Already subscribed",
                     description=f"You're already subscribed to {ctx.guild}'s announcements and polls.",
                     color=color,
                 )
@@ -42,7 +40,7 @@ class Subscription(Cog):
                     reason="Subscribed to announcements",
                 )
                 embed = Embed(
-                    title=f"{yes_emoji} Subscribed",
+                    title=f"{Emojis.confirmation_emoji} Subscribed",
                     description=f"You've subscribed to {ctx.guild}'s announcements.",
                     color=color,
                 )
@@ -54,7 +52,7 @@ class Subscription(Cog):
                     reason="Subscribed to polls",
                 )
                 embed = Embed(
-                    title=f"{yes_emoji} Subscribed",
+                    title=f"{Emojis.confirmation_emoji} Subscribed",
                     description=f"You've subscribed to {ctx.guild}'s polls.",
                     color=color,
                 )
@@ -69,7 +67,7 @@ class Subscription(Cog):
                     discord.Object(POLLS_ID), reason="Subscribed to polls"
                 )
                 embed = Embed(
-                    title=f"{yes_emoji} Subscribed",
+                    title=f"{Emojis.confirmation_emoji} Subscribed",
                     description=f"You've subscribed to {ctx.guild}'s announcements and polls.",
                     color=color,
                 )
@@ -95,7 +93,7 @@ class Subscription(Cog):
                     discord.Object(POLLS_ID), reason="Unsubscribed to polls"
                 )
                 embed = Embed(
-                    title=f"{yes_emoji} Unsubscribed",
+                    title=f"{Emojis.confirmation_emoji} Unsubscribed",
                     description=f"You've unsubscribed to {ctx.guild}'s announcements and polls.",
                     color=color,
                 )
@@ -106,7 +104,7 @@ class Subscription(Cog):
                     discord.Object(POLLS_ID), reason="Unsubscribed to polls"
                 )
                 embed = Embed(
-                    title=f"{yes_emoji} Unsubscribed",
+                    title=f"{Emojis.confirmation_emoji} Unsubscribed",
                     description=f"You've unsubscribed to {ctx.guild}'s polls.",
                     color=color,
                 )
@@ -118,7 +116,7 @@ class Subscription(Cog):
                     reason="Unsubscribed to announcements",
                 )
                 embed = Embed(
-                    title=f"{yes_emoji} Unsubscribed",
+                    title=f"{Emojis.confirmation_emoji} Unsubscribed",
                     description=f"You've unsubscribed to {ctx.guild}'s announcements.",
                     color=color,
                 )
@@ -126,7 +124,7 @@ class Subscription(Cog):
 
             else:
                 embed = Embed(
-                    title=f"{no_emoji} Already unsubscribed",
+                    title=f"{Emojis.warning_emoji} Already unsubscribed",
                     description=f"You're already unsubscribed to {ctx.guild}'s announcements and polls.",
                     color=color,
                 )
@@ -138,7 +136,7 @@ class Subscription(Cog):
         for role in ctx.author.roles:
             if role.id == ANNOUNCEMENTS_ID:
                 embed = Embed(
-                    title=f"{no_emoji} Already subscribed",
+                    title=f"{Emojis.warning_emoji} Already subscribed",
                     description=f"You're already subscribed to {ctx.guild}'s announcements.",
                     color=color,
                 )
@@ -148,7 +146,7 @@ class Subscription(Cog):
             discord.Object(ANNOUNCEMENTS_ID), reason="Subscribed to announcements"
         )
         embed = Embed(
-            title=f"{yes_emoji} Subscribed",
+            title=f"{Emojis.confirmation_emoji} Subscribed",
             description=f"You've subscribed to {ctx.guild}'s announcements.",
             color=color,
         )
@@ -164,7 +162,7 @@ class Subscription(Cog):
                 break
         if not has_role:
             embed = Embed(
-                title=f"{no_emoji} Already unsubscribed",
+                title=f"{Emojis.warning_emoji} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s announcements.",
                 color=color,
             )
@@ -174,7 +172,7 @@ class Subscription(Cog):
             discord.Object(ANNOUNCEMENTS_ID), reason="Unsubscribed to announcements"
         )
         embed = Embed(
-            title=f"{yes_emoji} Unsubscribed",
+            title=f"{Emojis.confirmation_emoji} Unsubscribed",
             description=f"You've unsubscribed to {ctx.guild}'s announcements.",
             color=color,
         )
@@ -186,7 +184,7 @@ class Subscription(Cog):
         for role in ctx.author.roles:
             if role.id == POLLS_ID:
                 embed = Embed(
-                    title=f"{no_emoji} Already subscribed",
+                    title=f"{Emojis.warning_emoji} Already subscribed",
                     description=f"You're already subscribed to {ctx.guild}'s polls.",
                     color=color,
                 )
@@ -196,7 +194,7 @@ class Subscription(Cog):
             discord.Object(POLLS_ID), reason="Subscribed to polls"
         )
         embed = Embed(
-            title=f"{yes_emoji} Subscribed",
+            title=f"{Emojis.confirmation_emoji} Subscribed",
             description=f"You've subscribed to {ctx.guild}'s polls.",
             color=color,
         )
@@ -212,7 +210,7 @@ class Subscription(Cog):
                 break
         if not has_role:
             embed = Embed(
-                title=f"{no_emoji} Already unsubscribed",
+                title=f"{Emojis.warning_emoji} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s polls.",
                 color=color,
             )
@@ -222,7 +220,7 @@ class Subscription(Cog):
             discord.Object(POLLS_ID), reason="Unsubscribed to polls"
         )
         embed = Embed(
-            title=f"{yes_emoji} Unsubscribed",
+            title=f"{Emojis.confirmation_emoji} Unsubscribed",
             description=f"You've unsubscribed to {ctx.guild}'s polls.",
             color=color,
         )
