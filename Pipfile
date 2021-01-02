@@ -9,6 +9,7 @@ loguru = "*"
 pyyaml = "*"
 aiohttp-requests = "*"
 requests = "*"
+pre-commit = "*"
 
 [dev-packages]
 flake8 = "~=3.8.4"

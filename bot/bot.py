@@ -4,7 +4,6 @@ from loguru import logger
 from . import constants
 
 
-
 class Bot(commands.Bot):
     """The core of the bot."""
 
@@ -31,4 +30,3 @@ class Bot(commands.Bot):
     async def on_ready(self) -> None:
         """Ran when the bot has connected to discord and is ready."""
         logger.info("Bot online")
-
