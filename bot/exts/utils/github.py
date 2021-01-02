@@ -9,8 +9,9 @@ import aiohttp
 import random
 
 GREEN = 0x1F8B4C
-GITHUB_LOGO_URL = "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-
+GITHUB_LOGO_URL = (
+    "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+)
 
 
 class GitHub(Cog):
@@ -106,9 +107,7 @@ class GitHub(Cog):
             results_embed = Embed(
                 title=f"{results_count} Results for {term}", color=GREEN
             )
-            results_embed.set_thumbnail(
-                url=GITHUB_LOGO_URL
-            )
+            results_embed.set_thumbnail(url=GITHUB_LOGO_URL)
 
             if len(response["items"]) > 3:
                 for result in response["items"][-10:]:
