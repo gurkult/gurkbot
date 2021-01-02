@@ -2,12 +2,14 @@ from discord.ext import commands
 from discord.ext.commands import Cog
 from bot.bot import Bot
 from discord import Embed
-from .eval import GREEN
 import os
 import json
 from bot.constants import PREFIX
 import aiohttp
-import asyncio
+import random
+
+GREEN = 0x1F8B4C
+GITHUB_LOGO_URL = 'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
 
 class GitHub(Cog):
     def __init__(self, bot: Bot) -> None:
@@ -15,9 +17,11 @@ class GitHub(Cog):
 
     @commands.command(help='Get the top 5 contributors of the bot.')
     async def contributors(self, ctx):
+        """Command for getting the contributors of the bot."""
         async with aiohttp.ClientSession() as cs:
             async with cs.get('https://api.github.com/repos/gurkult/gurkbot/contributors') as resp:
                 response = await resp.json()
+                response = random.sample(response, 5)
         em = Embed(title='Awesome People Who have contributed to this Bot!', color=GREEN)
         em.set_thumbnail(url='https://avatars3.githubusercontent.com/u/72938830?s=200&v=4')
         for contributor in response:
@@ -29,12 +33,14 @@ class GitHub(Cog):
 
     @commands.group()
     async def gitsearch(self, ctx: commands.Context):
+        """Group of the commands for searching GitHub"""
         if ctx.invoked_subcommand is None:
-            await ctx.send('Use `gitsearch users username` to search for users and `gitsearch repos reponame` to search for repositories.')
+            await ctx.send(f'Use `{PREFIX}gitsearch users username` to search for users and `{PREFIX}gitsearch repos reponame` to search for repositories.')
 
 
     @gitsearch.command()
     async def users(self, ctx: commands.Context,*, term):
+        """Command for searching users on GitHub. A sub command on the gitsearch group."""
         async with aiohttp.ClientSession() as client:
             async with client.get('https://api.github.com/search/users?q=' + str(term.replace(' ', '+'))) as resp:
                 assert resp.status == 200
@@ -45,7 +51,7 @@ class GitHub(Cog):
         else:
             results_embed = Embed(title=f'{results_count} results for {term}', color=GREEN)
             results_embed.set_thumbnail(
-                url='https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png')
+                url=GITHUB_LOGO_URL)
             if len(response['items']) > 3:
                 for user in response['items'][-10:]:
                     profile_link = user['html_url']
@@ -61,6 +67,7 @@ class GitHub(Cog):
 
     @gitsearch.command()
     async def repos(self, ctx: commands.Context, *,term):
+        """Command for searching repositories on GitHub. A sub command on the gitsearch group."""
         async with aiohttp.ClientSession() as client:
             async with client.get('https://api.github.com/search/repositories?q=' + str(term.replace(' ', '+'))) as resp:
                 assert resp.status == 200
@@ -94,5 +101,5 @@ class GitHub(Cog):
                 await ctx.send(embed=absolute_result_embed)
 
 
-def setup(bot):
+def setup(bot) -> None:
     bot.add_cog(GitHub(bot))
