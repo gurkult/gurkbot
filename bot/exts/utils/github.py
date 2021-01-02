@@ -1,12 +1,11 @@
 from discord.ext import commands
 from discord.ext.commands import Cog
-from bot.bot import Bot
 from discord import Embed
-import os
-import json
-from bot.constants import PREFIX
 import aiohttp
 import random
+
+from bot.bot import Bot
+from bot.constants import PREFIX
 
 GREEN = 0x1F8B4C
 GITHUB_LOGO_URL = (
@@ -49,10 +48,10 @@ class GitHub(Cog):
     @commands.group()
     async def gitsearch(self, ctx: commands.Context):
         """Group of the commands for searching GitHub"""
+        help_msg = f"Use `{PREFIX}gitsearch users username` to search for users\
+         and `{PREFIX}gitsearch repos reponame` to search for repositories."
         if ctx.invoked_subcommand is None:
-            await ctx.send(
-                f"Use `{PREFIX}gitsearch users username` to search for users and `{PREFIX}gitsearch repos reponame` to search for repositories."
-            )
+            await ctx.send(help_msg)
 
     @gitsearch.command()
     async def users(self, ctx: commands.Context, *, term):
