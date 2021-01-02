@@ -1,11 +1,11 @@
-from discord.ext import commands
-from discord.ext.commands import Cog
-from discord import Embed
-import aiohttp
 import random
 
+import aiohttp
 from bot.bot import Bot
 from bot.constants import PREFIX
+from discord import Embed
+from discord.ext import commands
+from discord.ext.commands import Cog
 
 GREEN = 0x1F8B4C
 GITHUB_LOGO_URL = (
