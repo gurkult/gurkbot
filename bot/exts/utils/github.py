@@ -1,9 +1,10 @@
 import random
+from typing import Optional
 
 import aiohttp
 from bot.bot import Bot
 from bot.constants import PREFIX
-from discord import Embed
+from discord import Embed, Message
 from discord.ext import commands
 from discord.ext.commands import Cog
 
@@ -14,11 +15,13 @@ GITHUB_LOGO_URL = (
 
 
 class GitHub(Cog):
+    """GitHub Cog"""
+
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
     @commands.command(help="Get the top 5 contributors of the bot.")
-    async def contributors(self, ctx):
+    async def contributors(self, ctx: commands.Context) -> Optional[Message]:
         """Command for getting the contributors of the bot."""
         async with aiohttp.ClientSession() as cs:
             async with cs.get(
@@ -33,12 +36,13 @@ class GitHub(Cog):
             url="https://avatars3.githubusercontent.com/u/72938830?s=200&v=4"
         )
         for contributor in response:
+            contributions = contributor["contributions"]
+            login = contributor["login"]
             em.add_field(
                 name=contributor["login"],
-                value="{} commits\n[Profile](https://github.com/{})".format(
-                    contributor["contributions"], contributor["login"]
-                ),
+                value=f"{contributions} commits\n[Profile](https://github.com/{login})",
             )
+
         em.add_field(
             name="You Can Contribute Too!",
             value="Here's our [GitHub Repo](https://github.com/gurkult/gurkbot)",
@@ -46,15 +50,17 @@ class GitHub(Cog):
         await ctx.send(embed=em)
 
     @commands.group()
-    async def gitsearch(self, ctx: commands.Context):
-        """Group of the commands for searching GitHub"""
+    async def gitsearch(self, ctx: commands.Context) -> Optional[Message]:
+        """Group of the commands for searching GitHub."""
         help_msg = f"Use `{PREFIX}gitsearch users username` to search for users\
          and `{PREFIX}gitsearch repos reponame` to search for repositories."
         if ctx.invoked_subcommand is None:
             await ctx.send(help_msg)
 
     @gitsearch.command()
-    async def users(self, ctx: commands.Context, *, term):
+    async def users(
+        self, ctx: commands.Context, *, term: str = ""
+    ) -> Optional[Message]:
         """Command for searching users on GitHub. A sub command on the gitsearch group."""
         async with aiohttp.ClientSession() as client:
             async with client.get(
@@ -90,7 +96,9 @@ class GitHub(Cog):
                 await ctx.send(embed=absolute_result_embed)
 
     @gitsearch.command()
-    async def repos(self, ctx: commands.Context, *, term):
+    async def repos(
+        self, ctx: commands.Context, *, term: str = ""
+    ) -> Optional[Message]:
         """Command for searching repositories on GitHub. A sub command on the gitsearch group."""
         async with aiohttp.ClientSession() as client:
             async with client.get(
@@ -143,5 +151,6 @@ class GitHub(Cog):
                 await ctx.send(embed=absolute_result_embed)
 
 
-def setup(bot) -> None:
+def setup(bot: Bot) -> None:
+    """Loading the Cog."""
     bot.add_cog(GitHub(bot))
