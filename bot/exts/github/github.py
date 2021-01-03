@@ -18,7 +18,7 @@ class Github(commands.Cog):
         await ctx.send_help(ctx.command)
 
     @github_group.command(name="profile")
-    @commands.cooldown(1, 10, BucketType.user)
+    @commands.cooldown(1, 60, BucketType.user)
     async def profile(
         self, ctx: commands.Context, username: typing.Optional[str]
     ) -> None:
