@@ -40,7 +40,7 @@ class Bot(commands.Bot):
         embed = Embed(description="Connected!")
         embed.set_author(
             name="Gurk Bot",
-            url="https://github.com/gurkult/gurkbot",
+            url=constants.BOT_REPO_URL,
             icon_url=self.user.avatar_url,
         )
         await self.get_channel(constants.Channels.devlog).send(embed=embed)
