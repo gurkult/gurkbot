@@ -13,6 +13,11 @@ class Emojis:
     warning_emoji = "\u26a0"
 
 
+# Colors
+class Colors:
+    green_color = 0x32A05A
+
+
 # paths
 EXTENSIONS = pathlib.Path("bot/exts/")
 LOG_FILE = pathlib.Path("log/gurkbot.log")

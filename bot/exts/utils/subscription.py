@@ -1,6 +1,6 @@
 import discord
 from bot.bot import Bot
-from bot.constants import ANNOUNCEMENTS_ID, Emojis, POLLS_ID
+from bot.constants import ANNOUNCEMENTS_ID, Colors, Emojis, POLLS_ID
 from discord import Embed
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
@@ -28,7 +28,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.warning_emoji} Already subscribed",
                 description=f"You're already subscribed to {ctx.guild}'s announcements and polls.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
             return
@@ -41,7 +41,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.confirmation_emoji} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s announcements.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -53,7 +53,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.confirmation_emoji} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s polls.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -68,7 +68,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.confirmation_emoji} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s announcements and polls.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -93,7 +93,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.confirmation_emoji} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s announcements and polls.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -104,7 +104,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.confirmation_emoji} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s polls.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -116,7 +116,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.confirmation_emoji} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s announcements.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -124,7 +124,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.warning_emoji} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s announcements and polls.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -136,7 +136,7 @@ class Subscription(Cog):
                 embed = Embed(
                     title=f"{Emojis.warning_emoji} Already subscribed",
                     description=f"You're already subscribed to {ctx.guild}'s announcements.",
-                    color=color,
+                    color=Colors.green_color,
                 )
                 await ctx.send(content=ctx.author.mention, embed=embed)
                 return
@@ -146,7 +146,7 @@ class Subscription(Cog):
         embed = Embed(
             title=f"{Emojis.confirmation_emoji} Subscribed",
             description=f"You've subscribed to {ctx.guild}'s announcements.",
-            color=color,
+            color=Colors.green_color,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -162,7 +162,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.warning_emoji} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s announcements.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
             return
@@ -172,7 +172,7 @@ class Subscription(Cog):
         embed = Embed(
             title=f"{Emojis.confirmation_emoji} Unsubscribed",
             description=f"You've unsubscribed to {ctx.guild}'s announcements.",
-            color=color,
+            color=Colors.green_color,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -184,7 +184,7 @@ class Subscription(Cog):
                 embed = Embed(
                     title=f"{Emojis.warning_emoji} Already subscribed",
                     description=f"You're already subscribed to {ctx.guild}'s polls.",
-                    color=color,
+                    color=Colors.green_color,
                 )
                 await ctx.send(content=ctx.author.mention, embed=embed)
                 return
@@ -194,7 +194,7 @@ class Subscription(Cog):
         embed = Embed(
             title=f"{Emojis.confirmation_emoji} Subscribed",
             description=f"You've subscribed to {ctx.guild}'s polls.",
-            color=color,
+            color=Colors.green_color,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -210,7 +210,7 @@ class Subscription(Cog):
             embed = Embed(
                 title=f"{Emojis.warning_emoji} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s polls.",
-                color=color,
+                color=Colors.green_color,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
             return
@@ -220,7 +220,7 @@ class Subscription(Cog):
         embed = Embed(
             title=f"{Emojis.confirmation_emoji} Unsubscribed",
             description=f"You've unsubscribed to {ctx.guild}'s polls.",
-            color=color,
+            color=Colors.green_color,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
