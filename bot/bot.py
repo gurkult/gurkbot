@@ -39,7 +39,7 @@ class Bot(commands.Bot):
         """Announce presence to the devlog channel."""
         embed = Embed(description="Connected!")
         embed.set_author(
-            name="Gurk Bot",
+            name="Gurkbot",
             url="https://github.com/gurkult/gurkbot",
             icon_url=self.user.avatar_url,
         )
