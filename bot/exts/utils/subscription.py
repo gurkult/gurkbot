@@ -111,7 +111,7 @@ class Subscription(Cog):
                 )
                 embed = Embed(
                     title=f"{Emojis.confirmation_emoji} {sub_unsub}",
-                    description=f"""You've {sub_unsub.lower()} to {ctx.guild}'s
+                    description=f"""You've {sub_unsub.lower()} to {ctx.guild}'s \
                     {role_name1} and {role_name2}.""",
                     color=Colors.green,
                 )
