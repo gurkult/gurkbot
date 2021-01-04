@@ -4,11 +4,9 @@ name: Push Container
 
 on:
   workflow_run:
-  # TODO: remove `docker`
     workflows: ["Linting"]
     branches:
       - main
-      - docker
     types:
       - completed
 
