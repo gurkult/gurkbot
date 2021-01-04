@@ -18,7 +18,7 @@ class Subscription(Cog):
         for role in ctx.author.roles:
             if role.id == role_id:
                 embed = Embed(
-                    title=f"{Emojis.warning} Already subscribed",
+                    title=f"{Emojis.warning_emoji} Already subscribed",
                     description=f"You're already subscribed to {ctx.guild}'s {role_name}.",
                     color=Colors.green,
                 )
@@ -29,7 +29,7 @@ class Subscription(Cog):
             reason=f"Subscribed to {role_name}",
         )
         embed = Embed(
-            title=f"{Emojis.confirmation} Subscribed",
+            title=f"{Emojis.confirmation_emoji} Subscribed",
             description=f"You've subscribed to {ctx.guild}'s {role_name}.",
             color=Colors.green,
         )
@@ -46,7 +46,7 @@ class Subscription(Cog):
                 break
         if not has_role:
             embed = Embed(
-                title=f"{Emojis.warning} Already unsubscribed",
+                title=f"{Emojis.warning_emoji} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s {role_name}.",
                 color=Colors.green,
             )
@@ -57,7 +57,7 @@ class Subscription(Cog):
             reason=f"Unsubscribed to {role_name}",
         )
         embed = Embed(
-            title=f"{Emojis.confirmation} Unsubscribed",
+            title=f"{Emojis.confirmation_emoji} Unsubscribed",
             description=f"You've unsubscribed to {ctx.guild}'s {role_name}.",
             color=Colors.green,
         )
@@ -75,7 +75,7 @@ class Subscription(Cog):
                 has_polls = True
         if has_announcements and has_polls:
             embed = Embed(
-                title=f"{Emojis.warning} Already subscribed",
+                title=f"{Emojis.warning_emoji} Already subscribed",
                 description=f"You're already subscribed to {ctx.guild}'s announcements and polls.",
                 color=Colors.green,
             )
@@ -88,7 +88,7 @@ class Subscription(Cog):
                 reason="Subscribed to announcements",
             )
             embed = Embed(
-                title=f"{Emojis.confirmation} Subscribed",
+                title=f"{Emojis.confirmation_emoji} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s announcements.",
                 color=Colors.green,
             )
@@ -100,7 +100,7 @@ class Subscription(Cog):
                 reason="Subscribed to polls",
             )
             embed = Embed(
-                title=f"{Emojis.confirmation} Subscribed",
+                title=f"{Emojis.confirmation_emoji} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s polls.",
                 color=Colors.green,
             )
@@ -115,7 +115,7 @@ class Subscription(Cog):
                 ctx.guild.get_role(Roles.polls), reason="Subscribed to polls"
             )
             embed = Embed(
-                title=f"{Emojis.confirmation} Subscribed",
+                title=f"{Emojis.confirmation_emoji} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s announcements and polls.",
                 color=Colors.green,
             )
@@ -140,7 +140,7 @@ class Subscription(Cog):
                 ctx.guild.get_role(Roles.polls), reason="Unsubscribed to polls"
             )
             embed = Embed(
-                title=f"{Emojis.confirmation} Unsubscribed",
+                title=f"{Emojis.confirmation_emoji} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s announcements and polls.",
                 color=Colors.green,
             )
@@ -151,7 +151,7 @@ class Subscription(Cog):
                 ctx.guild.get_role(Roles.polls), reason="Unsubscribed to polls"
             )
             embed = Embed(
-                title=f"{Emojis.confirmation} Unsubscribed",
+                title=f"{Emojis.confirmation_emoji} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s polls.",
                 color=Colors.green,
             )
@@ -163,7 +163,7 @@ class Subscription(Cog):
                 reason="Unsubscribed to announcements",
             )
             embed = Embed(
-                title=f"{Emojis.confirmation} Unsubscribed",
+                title=f"{Emojis.confirmation_emoji} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s announcements.",
                 color=Colors.green,
             )
@@ -171,7 +171,7 @@ class Subscription(Cog):
 
         else:
             embed = Embed(
-                title=f"{Emojis.warning} Already unsubscribed",
+                title=f"{Emojis.warning_emoji} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s announcements and polls.",
                 color=Colors.green,
             )
