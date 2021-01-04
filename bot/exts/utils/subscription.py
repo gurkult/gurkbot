@@ -1,4 +1,3 @@
-import discord
 from bot.bot import Bot
 from bot.constants import Colors, Emojis, Roles
 from discord import Embed
@@ -18,55 +17,55 @@ class Subscription(Cog):
         has_announcements = False
         has_polls = False
         for role in ctx.author.roles:
-            if role.id == Roles.ANNOUNCEMENTS_ID:
+            if role.id == Roles.announcements:
                 has_announcements = True
-            if role.id == Roles.POLLS_ID:
+            if role.id == Roles.polls:
                 has_polls = True
         if has_announcements and has_polls:
             embed = Embed(
-                title=f"{Emojis.WARNING_EMOJI} Already subscribed",
+                title=f"{Emojis.warning} Already subscribed",
                 description=f"You're already subscribed to {ctx.guild}'s announcements and polls.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
             return
 
         elif has_polls:
             await ctx.author.add_roles(
-                discord.Object(Roles.ANNOUNCEMENTS_ID),
+                ctx.guild.get_role(Roles.announcements),
                 reason="Subscribed to announcements",
             )
             embed = Embed(
-                title=f"{Emojis.CONFIRMATION_EMOJI} Subscribed",
+                title=f"{Emojis.confirmation} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s announcements.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
         elif has_announcements:
             await ctx.author.add_roles(
-                discord.Object(Roles.POLLS_ID),
+                ctx.guild.get_role(Roles.polls),
                 reason="Subscribed to polls",
             )
             embed = Embed(
-                title=f"{Emojis.CONFIRMATION_EMOJI} Subscribed",
+                title=f"{Emojis.confirmation} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s polls.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
         else:
             await ctx.author.add_roles(
-                discord.Object(Roles.ANNOUNCEMENTS_ID),
+                ctx.guild.get_role(Roles.announcements),
                 reason="Subscribed to announcements",
             )
             await ctx.author.add_roles(
-                discord.Object(Roles.POLLS_ID), reason="Subscribed to polls"
+                ctx.guild.get_role(Roles.polls), reason="Subscribed to polls"
             )
             embed = Embed(
-                title=f"{Emojis.CONFIRMATION_EMOJI} Subscribed",
+                title=f"{Emojis.confirmation} Subscribed",
                 description=f"You've subscribed to {ctx.guild}'s announcements and polls.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -76,53 +75,53 @@ class Subscription(Cog):
         has_announcements = False
         has_polls = False
         for role in ctx.author.roles:
-            if role.id == Roles.ANNOUNCEMENTS_ID:
+            if role.id == Roles.announcements:
                 has_announcements = True
-            if role.id == Roles.POLLS_ID:
+            if role.id == Roles.polls:
                 has_polls = True
         if has_announcements and has_polls:
             await ctx.author.remove_roles(
-                discord.Object(Roles.ANNOUNCEMENTS_ID),
+                ctx.guild.get_role(Roles.announcements),
                 reason="Unsubscribed to announcements",
             )
             await ctx.author.remove_roles(
-                discord.Object(Roles.POLLS_ID), reason="Unsubscribed to polls"
+                ctx.guild.get_role(Roles.polls), reason="Unsubscribed to polls"
             )
             embed = Embed(
-                title=f"{Emojis.CONFIRMATION_EMOJI} Unsubscribed",
+                title=f"{Emojis.confirmation} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s announcements and polls.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
         elif has_polls:
             await ctx.author.remove_roles(
-                discord.Object(Roles.POLLS_ID), reason="Unsubscribed to polls"
+                ctx.guild.get_role(Roles.polls), reason="Unsubscribed to polls"
             )
             embed = Embed(
-                title=f"{Emojis.CONFIRMATION_EMOJI} Unsubscribed",
+                title=f"{Emojis.confirmation} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s polls.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
         elif has_announcements:
             await ctx.author.remove_roles(
-                discord.Object(Roles.ANNOUNCEMENTS_ID),
+                ctx.guild.get_role(Roles.announcements),
                 reason="Unsubscribed to announcements",
             )
             embed = Embed(
-                title=f"{Emojis.CONFIRMATION_EMOJI} Unsubscribed",
+                title=f"{Emojis.confirmation} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s announcements.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
         else:
             embed = Embed(
-                title=f"{Emojis.WARNING_EMOJI} Already unsubscribed",
+                title=f"{Emojis.warning} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s announcements and polls.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -130,21 +129,22 @@ class Subscription(Cog):
     async def announcements_subscribe(self, ctx: Context) -> None:
         """Subscribe to announcements by assigning yourself the role."""
         for role in ctx.author.roles:
-            if role.id == Roles.ANNOUNCEMENTS_ID:
+            if role.id == Roles.announcements:
                 embed = Embed(
-                    title=f"{Emojis.WARNING_EMOJI} Already subscribed",
+                    title=f"{Emojis.warning} Already subscribed",
                     description=f"You're already subscribed to {ctx.guild}'s announcements.",
-                    color=Colors.GREEN,
+                    color=Colors.green,
                 )
                 await ctx.send(content=ctx.author.mention, embed=embed)
                 return
         await ctx.author.add_roles(
-            discord.Object(Roles.ANNOUNCEMENTS_ID), reason="Subscribed to announcements"
+            ctx.guild.get_role(Roles.announcements),
+            reason="Subscribed to announcements",
         )
         embed = Embed(
-            title=f"{Emojis.CONFIRMATION_EMOJI} Subscribed",
+            title=f"{Emojis.confirmation} Subscribed",
             description=f"You've subscribed to {ctx.guild}'s announcements.",
-            color=Colors.GREEN,
+            color=Colors.green,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -153,25 +153,25 @@ class Subscription(Cog):
         """Unsubscribe to announcements by unassigning yourself the role."""
         has_role = False
         for role in ctx.author.roles:
-            if role.id == Roles.ANNOUNCEMENTS_ID:
+            if role.id == Roles.announcements:
                 has_role = True
                 break
         if not has_role:
             embed = Embed(
-                title=f"{Emojis.WARNING_EMOJI} Already unsubscribed",
+                title=f"{Emojis.warning} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s announcements.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
             return
         await ctx.author.remove_roles(
-            discord.Object(Roles.ANNOUNCEMENTS_ID),
+            ctx.guild.get_role(Roles.announcements),
             reason="Unsubscribed to announcements",
         )
         embed = Embed(
-            title=f"{Emojis.CONFIRMATION_EMOJI} Unsubscribed",
+            title=f"{Emojis.confirmation} Unsubscribed",
             description=f"You've unsubscribed to {ctx.guild}'s announcements.",
-            color=Colors.GREEN,
+            color=Colors.green,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -179,21 +179,21 @@ class Subscription(Cog):
     async def polls_subscribe(self, ctx: Context) -> None:
         """Subscribe to polls by assigning yourself the role."""
         for role in ctx.author.roles:
-            if role.id == Roles.POLLS_ID:
+            if role.id == Roles.polls:
                 embed = Embed(
-                    title=f"{Emojis.WARNING_EMOJI} Already subscribed",
+                    title=f"{Emojis.warning} Already subscribed",
                     description=f"You're already subscribed to {ctx.guild}'s polls.",
-                    color=Colors.GREEN,
+                    color=Colors.green,
                 )
                 await ctx.send(content=ctx.author.mention, embed=embed)
                 return
         await ctx.author.add_roles(
-            discord.Object(Roles.POLLS_ID), reason="Subscribed to polls"
+            ctx.guild.get_role(Roles.polls), reason="Subscribed to polls"
         )
         embed = Embed(
-            title=f"{Emojis.CONFIRMATION_EMOJI} Subscribed",
+            title=f"{Emojis.confirmation} Subscribed",
             description=f"You've subscribed to {ctx.guild}'s polls.",
-            color=Colors.GREEN,
+            color=Colors.green,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
@@ -202,24 +202,24 @@ class Subscription(Cog):
         """Unsubscribe to polls by unassigning yourself the role."""
         has_role = False
         for role in ctx.author.roles:
-            if role.id == Roles.POLLS_ID:
+            if role.id == Roles.polls:
                 has_role = True
                 break
         if not has_role:
             embed = Embed(
-                title=f"{Emojis.WARNING_EMOJI} Already unsubscribed",
+                title=f"{Emojis.warning} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s polls.",
-                color=Colors.GREEN,
+                color=Colors.green,
             )
             await ctx.send(content=ctx.author.mention, embed=embed)
             return
         await ctx.author.remove_roles(
-            discord.Object(Roles.POLLS_ID), reason="Unsubscribed to polls"
+            ctx.guild.get_role(Roles.polls), reason="Unsubscribed to polls"
         )
         embed = Embed(
-            title=f"{Emojis.CONFIRMATION_EMOJI} Unsubscribed",
+            title=f"{Emojis.confirmation} Unsubscribed",
             description=f"You've unsubscribed to {ctx.guild}'s polls.",
-            color=Colors.GREEN,
+            color=Colors.green,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
