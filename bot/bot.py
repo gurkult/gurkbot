@@ -1,5 +1,6 @@
 import os
 
+from aiohttp import ClientSession
 from discord import Embed
 from discord.ext import commands
 from loguru import logger
@@ -11,6 +12,7 @@ class Bot(commands.Bot):
     """The core of the bot."""
 
     def __init__(self) -> None:
+        self.http_session = ClientSession()
         super().__init__(command_prefix=constants.PREFIX)
         self.load_extensions()
 
@@ -48,3 +50,10 @@ class Bot(commands.Bot):
             icon_url=self.user.avatar_url,
         )
         await self.get_channel(constants.Channels.devlog).send(embed=embed)
+
+    async def close(self) -> None:
+        """Close Http session when bot is shutting down."""
+        await super().close()
+
+        if self.http_session:
+            await self.http_session.close()
