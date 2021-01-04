@@ -32,7 +32,7 @@ class Subscription(Cog):
             if sub_unsub == "Subscribed":
                 embed = Embed(
                     title=f"{Emojis.warning_emoji} Already {sub_unsub.lower()}",
-                    description=f"""You're already {sub_unsub.lower()} to {ctx.guild}'s
+                    description=f"""You're already {sub_unsub.lower()} to {ctx.guild}'s \
                     {role_name1} and {role_name2}.""",
                     color=Colors.green,
                 )
@@ -48,7 +48,7 @@ class Subscription(Cog):
                 )
                 embed = Embed(
                     title=f"{Emojis.confirmation_emoji} {sub_unsub}",
-                    description=f"""You've {sub_unsub.lower()} to {ctx.guild}'s
+                    description=f"""You've {sub_unsub.lower()} to {ctx.guild}'s \
                     {role_name1} and {role_name2}.""",
                     color=Colors.green,
                 )
@@ -119,7 +119,7 @@ class Subscription(Cog):
             else:
                 embed = Embed(
                     title=f"{Emojis.warning_emoji} Already {sub_unsub.lower()}",
-                    description=f"""You're already {sub_unsub.lower()} to {ctx.guild}'s
+                    description=f"""You're already {sub_unsub.lower()} to {ctx.guild}'s \
                     {role_name1} and {role_name2}.""",
                     color=Colors.green,
                 )
