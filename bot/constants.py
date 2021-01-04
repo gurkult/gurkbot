@@ -13,6 +13,13 @@ BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
 EXTENSIONS = pathlib.Path("bot/exts/")
 LOG_FILE = pathlib.Path("log/gurkbot.log")
 
+class Emojis(NamedTuple):
+    issue = "<:IssueOpen:794119024367632405>"
+    issue_closed = "<:IssueClosed:794118652219359253>"
+    pull_request = "<:PROpen:794118652014231562>"
+    pull_request_closed = "<:PRClosed:794120818908463134>"
+    merge = "<:PRMerged:794119023687761941>"
+
 
 class Colours:
     green = 0x1F8B4C
