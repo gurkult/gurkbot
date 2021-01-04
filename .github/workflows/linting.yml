@@ -9,6 +9,7 @@ jobs:
     
     env:
       PIP_CACHE_DIR: /tmp/pip-cache-dir
+      PIPENV_CACHE_DIR: /tmp/pip-cache-dir
 
     steps:
       - name: Checks out repository
@@ -52,4 +53,4 @@ jobs:
 
       # Run black
       - name: Run black
-        run: black
+        run: black . --check --diff
