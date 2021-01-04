@@ -13,7 +13,7 @@ class Roles(typing.NamedTuple):
 
 
 class Emojis(typing.NamedTuple):
-    confirmation = "<:yes:794231332770938901>"
+    confirmation = "<:confirmation:794231332770938901>"
     warning = "\u26a0"
 
 
