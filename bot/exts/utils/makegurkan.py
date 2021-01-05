@@ -20,7 +20,8 @@ class MakeGurkan(commands.Cog):
                 await after.remove_roles(role)
 
     @commands.Cog.listener()
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: discord.Member) -> None:
+         """When the member updates their username, this function will check if member is classified to be a gurkan or not."""
         if member.bot:
             return
         role = find(lambda r: r.name == "Gurkans", member.guild.roles)
