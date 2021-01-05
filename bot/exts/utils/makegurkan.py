@@ -4,7 +4,7 @@ import re
 
 
 class MakeGurkan(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
     @commands.Cog.listener()
