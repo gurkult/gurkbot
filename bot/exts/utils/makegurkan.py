@@ -1,6 +1,9 @@
+import re
+
+import discord
+from bot.bot import Bot
 from discord.ext import commands
 from discord.utils import find
-import re
 
 
 class MakeGurkan(commands.Cog):
