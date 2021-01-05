@@ -8,7 +8,8 @@ class MakeGurkan(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_member_update(self, before, after):
+    async def on_member_update(self, before: discord.Member, after: discord.Member) -> None:
+        """When the member updates their nicknames, this function will check if member is classified to be a gurkan or not."""
         if after.bot:
             return
         if before.display_name != after.display_name:
