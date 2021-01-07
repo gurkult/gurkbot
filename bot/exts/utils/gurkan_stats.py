@@ -8,21 +8,23 @@ from fuzzywuzzy import process
 
 
 RATE_DICT = {
-    range(1, 10): "Pathetic",
-    range(10, 30): "Not bad",
-    range(30, 60): "Good",
-    range(60, 80): "Cool!",
-    range(80, 95): "So Epic!!",
-    range(95, 100): "Just wow, superb!",
+    range(1, 10): "pathetic",
+    range(10, 30): "not bad",
+    range(30, 60): "good",
+    range(60, 80): "cool!",
+    range(80, 95): "so Epic!!",
+    range(95, 100): "just wow, superb!",
 }
 
 
-def gurkan_check(target: Union[list, str]) -> int:
-    """Returns the count of gurkans if a list is given or the rate of the gurkan if a string is given."""
-    if isinstance(target, list):
-        return sum(bool(re.search(r"gurk|urkan", i.lower())) for i in target)
-    else:
-        return process.extractOne("gurkan", [target])[1]
+def gurkan_check(target: str) -> bool:
+    """Returns a bool stating if the name given is a gurkan or not."""
+    return bool(re.search(r"gurk|urkan", target))
+
+
+def gurkan_rate(name: str) -> int:
+    """Returns the rate of gurkan in the name given."""
+    return process.extractOne("gurkan", [name])[1]
 
 
 class GurkanStats(Cog):
@@ -40,64 +42,78 @@ class GurkanStats(Cog):
         brief="Get the count of people who are valid gurkans",
         help="""gurkancount
 
-            To get the count of people who have gurk/urkan in their names i.e, they are valid gurkans.
+            Get the count of people who are valid gurkans.
             """,
     )
     async def gurkan_count(self, ctx: Context) -> None:
         """
         Goes through a list of all the members and uses regex to check if the member is a gurkan.
 
-        If a member is a gurkan they are added through the generator, and this sum (the count) with a\
-        message denoting the quality depending on the rate of total members and total gurkans
-        is returned in the end.
+        Sends the count of total Gurkans in the server,\
+        and the percentage of the gurkans to the server members.
         """
         members = [i.display_name for i in ctx.guild.members]
-
-        gurkans = gurkan_check(members)
-
+        gurkans = sum(gurkan_check(member) for member in members)
         rate = round((gurkans / len(members)) * 100)
 
+        title = ""
+        color = ""
+        description = ""
+
+        count_emb = Embed()
+
         if rate == 100:
-            await ctx.send(f"Whoa!! Everyone is a gurkan! All {gurkans} members!")
-            return
+            title = f"Whoa!! All {gurkans} members are gurkans!"
+            color = Color.green()
+
         elif rate == 0:
-            await ctx.send("No one is a gurkan?! That's lame.")
-            return
+            title = "No one is a gurkan?! That's lame."
+            color = Color.red()
 
-        rate_msg = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
+        else:
+            rate_msg = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
 
-        await ctx.send(
-            f"About {rate}% ({gurkans}/ {len(members)}) of members are gurkans, That's {rate_msg}"
-        )
+            title = f"🥒 {gurkans} members"
+            color = Color.green()
+            description = f"""About {rate}% ({gurkans}/ {len(members)})\
+                              of members are gurkans, that's {rate_msg}
+                           """
+
+        count_emb.title = title
+        count_emb.color = color
+        count_emb.description = description
+
+        await ctx.send(embed=count_emb)
 
     @command(
         name="isgurkan",
-        brief="Get an embed on the rate of gurkanity of a user",
+        brief="Get an embed of how gurkan a user is",
         aliases=(
             "gr",
             "gurkanrate",
         ),
         help="""isgurkan [user/text (optional)]
 
-                Get an embed based on the gurkan rate of the person.
+                Check if someone is gurkan and get their gurkanrate.
             """,
     )
     async def is_gurkan(self, ctx: Context, user: Union[Member, str] = None) -> None:
         """
-        Uses fuzzywuzzy module to get a rate on how much the sub string matches the original string,\
-        the rate is then sent in a color embed, the color depending on how high the rate is.
+        The gurkanrate of the user and wether the user is a gurkan is sent in a color embed,\
+        the color depending on how high the rate is.
 
         Can be used on other members, or even text.
         """
         if not isinstance(user, str):
             user = ctx.author.display_name if not user else user.display_name
 
-        gurk_rate = gurkan_check(user)
+        gurk_state = gurkan_check(user)
+        gurk_rate = gurkan_rate(user)
         rate_embed = Embed(description=f"{user}'s gurk rate is {gurk_rate}%")
         color = ""
         title = ""
 
-        if gurk_rate < 40:
+        if not gurk_state:
             color = Color.red()
             title = ":x: Not gurkan"
         else:
