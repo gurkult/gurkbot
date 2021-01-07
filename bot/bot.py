@@ -1,6 +1,6 @@
 import os
 
-from discord import Embed
+from discord import Embed, Intents
 from discord.ext import commands
 from loguru import logger
 
