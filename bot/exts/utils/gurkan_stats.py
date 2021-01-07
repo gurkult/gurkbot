@@ -1,11 +1,10 @@
-import re
 from typing import Union
 
 from bot.bot import Bot
 from bot.constants import Emojis
+from bot.utils.is_gurkan import gurkan_check, gurkan_rate
 from discord import Color, Embed, Member
 from discord.ext.commands import Cog, Context, command
-from fuzzywuzzy import process
 
 
 RATE_DICT = {
@@ -16,16 +15,6 @@ RATE_DICT = {
     range(80, 95): "so Epic!!",
     range(95, 100): "just wow, superb!",
 }
-
-
-def gurkan_check(target: str) -> bool:
-    """Returns a bool stating if the name given is a gurkan or not."""
-    return bool(re.search(r"gurk|urkan", target))
-
-
-def gurkan_rate(name: str) -> int:
-    """Returns the rate of gurkan in the name given."""
-    return process.extractOne("gurkan", [name])[1]
 
 
 class GurkanStats(Cog):
