@@ -2,6 +2,7 @@ import re
 from typing import Union
 
 from bot.bot import Bot
+from bot.constants import Emojis
 from discord import Color, Embed, Member
 from discord.ext.commands import Cog, Context, command
 from fuzzywuzzy import process
@@ -56,10 +57,6 @@ class GurkanStats(Cog):
         gurkans = sum(gurkan_check(member) for member in members)
         rate = round((gurkans / len(members)) * 100)
 
-        title = ""
-        color = ""
-        description = ""
-
         count_emb = Embed()
 
         if rate == 100:
@@ -73,7 +70,7 @@ class GurkanStats(Cog):
         else:
             rate_msg = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
 
-            title = f"🥒 {gurkans} members"
+            title = f"{Emojis.cucumber} {gurkans} members"
             color = Color.green()
             description = f"""About {rate}% ({gurkans}/ {len(members)})\
                               of members are gurkans, that's {rate_msg}
@@ -110,15 +107,13 @@ class GurkanStats(Cog):
         gurk_state = gurkan_check(user)
         gurk_rate = gurkan_rate(user)
         rate_embed = Embed(description=f"{user}'s gurk rate is {gurk_rate}%")
-        color = ""
-        title = ""
 
         if not gurk_state:
             color = Color.red()
-            title = ":x: Not gurkan"
+            title = f"{Emojis.invalid} Not gurkan"
         else:
             color = Color.green()
-            title = ":cucumber: Gurkan"
+            title = f"{Emojis.cucumber} Gurkan"
 
         rate_embed.color = color
         rate_embed.title = title
