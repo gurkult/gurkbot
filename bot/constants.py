@@ -15,3 +15,8 @@ LOG_FILE = pathlib.Path("log/gurkbot.log")
 
 class Channels(NamedTuple):
     devlog = int(os.environ.get("CHANNEL_DEVLOG", 789431367167377448))
+
+
+class Emojis(NamedTuple):
+    cucumber = "🥒"
+    invalid = "❌"
