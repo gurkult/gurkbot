@@ -1,5 +1,5 @@
 from random import choice
-from typing import Union
+from typing import Optional
 
 import discord
 from aiohttp import ClientSession
@@ -28,12 +28,21 @@ class Issues:
         self.http_session = http_session
 
     @staticmethod
-    def get_repo(channel: discord.TextChannel) -> str:
+    def get_repo(channel: discord.TextChannel) -> Optional[str]:
         """Get repository for the particular channel."""
         if str(channel) in REPO_CHANNEL_MAP.keys():
             return REPO_CHANNEL_MAP[str(channel)]
         else:
-            return ""
+            return None
+
+    @staticmethod
+    def error_embed(error_msg: str) -> Embed:
+        embed = discord.Embed(
+            title=choice(ERROR_REPLIES),
+            color=discord.Color.red(),
+            description=error_msg,
+        )
+        return embed
 
     async def issue(
             self,
@@ -41,20 +50,15 @@ class Issues:
             numbers: commands.Greedy[int],
             repository: str,
             user: str,
-    ) -> Union[None, Embed, str]:
+    ) -> Embed:
         """Command to retrieve issue(s) from a GitHub repository."""
         links = []
         numbers = set(numbers)
 
-        repo_got_for_channel = self.get_repo(channel)
-        repository = repository if repository else repo_got_for_channel
+        repository = repository if repository else self.get_repo(channel)
 
         if len(numbers) > MAX_REQUESTS:
-            embed = discord.Embed(
-                title=choice(ERROR_REPLIES),
-                color=discord.Color.red(),
-                description=f"Too many issues/PRs! (maximum of {MAX_REQUESTS})",
-            )
+            embed = self.error_embed("You can specify a maximum of {MAX_REQUESTS} issues/PRs only.")
             return embed
 
         for number in numbers:
@@ -69,7 +73,8 @@ class Issues:
 
             if r.status in BAD_RESPONSE:
                 logger.warning(f"Received response {r.status} from: {url}")
-                return f"#{number} {BAD_RESPONSE.get(r.status)}"
+                embed = self.error_embed(f"#{number} {BAD_RESPONSE.get(r.status)}")
+                return embed
 
             if "issues" in json_data.get("html_url"):
                 icon_url = (
