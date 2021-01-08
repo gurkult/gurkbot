@@ -8,7 +8,7 @@ import aiohttp
 from bot.bot import Bot
 from discord import Embed, Message
 from discord.ext import commands, tasks
-from discord.ext.commands import Cog, CommandError, Context, command
+from discord.ext.commands import Cog, Context, command
 from discord.utils import escape_mentions
 from loguru import logger
 from yaml import safe_load
@@ -184,30 +184,6 @@ class Eval(Cog):
             embed = format_output.format_code_output(result)
             await ctx.send(content=f"{ctx.author.mention}", embed=embed)
             logger.info("Result Sent.")
-
-    @eval_command.error
-    async def eval_command_error(self, ctx: Context, error: CommandError) -> None:
-        """A error handler for Eval Command."""
-        if isinstance(error, commands.MissingRequiredArgument):
-            embed = Embed(
-                title="MissingRequiredArgument",
-                description=f"Your input was invalid: {error}\n\nUsage:\n"
-                f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```",
-                color=SOFT_RED,
-            )
-            await ctx.send(embed=embed)
-            return
-
-        if isinstance(error, commands.CommandOnCooldown):
-            embed = Embed(
-                title="Cooldown",
-                description=f"You’re on a cooldown for this command. Please "
-                f"wait **{int(error.retry_after)}s** "
-                "until you use it again.",
-                color=SOFT_RED,
-            )
-            await ctx.send(embed=embed)
-            return
 
 
 def setup(bot: Bot) -> None:
