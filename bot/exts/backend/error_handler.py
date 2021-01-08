@@ -60,7 +60,7 @@ class CommandErrorHandler(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-        elif isinstance(error, commands.CommandOnCooldown):
+        if isinstance(error, commands.CommandOnCooldown):
             mins, secs = divmod(math.ceil(error.retry_after), 60)
             embed = self.error_embed(
                 f"This command is on cooldown:\nPlease retry in **{mins} minutes {secs} seconds**.",
@@ -115,7 +115,7 @@ class CommandErrorHandler(commands.Cog):
         )
         push_alert.add_field(
             name="User",
-            value=f"id: {ctx.author.id} | username: {str(ctx.author)}",
+            value=f"id: {ctx.author.id} | username: {ctx.author.mention}",
             inline=False,
         )
         push_alert.add_field(
@@ -123,7 +123,7 @@ class CommandErrorHandler(commands.Cog):
         )
         push_alert.add_field(
             name="Message & Channel",
-            value=f"Message: {ctx.message.id} | Channel {ctx.channel.id}",
+            value=f"Message: [{ctx.message.id}]({ctx.message.jump_url}) | Channel: <#{ctx.channel.id}>",
             inline=False,
         )
         push_alert.add_field(
