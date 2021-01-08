@@ -1,12 +1,12 @@
+from random import choice
 from typing import Union
 
 import discord
 from aiohttp import ClientSession
-from bot.constants import Emojis
+from bot.constants import Channels, Emojis, ERROR_REPLIES
 from discord import Embed
 from discord.ext import commands
 from loguru import logger
-
 
 BAD_RESPONSE = {
     404: "Issue/pull request not located! Please enter a valid number!",
@@ -14,10 +14,10 @@ BAD_RESPONSE = {
 }
 MAX_REQUESTS = 5
 REPO_CHANNEL_MAP = {
-    "793864456249278486": "reagurk",
-    "793864456249278487": "gurkbot",
-    "793864456249278488": "py-gurklang",
-    "793864456249278489": "branding",
+    f"{Channels.dev_reagurk}": "reagurk",
+    f"{Channels.dev_gurkbot}": "gurkbot",
+    f"{Channels.dev_gurklang}": "py-gurklang",
+    f"{Channels.dev_branding}": "branding",
 }
 
 
@@ -36,11 +36,11 @@ class Issues:
             return ""
 
     async def issue(
-        self,
-        channel: discord.TextChannel,
-        numbers: commands.Greedy[int],
-        repository: str,
-        user: str,
+            self,
+            channel: discord.TextChannel,
+            numbers: commands.Greedy[int],
+            repository: str,
+            user: str,
     ) -> Union[None, Embed, str]:
         """Command to retrieve issue(s) from a GitHub repository."""
         links = []
@@ -51,7 +51,7 @@ class Issues:
 
         if len(numbers) > MAX_REQUESTS:
             embed = discord.Embed(
-                title="Errror!",
+                title=choice(ERROR_REPLIES),
                 color=discord.Color.red(),
                 description=f"Too many issues/PRs! (maximum of {MAX_REQUESTS})",
             )
@@ -73,9 +73,9 @@ class Issues:
 
             if "issues" in json_data.get("html_url"):
                 icon_url = (
-                    Emojis.issue
+                    Emojis.issue_emoji
                     if json_data.get("state") == "open"
-                    else Emojis.issue_closed
+                    else Emojis.issue_closed_emoji
                 )
 
             else:
@@ -84,11 +84,11 @@ class Issues:
                 )
                 async with self.http_session.get(merge_url) as m:
                     if json_data.get("state") == "open":
-                        icon_url = Emojis.pull_request
+                        icon_url = Emojis.pull_request_emoji
                     elif m.status == 204:
-                        icon_url = Emojis.merge
+                        icon_url = Emojis.merge_emoji
                     else:
-                        icon_url = Emojis.pull_request_closed
+                        icon_url = Emojis.pull_request_closed_emoji
 
             issue_url = json_data.get("html_url")
             links.append(
