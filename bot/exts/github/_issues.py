@@ -3,7 +3,7 @@ from typing import Optional
 
 import discord
 from aiohttp import ClientSession
-from bot.constants import Channels, Emojis, ERROR_REPLIES
+from bot.constants import Channels, ERROR_REPLIES, Emojis
 from discord import Embed
 from discord.ext import commands
 from loguru import logger
@@ -37,6 +37,7 @@ class Issues:
 
     @staticmethod
     def error_embed(error_msg: str) -> Embed:
+        """Generate Error Embed for Issues command."""
         embed = discord.Embed(
             title=choice(ERROR_REPLIES),
             color=discord.Color.red(),
@@ -45,11 +46,11 @@ class Issues:
         return embed
 
     async def issue(
-            self,
-            channel: discord.TextChannel,
-            numbers: commands.Greedy[int],
-            repository: str,
-            user: str,
+        self,
+        channel: discord.TextChannel,
+        numbers: commands.Greedy[int],
+        repository: str,
+        user: str,
     ) -> Embed:
         """Command to retrieve issue(s) from a GitHub repository."""
         links = []
@@ -58,7 +59,9 @@ class Issues:
         repository = repository if repository else self.get_repo(channel)
 
         if len(numbers) > MAX_REQUESTS:
-            embed = self.error_embed("You can specify a maximum of {MAX_REQUESTS} issues/PRs only.")
+            embed = self.error_embed(
+                "You can specify a maximum of {MAX_REQUESTS} issues/PRs only."
+            )
             return embed
 
         for number in numbers:
