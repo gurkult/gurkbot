@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  gurkbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gurkbot
+    init: true
+
+    restart: always
+
+    environment:
+      - TOKEN
+      - PREFIX
+      - CHANNEL_DEVLOG
+      - CHANNEL_DEVALERTS
+
+    volumes:
+      - .:/bot
