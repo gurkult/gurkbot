@@ -6,8 +6,6 @@ verify_ssl = true
 [packages]
 "discord.py" = "~=1.5.1"
 loguru = "*"
-python-levenshtein = "==0.12.0"
-fuzzywuzzy = "==0.18.0"
 
 [dev-packages]
 flake8 = "~=3.8.4"
