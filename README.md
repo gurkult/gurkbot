@@ -1,6 +1,6 @@
 # Gurkbot
 
-The official bot for [**THE GURKULT OPEN SOURCE COMMUNITY - DISCORD SERVER**](https://bit.ly/Gurkult-Discord).
+The official bot for [the Gurkult](https://gurkult.com/discord) — an open source community with the aim of bringing people together.
 
 ---
 
