@@ -57,14 +57,14 @@ class Github(commands.Cog):
     async def source_command(self, ctx: commands.Context, *, source_item: str) -> None:
         """Displays information about the bot's source code."""
         github_source = _source.Source(self.bot.http_session, self.bot.user.avatar_url)
-        embed = await github_source.inspect(cmd=ctx.bot.get_command(source_item))
+        content = await github_source.inspect(cmd=ctx.bot.get_command(source_item))
 
-        if embed is None:
+        if content is None:
             await ctx.send_help(ctx.command)
             ctx.command.reset_cooldown(ctx)
             return
 
-        await ctx.send(embed=embed)
+        await ctx.send(content)
 
 
 def setup(bot: commands.Bot) -> None:

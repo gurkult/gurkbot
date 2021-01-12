@@ -8,8 +8,7 @@ from bot import constants
 from discord import Embed
 from discord.ext.commands import Command
 
-doc_reg_class = r'("""|\'\'\')([\s\S]*?)(\1\s*)(?=class)'
-doc_reg_def = r'(\s+def\s+.*:\s*)\n(\s*"""|\s*\'\'\')([\s\S]*?)(\2[^\n\S]*)'
+doc_reg_class = r'("""|\'\'\')([\s\S]*?)(\1\s*)'
 
 
 class Source:
@@ -22,7 +21,7 @@ class Source:
         self.MAX_FIELD_LENGTH = 500
         self.bot_avatar = bot_avatar
 
-    async def inspect(self, cmd: Optional[Command]) -> Union[None, Embed]:
+    async def inspect(self, cmd: Optional[Command]) -> Optional[str]:
         """Display information and a GitHub link to the source code of a command."""
         if cmd is None:
             return
@@ -37,7 +36,8 @@ class Source:
         source_code = "".join(code_lines)
         sanitized = source_code.replace("`", "\u200B`")
         sanitized = re.sub(doc_reg_class, "", sanitized)
-        sanitized = re.sub(doc_reg_def, r"\1", sanitized)
+        # The help argument of commands.command gets changed to `help=`
+        sanitized = sanitized.replace("help=", 'help=""')
 
         if len(sanitized) > self.MAX_FIELD_LENGTH:
             sanitized = (
@@ -45,9 +45,6 @@ class Source:
                 + "\n... (truncated - too many lines)"
             )
 
-        embed = Embed(
-            title="Gurkbot's Source Link", description=f"[Go to GitHub]({url})"
-        )
-        embed.add_field(name="Source Code", value=f"```python\n{sanitized}\n```")
+        content = f"__Gurkbot's Source Link:__ {url}\n```python\n{sanitized}\n```"
 
-        return embed
+        return content
