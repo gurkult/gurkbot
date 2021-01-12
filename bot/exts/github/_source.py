@@ -1,11 +1,10 @@
 import re
 from inspect import getsourcelines
-from typing import Optional, Union
+from typing import Optional
 
 import discord
 from aiohttp import ClientSession
 from bot import constants
-from discord import Embed
 from discord.ext.commands import Command
 
 doc_reg_class = r'("""|\'\'\')([\s\S]*?)(\1\s*)'
