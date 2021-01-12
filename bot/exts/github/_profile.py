@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional
 
 import discord
 from aiohttp import ClientSession
@@ -83,12 +83,7 @@ class GithubInfo:
         return embed
 
     async def get_github_info(self, username: str) -> Embed:
-        """
-        Fetches a user's GitHub information.
-        """
-        if username is None:
-            return None
-
+        """Fetches a user's GitHub information."""
         user_data = await self.fetch_data(f"https://api.github.com/users/{username}")
 
         # User_data will not have a message key if the user exists

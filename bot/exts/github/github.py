@@ -49,9 +49,7 @@ class Github(commands.Cog):
         if not numbers:
             raise commands.MissingRequiredArgument
 
-        embed = await github_issue.issue(
-            ctx.message.channel, numbers, repository, user
-        )
+        embed = await github_issue.issue(ctx.message.channel, numbers, repository, user)
 
         await ctx.send(embed=embed)
 

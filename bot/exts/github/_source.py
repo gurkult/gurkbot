@@ -4,14 +4,13 @@ from typing import Optional, Union
 
 import discord
 from aiohttp import ClientSession
+from bot import constants
 from discord import Embed
 from discord.ext.commands import Command
 
-from bot import constants
-
-
 doc_reg_class = r'("""|\'\'\')([\s\S]*?)(\1\s*)(?=class)'
-doc_reg_def= r'(\s+def\s+.*:\s*)\n(\s*"""|\s*\'\'\')([\s\S]*?)(\2[^\n\S]*)'
+doc_reg_def = r'(\s+def\s+.*:\s*)\n(\s*"""|\s*\'\'\')([\s\S]*?)(\2[^\n\S]*)'
+
 
 class Source:
     """Displays information about the bot's source code."""
@@ -37,12 +36,12 @@ class Source:
 
         source_code = "".join(code_lines)
         sanitized = source_code.replace("`", "\u200B`")
-        sanitized = re.sub(doc_reg_class, '', sanitized)
-        sanitized = re.sub(doc_reg_def, r'\1', sanitized)
+        sanitized = re.sub(doc_reg_class, "", sanitized)
+        sanitized = re.sub(doc_reg_def, r"\1", sanitized)
 
         if len(sanitized) > self.MAX_FIELD_LENGTH:
             sanitized = (
-                    sanitized[: self.MAX_FIELD_LENGTH]
+                sanitized[: self.MAX_FIELD_LENGTH]
                 + "\n... (truncated - too many lines)"
             )
 

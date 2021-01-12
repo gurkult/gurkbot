@@ -43,11 +43,11 @@ class Issues:
         return embed
 
     async def issue(
-            self,
-            channel: discord.TextChannel,
-            numbers: commands.Greedy[int],
-            repository: Optional[str],
-            user: str,
+        self,
+        channel: discord.TextChannel,
+        numbers: commands.Greedy[int],
+        repository: Optional[str],
+        user: str,
     ) -> Embed:
         """Retrieve issue(s) from a GitHub repository."""
         links = []
