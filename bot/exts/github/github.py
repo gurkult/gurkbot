@@ -27,13 +27,11 @@ class Github(commands.Cog):
 
         Username is optional and sends the help command if not specified.
         """
+        if username is None:
+            raise commands.MissingRequiredArgument
+
         github_profile = _profile.GithubInfo(self.bot.http_session)
         embed = await github_profile.get_github_info(username)
-
-        if embed is None:
-            await ctx.send_help(ctx.command)
-            ctx.command.reset_cooldown(ctx)
-            return
 
         await ctx.send(embed=embed)
 
@@ -42,25 +40,18 @@ class Github(commands.Cog):
         self,
         ctx: commands.Context,
         numbers: commands.Greedy[int],
-        repository: str = "",
+        repository: typing.Optional[str] = None,
         user: str = "gurkult",
     ) -> None:
         """Command to retrieve issue(s) from a GitHub repository."""
         github_issue = _issues.Issues(self.bot.http_session)
 
         if not numbers:
-            await ctx.send_help(ctx.command)
-            ctx.command.reset_cooldown(ctx)
-            return
+            raise commands.MissingRequiredArgument
 
         embed = await github_issue.issue(
-            ctx.message.channel.id, numbers, repository, user
+            ctx.message.channel, numbers, repository, user
         )
-
-        if embed is None:
-            await ctx.send_help(ctx.command)
-            ctx.command.reset_cooldown(ctx)
-            return
 
         await ctx.send(embed=embed)
 

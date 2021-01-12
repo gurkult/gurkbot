@@ -82,11 +82,9 @@ class GithubInfo:
 
         return embed
 
-    async def get_github_info(self, username: Optional[str]) -> Union[None, Embed]:
+    async def get_github_info(self, username: str) -> Embed:
         """
         Fetches a user's GitHub information.
-
-        Username is optional and sends the help command if not specified.
         """
         if username is None:
             return None

@@ -14,10 +14,10 @@ BAD_RESPONSE = {
 }
 MAX_REQUESTS = 5
 REPO_CHANNEL_MAP = {
-    f"{Channels.dev_reagurk}": "reagurk",
-    f"{Channels.dev_gurkbot}": "gurkbot",
-    f"{Channels.dev_gurklang}": "py-gurklang",
-    f"{Channels.dev_branding}": "branding",
+    Channels.dev_reagurk: "reagurk",
+    Channels.dev_gurkbot: "gurkbot",
+    Channels.dev_gurklang: "py-gurklang",
+    Channels.dev_branding: "branding",
 }
 
 
@@ -30,10 +30,7 @@ class Issues:
     @staticmethod
     def get_repo(channel: discord.TextChannel) -> Optional[str]:
         """Get repository for the particular channel."""
-        if str(channel) in REPO_CHANNEL_MAP.keys():
-            return REPO_CHANNEL_MAP[str(channel)]
-        else:
-            return None
+        return REPO_CHANNEL_MAP.get(channel.id)
 
     @staticmethod
     def error_embed(error_msg: str) -> Embed:
@@ -46,13 +43,13 @@ class Issues:
         return embed
 
     async def issue(
-        self,
-        channel: discord.TextChannel,
-        numbers: commands.Greedy[int],
-        repository: str,
-        user: str,
+            self,
+            channel: discord.TextChannel,
+            numbers: commands.Greedy[int],
+            repository: Optional[str],
+            user: str,
     ) -> Embed:
-        """Command to retrieve issue(s) from a GitHub repository."""
+        """Retrieve issue(s) from a GitHub repository."""
         links = []
         numbers = set(numbers)
 
@@ -100,16 +97,16 @@ class Issues:
 
             issue_url = json_data.get("html_url")
             links.append(
-                [
+                (
                     icon_url,
                     f"[{repository}] #{number} {json_data.get('title')}",
                     issue_url,
-                ]
+                )
             )
 
         resp = discord.Embed(
             colour=discord.Color.green(),
-            description="\n".join(["{0} [{1}]({2})".format(*link) for link in links]),
+            description="\n".join("{0} [{1}]({2})".format(*link) for link in links),
         )
         resp.set_author(name="GitHub", url=f"https://github.com/{user}/{repository}")
         return resp
