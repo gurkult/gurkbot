@@ -6,8 +6,12 @@ def gurkan_check(target: str) -> bool:
     return bool(re.search(r"gurk|urkan", target.lower()))
 
 
-def gurkan_rate(name: str) -> int:
+def gurkan_rate(name: str) -> float:
     """Returns the rate of gurkan in the name given."""
-    search = re.search(r"gurk|urkan", name.lower())
-    span = search.span() if search else (0, 0)
-    return int((span[1] - span[0]) / len(name) * 100)
+    if name == "":
+        return 0.0
+    gurkanness = 0
+    for match in re.finditer("gurkan|urkan|gurk", name.lower()):
+        begin, end = match.span()
+        gurkanness += end - begin
+    return round((gurkanness / len(name)) * 100, 2)
