@@ -49,6 +49,10 @@ class Github(commands.Cog):
         if not numbers:
             raise commands.MissingRequiredArgument
 
+        if repository is not None and "/" in repository:
+            await ctx.send(f"Running split user-repo on {repository}")
+            user, repository = repository.split("/")
+
         embed = await github_issue.issue(ctx.message.channel, numbers, repository, user)
 
         await ctx.send(embed=embed)
@@ -57,14 +61,14 @@ class Github(commands.Cog):
     async def source_command(self, ctx: commands.Context, *, source_item: str) -> None:
         """Displays information about the bot's source code."""
         github_source = _source.Source(self.bot.http_session, self.bot.user.avatar_url)
-        content = await github_source.inspect(cmd=ctx.bot.get_command(source_item))
+        embed = await github_source.inspect(cmd=ctx.bot.get_command(source_item))
 
-        if content is None:
+        if embed is None:
             await ctx.send_help(ctx.command)
             ctx.command.reset_cooldown(ctx)
             return
 
-        await ctx.send(content)
+        await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot) -> None:

@@ -99,7 +99,7 @@ class Issues:
             links.append(
                 (
                     icon_url,
-                    f"[{repository}] #{number} {json_data.get('title')}",
+                    f"[{user}/{repository}] #{number} {json_data.get('title')}",
                     issue_url,
                 )
             )

@@ -20,7 +20,7 @@ class Source:
         self.MAX_FIELD_LENGTH = 500
         self.bot_avatar = bot_avatar
 
-    async def inspect(self, cmd: Optional[Command]) -> Optional[str]:
+    async def inspect(self, cmd: Optional[Command]) -> Optional[discord.Embed]:
         """Display information and a GitHub link to the source code of a command."""
         if cmd is None:
             return
@@ -44,6 +44,9 @@ class Source:
                 + "\n... (truncated - too many lines)"
             )
 
-        content = f"__Gurkbot's Source Link:__ {url}\n```python\n{sanitized}\n```"
+        embed = discord.Embed(title="Gurkbot's Source Link", description=f"{url}")
+        embed.add_field(
+            name="Source Code Snippet", value=f"```python\n{sanitized}\n```"
+        )
 
-        return content
+        return embed
