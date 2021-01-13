@@ -20,7 +20,7 @@ RATE_DICT = {
 class GurkanStats(Cog):
     """Commands for showing stats on the Gurkan server."""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
     @command(
@@ -59,7 +59,7 @@ class GurkanStats(Cog):
         else:
             rate_m = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
 
-            title = f"{Emojis.cucumber} {gurkans} members"
+            title = f"{Emojis.cucumber_emoji} {gurkans} members"
             color = Color.green()
             description = f"About {rate}% ({gurkans}/ {len(members)}) of members are gurkans, that's {rate_m}"
 
@@ -80,7 +80,7 @@ class GurkanStats(Cog):
     )
     async def is_gurkan(self, ctx: Context, *, user: Union[Member, str] = None) -> None:
         """
-        The gurkanrate of the user and wether the user is a gurkan is sent in a color embed,\
+        The gurkanrate of the user and wether the user is a gurkan is sent in an embed,\
         the color depending on how high the rate is.
 
         Can be used on other members, or even text.
@@ -94,10 +94,10 @@ class GurkanStats(Cog):
 
         if not gurk_state:
             color = Color.red()
-            title = f"{Emojis.invalid} Not gurkan"
+            title = f"{Emojis.invalid_emoji} Not gurkan"
         else:
             color = Color.green()
-            title = f"{Emojis.cucumber} Gurkan"
+            title = f"{Emojis.cucumber_emoji} Gurkan"
 
         rate_embed.color = color
         rate_embed.title = title
