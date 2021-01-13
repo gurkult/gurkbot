@@ -42,8 +42,8 @@ class GurkanStats(Cog):
         Sends the count of total Gurkans in the server,\
         and the percentage of the gurkans to the server members.
         """
-        members = [i.display_name for i in ctx.guild.members]
-        gurkans = sum(gurkan_check(member) for member in members)
+        members = ctx.guild.members
+        gurkans = sum(gurkan_check(member.display_name) for member in members)
         rate = round((gurkans / len(members)) * 100)
 
         count_emb = Embed()
@@ -77,6 +77,8 @@ class GurkanStats(Cog):
         aliases=(
             "gr",
             "gurkanrate",
+            "gurkrate",
+            "isgurk"
         ),
         help="""isgurkan [user/text (optional)]
 
@@ -91,7 +93,7 @@ class GurkanStats(Cog):
         Can be used on other members, or even text.
         """
         if not isinstance(user, str):
-            user = ctx.author.display_name if not user else user.display_name
+            user = user.display_name if user else ctx.author.display_name
 
         gurk_state = gurkan_check(user)
         gurk_rate = gurkan_rate(user)
