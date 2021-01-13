@@ -74,12 +74,7 @@ class GurkanStats(Cog):
     @command(
         name="isgurkan",
         brief="Get an embed of how gurkan a user is",
-        aliases=(
-            "gr",
-            "gurkanrate",
-            "gurkrate",
-            "isgurk"
-        ),
+        aliases=("gr", "gurkanrate", "gurkrate", "isgurk"),
         help="""isgurkan [user/text (optional)]
 
                 Check if someone is gurkan and get their gurkanrate.
