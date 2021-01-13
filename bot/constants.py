@@ -26,8 +26,8 @@ class Channels(NamedTuple):
 
 
 class Emojis(NamedTuple):
-    cucumber = "\U0001f952"
-    invalid = "\u274c"
+    cucumber_emoji = "\U0001f952"
+    invalid_emoji = "\u274c"
 
 
 # Bot replies
