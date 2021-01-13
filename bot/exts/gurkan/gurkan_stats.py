@@ -20,7 +20,7 @@ RATE_DICT = {
 class GurkanStats(Cog):
     """Commands for showing stats on the Gurkan server."""
 
-    def __init__(self, bot: Bot):
+    def __init__(self, bot: Bot) -> None::
         self.bot = bot
 
     @command(
