@@ -80,7 +80,7 @@ class GurkanStats(Cog):
     )
     async def is_gurkan(self, ctx: Context, *, user: Union[Member, str] = None) -> None:
         """
-        The gurkanrate of the user and wether the user is a gurkan is sent in an embed,\
+        The gurkanrate of the user and whether the user is a gurkan is sent in an embed,\
         the color depending on how high the rate is.
 
         Can be used on other members, or even text.
