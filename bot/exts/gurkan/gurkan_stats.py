@@ -57,13 +57,11 @@ class GurkanStats(Cog):
             color = Color.red()
 
         else:
-            rate_msg = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
+            rate_m = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
 
             title = f"{Emojis.cucumber} {gurkans} members"
             color = Color.green()
-            description = f"""About {rate}% ({gurkans}/ {len(members)})\
-                              of members are gurkans, that's {rate_msg}
-                           """
+            description = f"About {rate}% ({gurkans}/ {len(members)}) of members are gurkans, that's {rate_m}"
 
         count_emb.title = title
         count_emb.color = color
