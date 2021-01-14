@@ -78,7 +78,7 @@ class GurkanStats(Cog):
                 Check if someone is gurkan and get their gurkanrate.
             """,
     )
-    async def is_gurkan(self, ctx: Context, *, user: Union[Member, str] = None) -> None:
+    async def is_gurkan(self, ctx: Context, *, user: Optional[Member, str] = None) -> None:
         """
         The gurkanrate of the user and whether the user is a gurkan is sent in an embed,\
         the color depending on how high the rate is.
