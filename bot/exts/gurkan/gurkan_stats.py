@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from bot.bot import Bot
 from bot.constants import Emojis
@@ -79,7 +79,7 @@ class GurkanStats(Cog):
             """,
     )
     async def is_gurkan(
-        self, ctx: Context, *, user: Optional[Member, str] = None
+        self, ctx: Context, *, user: Optional[Union[Member, str]]
     ) -> None:
         """
         The gurkanrate of the user and whether the user is a gurkan is sent in an embed,\
