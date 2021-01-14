@@ -28,11 +28,8 @@ class CommandErrorHandler(commands.Cog):
     @staticmethod
     def error_embed(message: str, title: Union[Iterable, str] = ERROR_REPLIES) -> Embed:
         """Build a basic embed with red colour and either a random error title or a title provided."""
-        embed = Embed(colour=Colours.soft_red)
-        if isinstance(title, str):
-            embed.title = title
-        else:
-            embed.title = random.choice(title)
+        embed = Embed(colour=Colours.soft_red.value)
+        embed.title = title if isinstance(title, str) else random.choice(title)
         embed.description = message
         return embed
 
@@ -111,7 +108,7 @@ class CommandErrorHandler(commands.Cog):
 
         push_alert = Embed(
             title="An unexpected error occurred",
-            color=Colours.soft_red,
+            color=Colours.soft_red.value,
         )
         push_alert.add_field(
             name="User",
@@ -130,13 +127,13 @@ class CommandErrorHandler(commands.Cog):
             name="Full Message", value=ctx.message.content, inline=False
         )
 
-        dev_alerts = self.bot.get_channel(Channels.devalerts)
+        dev_alerts = self.bot.get_channel(Channels.dev_alerts)
         if dev_alerts is None:
             logger.info(
-                f"Fetching dev-alerts channel as it wasn't found in the cache (ID: {Channels.devalerts})"
+                f"Fetching dev-alerts channel as it wasn't found in the cache (ID: {Channels.dev_alerts})"
             )
             try:
-                dev_alerts = await self.bot.fetch_channel(Channels.devalerts)
+                dev_alerts = await self.bot.fetch_channel(Channels.dev_alerts)
             except discord.HTTPException as discord_exc:
                 logger.exception("Fetch failed", exc_info=discord_exc)
                 return

@@ -1,0 +1,17 @@
+Auto-config: False
+
+Roles:
+  Boosters:
+    optional: False
+
+  Contributors:
+    optional: False
+
+Channels:
+
+  Dev_Polls:
+    optional: False
+
+  Polls:
+    optional: False
+

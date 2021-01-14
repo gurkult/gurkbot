@@ -1,0 +1,36 @@
+Guild_ID: 789192517375623228
+Guild_Invite": "https://discord.gg/W9DSfryp8Y"
+Guild_Name: "Gurkult"
+
+Bot:
+  ID : 793935699308052511
+  Name : "Gurkbot"
+  Prefix : "!"
+
+Roles:
+  Supreme_Cucumber: 789196598508650527
+  Steering_Council: 789213682332598302
+  Gurkult_Lords: 789197216869777440
+  Gurkans: 789195552121290823
+  Announcements: 789978290844598272
+  Polls: 790043110360350740
+  Muted: 796379764805599283
+  Contributors: 789222836643299398
+  Boosters: 792069114569949206
+
+Channels:
+  Polls : 790043296579452930
+  Bot_Commands : 793570459945926717
+  Dev_log : 789431367167377448
+  Dev_Alerts : 796695123177766982
+  Dev_Polls : 789475074746744863
+
+Emojis:
+  questionmark : "<:questionmark:795305037475610625>"
+  info : "<:Info:795305070593310730>"
+  pr_open : "<:PROpen:794834041416187935>"
+  pr_merged : "<:PRMerged:794834041173704744>"
+  pr_closed : "<:PRClosed:794834041073172501>"
+  issue_open : "<:IssueOpen:794834041450266624>"
+  issue_closed : "<:IssueClosed:794834041240289321>"
+  trash : "<:trash:798179380626587658>"

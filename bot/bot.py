@@ -1,23 +1,23 @@
 import os
 
+from bot.constants import Channels, EXTENSIONS, Gurkbot
+
 from discord import Embed
 from discord.ext import commands
 from loguru import logger
-
-from . import constants
 
 
 class Bot(commands.Bot):
     """The core of the bot."""
 
     def __init__(self) -> None:
-        super().__init__(command_prefix=constants.PREFIX)
+        super().__init__(command_prefix=Gurkbot.prefix)
         self.load_extensions()
 
     def load_extensions(self) -> None:
         """Load all the extensions in the exts/ folder."""
         logger.info("Start loading extensions from ./exts/")
-        for extension in constants.EXTENSIONS.glob("*/*.py"):
+        for extension in EXTENSIONS.glob("*/*.py"):
             if extension.name.startswith("_"):
                 continue  # ignore files starting with _
             dot_path = str(extension).replace(os.sep, ".")[:-3]  # remove the .py
@@ -28,11 +28,11 @@ class Bot(commands.Bot):
     def run(self) -> None:
         """Run the bot with the token in constants.py/.env ."""
         logger.info("Starting bot")
-        if constants.TOKEN is None:
+        if Gurkbot.token is None:
             raise EnvironmentError(
                 "token value is None. Make sure you have configured the TOKEN field in .env"
             )
-        super().run(constants.TOKEN)
+        super().run(Gurkbot.token)
 
     async def on_ready(self) -> None:
         """Ran when the bot has connected to discord and is ready."""
@@ -44,7 +44,7 @@ class Bot(commands.Bot):
         embed = Embed(description="Connected!")
         embed.set_author(
             name="Gurkbot",
-            url=constants.BOT_REPO_URL,
+            url=Gurkbot.repo_url,
             icon_url=self.user.avatar_url,
         )
-        await self.get_channel(constants.Channels.devlog).send(embed=embed)
+        await self.get_channel(Channels.dev_log).send(embed=embed)
