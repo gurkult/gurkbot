@@ -47,4 +47,4 @@ class Bot(commands.Bot):
             url=Gurkbot.repo_url,
             icon_url=self.user.avatar_url,
         )
-        await self.get_channel(Channels.dev_log).send(embed=embed)
+        await self.get_channel(Channels().dev_log).send(embed=embed)

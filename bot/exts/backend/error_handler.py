@@ -127,10 +127,10 @@ class CommandErrorHandler(commands.Cog):
             name="Full Message", value=ctx.message.content, inline=False
         )
 
-        dev_alerts = self.bot.get_channel(Channels.dev_alerts)
+        dev_alerts = self.bot.get_channel(Channels().dev_alerts)
         if dev_alerts is None:
             logger.info(
-                f"Fetching dev-alerts channel as it wasn't found in the cache (ID: {Channels.dev_alerts})"
+                f"Fetching dev-alerts channel as it wasn't found in the cache (ID: {Channels().dev_alerts})"
             )
             try:
                 dev_alerts = await self.bot.fetch_channel(Channels.dev_alerts)
