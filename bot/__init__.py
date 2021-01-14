@@ -17,9 +17,7 @@ def should_rotate(message: loguru.Message, file: typing.TextIO) -> bool:
     max_time = 7 * 24 * 60 * 60  # 1 week in seconds
     if file.tell() + len(message) > 5 * (2 ** 20):  # if greater than size 5 MB
         return True
-    if now - creation > max_time:
-        return True
-    return False
+    return now - creation > max_time
 
 
 logger.add(LOG_FILE, rotation=should_rotate)
