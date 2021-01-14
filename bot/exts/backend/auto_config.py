@@ -171,6 +171,9 @@ class AutoConfig(commands.Cog):
 
         if self.false_alarm():
             return
+        
+        if ctx.author is not ctx.guild.owner():
+            return
 
         if self.auto:
             raise RuntimeError("Auto-config is set to true! Cannot use setup command.")
