@@ -1,9 +1,9 @@
 # Setup Instructions
 
 1. [Install requirements](#Requirements)
-2. [Setup a test server and a bot account](# Test Server and Bot Account)
-3. [Fork the project repository](# Fork the Project)
-4. [Configure the development environment](# Development Environment)
+2. [Setup a test server and a bot account](#Test Server and Bot Account)
+3. [Fork the project repository](#Fork the Project)
+4. [Configure the development environment](#Development Environment)
 5. Run the project
 6. Work with git to make changes
 
