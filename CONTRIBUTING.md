@@ -1,9 +1,9 @@
 # Setup Instructions
 
-1. Install requirements
-2. Setup a test server and a bot account
-3. Fork the project repository
-4. Configure the development environment
+1. [Install requirements](#Requirements)
+2. [Setup a test server and a bot account](# Test Server and Bot Account)
+3. [Fork the project repository](# Fork the Project)
+4. [Configure the development environment](# Development Environment)
 5. Run the project
 6. Work with git to make changes
 
@@ -35,14 +35,6 @@ You will do all your work in the fork rather than directly in the main repositor
 
 ##### Once You Have Your Fork, You Will Need To Clone The Repository To Your Computer.
 
-###### Cloning with PyCharm
-
-1.  Load up PyCharm and click Check out from ` Version Control`, then `Git`.
-2.  Enter the URL of your forked repository, then test it with `Test`.
-3.  Change the directory if you desire and click `Clone`.
-
-###### Cloning with Commandline
-
 ```shell
 $ git clone https://github.com/<your username>/gurkbot
 ...
@@ -50,7 +42,7 @@ $ cd gurkbot
 ```
 **or using the github CLI**
 ```shell
-$ gh repo clone gurkult/gurkbot
+$ gh repo clone <your username>/gurkbot
 ...
 $ cd gurkbot
 ```
@@ -77,16 +69,13 @@ pipenv run start
 ##### After installing dependencies, you will have to setup environment variables:After installing dependencies, you will have to setup environment variables:
 
 1. Create a text file named .env in your project root (that's the base folder of your repository):
-2. Unix/Git Bash: `touch /path/to/project/.env`
-3. Windows CMD:`type nul > \path\to\project\.env` 
-`(The error The system cannot find the file specified can be safely ignored.)`
 
 Note: The entire file name is literally .env
 
-4. Open the file with any text editor.
-5. Each environment variable is on its own line, with the variable and the value separated by a = sign.
+3. Open the file with any text editor.
+4. Each environment variable is on its own line, with the variable and the value separated by a = sign.
 
-## The following variables are needed for running Sir Lancebot:
+## The following variables are needed for running Gurkbot:
 
 | ENV VARIABLE NAME | WHAT IS IT?                                                               |
 | ----------------- | ------------------------------------------------------------------------- |
@@ -109,7 +98,7 @@ Now that you have everything setup, it is finally time to make changes to the bo
 
 Notably, version control of our projects is done using Git and Github. It can be intimidating at first, so feel free to ask for any help in the server.
 
-Click [here](https://pythondiscord.com/pages/contributing/working-with-git/pycharm/ "here") to see the basic Git workflow when contributing to one of our projects
+Click [here](https://pythondiscord.com/pages/contributing/working-with-git/ "here") to see the basic Git workflow when contributing to one of our projects
 
 
 # Rules
@@ -127,7 +116,7 @@ Click [here](https://pythondiscord.com/pages/contributing/working-with-git/pycha
     * Run `flake8` and `pre-commit` against your code **before** you push. Your commit will be rejected by the build server if it fails to lint. You can run the lint by executing `pipenv run lint` in your command line.
  
 6. **Make great commits**. A well structured git log is key to a project's maintainability; it efficiently provides insight into when and *why* things were done for future maintainers of the project.
-    * A more in-depth guide to writing great commit messages can be found in Chris Beam's [*How to Write a Git Commit Message*](https://chris.beams.io/posts/git-commit/)..
+    * A more in-depth guide to writing great commit messages can be found in Chris Beam's [*How to Write a Git Commit Message*](https://chris.beams.io/posts/git-commit/).
     
 7. If someone is working on an issue or pull request, **do not open your own pull request for the same task**. Instead, collaborate with the author(s) of the existing pull request. Duplicate PRs opened without communicating with the other author(s) or staff, will be closed. 
     * One option is to fork the other contributor's repository and submit your changes to their branch with your own pull request. We suggest following these guidelines when interacting with their repository as well.
