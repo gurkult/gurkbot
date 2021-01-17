@@ -68,7 +68,7 @@ class Github(commands.Cog):
         self, ctx: commands.Context, *, source_item: Optional[str] = None
     ) -> None:
         """Displays information about the bot's source code."""
-        if source_item == "":
+        if source_item is None:
             embed = Embed(title="Gurkbot's GitHub Repository")
             embed.add_field(name="Repository", value=f"[Go to GitHub]({BOT_REPO_URL})")
             embed.set_thumbnail(url=self.bot.user.avatar_url)
