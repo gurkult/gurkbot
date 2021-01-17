@@ -52,7 +52,7 @@ class CommandErrorHandler(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             return  # Skip logging CommandNotFound Error
 
-        if isinstance(error, commands.UserInputError):
+        elif isinstance(error, commands.UserInputError):
             self.revert_cooldown_counter(ctx.command, ctx.message)
             embed = self.error_embed(
                 f"Your input was invalid: {error}\n\nUsage:\n"
@@ -60,7 +60,7 @@ class CommandErrorHandler(commands.Cog):
             )
             await ctx.send(embed=embed)
 
-        if isinstance(error, commands.CommandOnCooldown):
+        elif isinstance(error, commands.CommandOnCooldown):
             mins, secs = divmod(math.ceil(error.retry_after), 60)
             embed = self.error_embed(
                 f"This command is on cooldown:\nPlease retry in **{mins} minutes {secs} seconds**.",
