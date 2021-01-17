@@ -1,6 +1,6 @@
 import math
 import random
-from typing import Iterable, Union
+from typing import Optional
 
 import discord
 from bot.constants import Channels, Colours, ERROR_REPLIES, NEGATIVE_REPLIES
@@ -26,13 +26,10 @@ class CommandErrorHandler(commands.Cog):
             )
 
     @staticmethod
-    def error_embed(message: str, title: Union[Iterable, str] = ERROR_REPLIES) -> Embed:
+    def error_embed(message: str, title: Optional[str] = None) -> Embed:
         """Build a basic embed with red colour and either a random error title or a title provided."""
-        embed = Embed(colour=Colours.soft_red)
-        if isinstance(title, str):
-            embed.title = title
-        else:
-            embed.title = random.choice(title)
+        title = title or random.choice(ERROR_REPLIES)
+        embed = Embed(colour=Colours.soft_red, title=title)
         embed.description = message
         return embed
 
