@@ -65,7 +65,7 @@ class Github(commands.Cog):
 
     @github_group.command(name="source", aliases=("src", "inspect"))
     async def source_command(
-        self, ctx: commands.Context, *, source_item: str = ""
+        self, ctx: commands.Context, *, source_item: Optional[str] = None
     ) -> None:
         """Displays information about the bot's source code."""
         if source_item == "":
