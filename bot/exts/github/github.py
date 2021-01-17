@@ -1,8 +1,7 @@
 import typing
 
-from discord import Embed
-
 from bot.constants import BOT_REPO_URL
+from discord import Embed
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 
@@ -12,6 +11,7 @@ from . import _issues, _profile, _source
 class Github(commands.Cog):
     """
     Github Category cog, which contains commands related to github.
+
     Commands:
         ├ profile       Fetches a user's GitHub information.
         ├ issue         Command to retrieve issue(s) from a GitHub repository.
@@ -28,15 +28,12 @@ class Github(commands.Cog):
 
     @github_group.command(name="profile")
     @commands.cooldown(1, 10, BucketType.user)
-    async def profile(
-        self, ctx: commands.Context, username: str
-    ) -> None:
+    async def profile(self, ctx: commands.Context, username: str) -> None:
         """
         Fetches a user's GitHub information.
 
         Username is optional and sends the help command if not specified.
         """
-
         github_profile = _profile.GithubInfo(self.bot.http_session)
         embed = await github_profile.get_github_info(username)
 
@@ -67,7 +64,9 @@ class Github(commands.Cog):
         await ctx.send(embed=embed)
 
     @github_group.command(name="source", aliases=("src", "inspect"))
-    async def source_command(self, ctx: commands.Context, *, source_item: str = "") -> None:
+    async def source_command(
+        self, ctx: commands.Context, *, source_item: str = ""
+    ) -> None:
         """Displays information about the bot's source code."""
         if source_item == "":
             embed = Embed(title="Gurkbot's GitHub Repository")
