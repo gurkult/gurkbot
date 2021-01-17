@@ -53,11 +53,18 @@ class CommandErrorHandler(commands.Cog):
             return  # Skip logging CommandNotFound Error
 
         elif isinstance(error, commands.UserInputError):
-            self.revert_cooldown_counter(ctx.command, ctx.message)
-            embed = self.error_embed(
-                f"Your input was invalid: {error}\n\nUsage:\n"
-                f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```"
-            )
+            if isinstance(error, commands.MissingRequiredArgument):
+                description = (
+                    f"{error}\n\nUsage:\n"
+                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```"
+                )
+            else:
+                description = (
+                    f"Your input was invalid: {error}\n\nUsage:\n"
+                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```"
+                )
+
+            embed = self.error_embed(description)
             await ctx.send(embed=embed)
 
         elif isinstance(error, commands.CommandOnCooldown):
