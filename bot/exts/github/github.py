@@ -1,5 +1,8 @@
 import typing
 
+from discord import Embed
+
+from bot.constants import BOT_REPO_URL
 from discord.ext import commands
 from discord.ext.commands.cooldowns import BucketType
 
@@ -7,7 +10,13 @@ from . import _issues, _profile, _source
 
 
 class Github(commands.Cog):
-    """Github."""
+    """
+    Github Category cog, which contains commands related to github.
+    Commands:
+        ├ profile       Fetches a user's GitHub information.
+        ├ issue         Command to retrieve issue(s) from a GitHub repository.
+        └ source        Displays information about the bot's source code.
+    """
 
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
@@ -20,15 +29,13 @@ class Github(commands.Cog):
     @github_group.command(name="profile")
     @commands.cooldown(1, 10, BucketType.user)
     async def profile(
-        self, ctx: commands.Context, username: typing.Optional[str]
+        self, ctx: commands.Context, username: str
     ) -> None:
         """
         Fetches a user's GitHub information.
 
         Username is optional and sends the help command if not specified.
         """
-        if username is None:
-            raise commands.MissingRequiredArgument
 
         github_profile = _profile.GithubInfo(self.bot.http_session)
         embed = await github_profile.get_github_info(username)
@@ -41,32 +48,41 @@ class Github(commands.Cog):
         ctx: commands.Context,
         numbers: commands.Greedy[int],
         repository: typing.Optional[str] = None,
-        user: str = "gurkult",
     ) -> None:
         """Command to retrieve issue(s) from a GitHub repository."""
         github_issue = _issues.Issues(self.bot.http_session)
 
         if not numbers:
-            raise commands.MissingRequiredArgument
+            raise commands.MissingRequiredArgument(ctx.command.clean_params["numbers"])
 
-        if repository is not None and "/" in repository:
-            await ctx.send(f"Running split user-repo on {repository}")
-            user, repository = repository.split("/")
+        if repository is None:
+            user = "gurkult"
+        else:
+            user, _, repository = repository.rpartition("/")
+            if user == "":
+                user = "gurkult"
 
         embed = await github_issue.issue(ctx.message.channel, numbers, repository, user)
 
         await ctx.send(embed=embed)
 
     @github_group.command(name="source", aliases=("src", "inspect"))
-    async def source_command(self, ctx: commands.Context, *, source_item: str) -> None:
+    async def source_command(self, ctx: commands.Context, *, source_item: str = "") -> None:
         """Displays information about the bot's source code."""
+        if source_item == "":
+            embed = Embed(title="Gurkbot's GitHub Repository")
+            embed.add_field(name="Repository", value=f"[Go to GitHub]({BOT_REPO_URL})")
+            embed.set_thumbnail(url=self.bot.user.avatar_url)
+            await ctx.send(embed=embed)
+            return
+        elif not ctx.bot.get_command(source_item):
+            await ctx.send_help(ctx.command)
+            raise commands.BadArgument(
+                f"Unable to convert `{source_item}` to valid command or Cog."
+            )
+
         github_source = _source.Source(self.bot.http_session, self.bot.user.avatar_url)
         embed = await github_source.inspect(cmd=ctx.bot.get_command(source_item))
-
-        if embed is None:
-            await ctx.send_help(ctx.command)
-            ctx.command.reset_cooldown(ctx)
-            return
 
         await ctx.send(embed=embed)
 
