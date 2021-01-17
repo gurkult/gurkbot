@@ -3,7 +3,7 @@ from typing import Optional, Tuple, Union
 
 from discord import Embed
 
-from ..constants import Colours, POSITIVE_REPLIES
+from ..constants import Colours, ERROR_REPLIES, NEGATIVE_REPLIES, POSITIVE_REPLIES
 
 
 class EmbedHelper:
@@ -38,4 +38,42 @@ class EmbedHelper:
             description=description,
             url=url,
             colour=Colours.green,
+        )
+
+    @classmethod
+    def error(
+        cls,
+        *,
+        title: Optional[str] = None,
+        description: str,
+        url: Optional[str] = None,
+        **fields: Union[str, Tuple[str, bool]]
+    ) -> Embed:
+        """Embed used for displaying errors."""
+        title_ = title or choice(ERROR_REPLIES)
+
+        return cls.embed_helper(
+            title=title_,
+            description=description,
+            url=url,
+            colour=Colours.soft_red,
+        )
+
+    @classmethod
+    def warning(
+        cls,
+        *,
+        title: Optional[str] = None,
+        description: str,
+        url: Optional[str] = None,
+        **fields: Union[str, Tuple[str, bool]]
+    ) -> Embed:
+        """Embed used to blah."""
+        title_ = title or choice(NEGATIVE_REPLIES)
+
+        return cls.embed_helper(
+            title=title_,
+            description=description,
+            url=url,
+            colour=Colours.yellow,
         )
