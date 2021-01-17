@@ -55,7 +55,8 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, commands.UserInputError):
             if isinstance(error, commands.MissingRequiredArgument):
                 description = (
-                    f"{error}\n\nUsage:\n"
+                    f"`{error.param.name}` is a required argument that is missing."
+                    "\n\nUsage:\n"
                     f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```"
                 )
             else:
