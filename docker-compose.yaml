@@ -14,6 +14,10 @@ services:
       - PREFIX
       - CHANNEL_DEVLOG
       - CHANNEL_DEVALERTS
+      - CHANNEL_DEV_GURKBOT
+      - CHANNEL_DEV_REAGURK
+      - CHANNEL_DEV_GURKLANG
+      - CHANNEL_DEV_BRANDING
 
     volumes:
       - .:/bot
