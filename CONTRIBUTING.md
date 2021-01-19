@@ -63,7 +63,7 @@ pipenv run precommit
 pipenv run lint
 ```
 
-##### After installing dependencies, you will have to setup environment variables:After installing dependencies, you will have to setup environment variables:
+##### After installing dependencies, you will have to setup environment variables:
 
 1. Create a text file named .env in your project root (that's the base folder of your repository):
 
