@@ -37,7 +37,7 @@ class EmbedHelper:
         fields: Optional[Tuple[Dict[str, str], ...]] = None,
         url: Optional[str] = None,
     ) -> Embed:
-        '''Embed used in a positive context.'''
+        """Embed used in a positive context."""
         title_ = title or choice(POSITIVE_REPLIES)
         fields = fields or tuple()
 
@@ -58,7 +58,7 @@ class EmbedHelper:
         fields: Optional[Tuple[Dict[str, str], ...]] = None,
         url: Optional[str] = None,
     ) -> Embed:
-        '''Embed used for displaying errors.'''
+        """Embed used for displaying errors."""
         title_ = title or choice(ERROR_REPLIES)
         fields = fields or tuple()
 
@@ -79,7 +79,7 @@ class EmbedHelper:
         fields: Optional[Tuple[Dict[str, str], ...]] = None,
         url: Optional[str] = None,
     ) -> Embed:
-        '''Embed used to warn user.'''
+        """Embed used to warn user."""
         title_ = title or choice(NEGATIVE_REPLIES)
         fields = fields or tuple()
 
