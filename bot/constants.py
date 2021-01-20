@@ -32,10 +32,10 @@ class Channels(NamedTuple):
     devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
     devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
 
-    dev_gurkbot = int(os.getenv("CHANNEL_DEV_GURKBOT", 789431367167377448))
-    dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789431367167377448))
-    dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789431367167377448))
-    dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789431367167377448))
+    dev_gurkbot = int(os.getenv("CHANNEL_DEV_GURKBOT", 789295038315495455))
+    dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789241204696416287))
+    dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
+    dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
 
 
 # Bot replies
