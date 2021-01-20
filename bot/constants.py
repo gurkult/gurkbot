@@ -15,11 +15,11 @@ LOG_FILE = pathlib.Path("log/gurkbot.log")
 
 
 class Emojis(NamedTuple):
-    issue_emoji = "<:IssueOpen:794119024367632405>"
-    issue_closed_emoji = "<:IssueClosed:794118652219359253>"
-    pull_request_emoji = "<:PROpen:794118652014231562>"
-    pull_request_closed_emoji = "<:PRClosed:794120818908463134>"
-    merge_emoji = "<:PRMerged:794119023687761941>"
+    issue_emoji = "<:IssueOpen:794834041450266624>"
+    issue_closed_emoji = "<:IssueClosed:794834041240289321>"
+    pull_request_emoji = "<:PROpen:794834041416187935>"
+    pull_request_closed_emoji = "<:PRClosed:794834041073172501>"
+    merge_emoji = "<:PRMerged:794834041173704744>"
 
 
 class Colours:
