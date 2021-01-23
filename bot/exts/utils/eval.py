@@ -111,7 +111,7 @@ class Eval(Cog):
                 # Code in message
                 text = code.strip("`")
                 first_line = text.splitlines()[0]
-                if re.fullmatch(r"( |[0-9A-z]*)\b", first_line):
+                if first_line == language.strip("`"):
                     text = text[len(first_line) + 1 :]
 
             if text is None:
