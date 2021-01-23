@@ -39,7 +39,7 @@ To get a **token**, go to [Discord Developer Portal](https://discord.com/develop
    # Optionally: run pre-commit hooks to initialize them.
    # You can start working on the feature after this.
    pipenv run pre-commit run --all-files
-   
+
    # Run the bot
    pipenv run start
 
