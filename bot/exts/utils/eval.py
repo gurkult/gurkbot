@@ -94,8 +94,6 @@ class Eval(Cog):
                 args,
             ) = parsed_data
             text = None
-            logger.debug(f"{lang} and {language}")
-            logger.debug(code)
 
             if ctx.message.attachments:
                 text = await eval_helper.code_from_attachments(ctx)
