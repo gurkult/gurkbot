@@ -48,14 +48,6 @@ class Eval(Cog):
             f"Successfully Updated List Of Languages To Date: {datetime.datetime.now()}"
         )
 
-    def lookup_lang(self, lang: str) -> str:
-        """Transform a lang into the tio.run version."""
-        if lang in self.quick_map:
-            lang = self.quick_map[lang]
-        if lang in self.default_languages:
-            lang = self.default_languages[lang]
-        return lang
-
     @command(
         help="""eval <language> [--wrapped] [--stats] <code>
 
@@ -102,7 +94,8 @@ class Eval(Cog):
                 args,
             ) = parsed_data
             text = None
-            language = self.lookup_lang(language.strip("`"))
+            logger.debug(f"{lang} and {language}")
+            logger.debug(code)
 
             if ctx.message.attachments:
                 text = await eval_helper.code_from_attachments(ctx)
@@ -119,14 +112,17 @@ class Eval(Cog):
                 # Code in message
                 text = code.strip("`")
                 first_line = text.splitlines()[0]
-                if self.lookup_lang(first_line) == language:
+                if not language.startswith("```"):
                     text = text[len(first_line) + 1 :]
 
             if text is None:
                 # Ensures code isn't empty after removing options
                 raise commands.MissingRequiredArgument(ctx.command.clean_params["code"])
 
-            lang = self.lookup_lang(lang)
+            if lang in self.quick_map:
+                lang = self.quick_map[lang]
+            if lang in self.default_languages:
+                lang = self.default_languages[lang]
             if lang not in self.languages:
                 if not escape_mentions(lang):
                     embed = Embed(
