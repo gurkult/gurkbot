@@ -21,24 +21,6 @@ class Emojis(NamedTuple):
     pull_request_closed_emoji = "<:PRClosed:794834041073172501>"
     merge_emoji = "<:PRMerged:794834041173704744>"
 
-
-class Colours:
-    green = 0x1F8B4C
-    yellow = 0xF1C502
-    soft_red = 0xCD6D6D
-
-
-class Channels(NamedTuple):
-    devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
-    devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
-
-    dev_gurkbot = int(os.getenv("CHANNEL_DEV_GURKBOT", 789295038315495455))
-    dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789241204696416287))
-    dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
-    dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
-
-
-class Emojis:
     # TicTacToe Emojis
     number_emojis = {
         1: "\u0031\ufe0f\u20e3",
@@ -55,6 +37,22 @@ class Emojis:
     decline = "\u274c"
     cucumber = ":cucumber:"
     watermelon = ":watermelon:"
+
+
+class Colours:
+    green = 0x1F8B4C
+    yellow = 0xF1C502
+    soft_red = 0xCD6D6D
+
+
+class Channels(NamedTuple):
+    devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
+    devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
+
+    dev_gurkbot = int(os.getenv("CHANNEL_DEV_GURKBOT", 789295038315495455))
+    dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789241204696416287))
+    dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
+    dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
 
 
 # Bot replies
