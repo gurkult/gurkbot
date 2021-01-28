@@ -4,14 +4,14 @@ import typing as t
 from functools import partial
 
 import discord
-from discord.ext.commands import Cog, Context, check, group, guild_only
-
 from bot.bot import Bot
 from bot.constants import Emojis
+from discord.ext.commands import Cog, Context, check, group
 
 CROSS_EMOJI = "\u274e"
 HAND_RAISED_EMOJI = "\U0001f64b"
 EMOJI_TOKENS = (Emojis.cucumber, Emojis.watermelon)
+EMOJI_CHECK = t.Union[discord.Emoji, str]
 
 
 def check_win(board: t.Dict[int, str]) -> bool:
@@ -42,22 +42,25 @@ class Player:
         self.symbol = symbol
 
     async def get_move(
-            self, board: t.Dict[int, str], msg: discord.Message
+        self, _: t.Dict[int, str], msg: discord.Message
     ) -> t.Tuple[bool, t.Optional[int], bool]:
         """
         Get move from user.
+
         Return is timeout reached
         and position of field what user will fill when timeout don't reach
         and whether the game was abandoned or not.
         """
 
         def check_for_move(r: discord.Reaction, u: discord.User) -> bool:
-            """Check does user who reacted is user who we want, message is board and emoji is in board values or is
-            CROSS_EMOJI. """
+            """Check does user who reacted is user who we want, message is board and emoji is valid."""
             return (
-                    u.id == self.user.id
-                    and msg.id == r.message.id
-                    and (str(r.emoji) == CROSS_EMOJI or r.emoji in Emojis.number_emojis.values())
+                u.id == self.user.id
+                and msg.id == r.message.id
+                and (
+                    str(r.emoji) == CROSS_EMOJI
+                    or r.emoji in Emojis.number_emojis.values()
+                )
             )
 
         try:
@@ -75,7 +78,7 @@ class Player:
                 list(Emojis.number_emojis.keys())[
                     list(Emojis.number_emojis.values()).index(react.emoji)
                 ],
-                False
+                False,
             )
 
     def __str__(self) -> str:
@@ -90,11 +93,12 @@ class AI:
         self.symbol = symbol
 
     async def get_move(
-            self, board: t.Dict[int, str], _: discord.Message
+        self, board: t.Dict[int, str], _: discord.Message
     ) -> t.Tuple[bool, int, bool]:
         """Get move from AI using Minimax strategy."""
         possible_moves = [
-            move for move, emoji in board.items()
+            move
+            for move, emoji in board.items()
             if emoji in list(Emojis.number_emojis.values())
         ]
 
@@ -146,10 +150,10 @@ class Game:
         )
 
     async def game_over_msg(self, title: str) -> None:
+        """Clear all reactions and announces to chat."""
         await self.board_embed.clear_reactions()
-        await self.board_embed.edit(embed=discord.Embed(
-            title=title,
-            description=self.format_board())
+        await self.board_embed.edit(
+            embed=discord.Embed(title=title, description=self.format_board())
         )
         self.over = True
         return
@@ -162,12 +166,14 @@ class Game:
             await self.board_embed.add_reaction(x)
         await self.board_embed.add_reaction(CROSS_EMOJI)
 
-        title = f'{self.current.user.display_name} VS ' \
-                f'{self.next if isinstance(self.next, AI) else self.next.user.display_name}'
+        title = (
+            f"{self.current.user.display_name} VS "
+            f"{self.next if isinstance(self.next, AI) else self.next.user.display_name}"
+        )
 
         await self.board_embed.edit(
             content=None,
-            embed=discord.Embed(title=title, description=self.format_board())
+            embed=discord.Embed(title=title, description=self.format_board()),
         )
 
         for _ in range(9):
@@ -176,7 +182,9 @@ class Game:
                     f"{self.current.user.mention}, it's your turn! "
                     "React with an emoji to take your go."
                 )
-            timeout, pos, abandoned = await self.current.get_move(self.board, self.board_embed)
+            timeout, pos, abandoned = await self.current.get_move(
+                self.board, self.board_embed
+            )
 
             if isinstance(self.current, Player):
                 await announcement.delete()
@@ -187,17 +195,22 @@ class Game:
                 self.over = True
                 return
             if abandoned:
-                await self.game_over_msg(f"{self.current.user.display_name} left the game!")
+                await self.game_over_msg(
+                    f"{self.current.user.display_name} left the game!"
+                )
                 return
 
             self.board[pos] = self.current.symbol
-            await self.board_embed.edit(embed=discord.Embed(title=title, description=self.format_board()))
+            await self.board_embed.edit(
+                embed=discord.Embed(title=title, description=self.format_board())
+            )
             await self.board_embed.clear_reaction(Emojis.number_emojis[pos])
 
             if check_win(self.board):
                 await self.game_over_msg(
-                    f":tada: {self.current if isinstance(self.current, AI) else self.current.user.display_name} "
-                    f"won this game! :tada:")
+                    f"{self.current if isinstance(self.current, AI) else self.current.user.display_name}"
+                    f" won this game! :tada:"
+                )
                 return
 
             self.current, self.next = self.next, self.current
@@ -232,20 +245,20 @@ class TicTacToe(Cog):
         self.waiting: t.List[discord.Member] = []
 
     def get_player(
-            self,
-            ctx: Context,
-            announcement: discord.Message,
-            reaction: discord.Reaction,
-            user: discord.Member,
+        self,
+        ctx: Context,
+        announcement: discord.Message,
+        reaction: discord.Reaction,
+        user: discord.Member,
     ) -> bool:
         """Predicate checking the criteria for the announcement message."""
         if self.already_playing(ctx.author):
             return True
 
         if (
-                user.id not in (ctx.me.id, ctx.author.id)
-                and str(reaction.emoji) == HAND_RAISED_EMOJI
-                and reaction.message.id == announcement.id
+            user.id not in (ctx.me.id, ctx.author.id)
+            and str(reaction.emoji) == HAND_RAISED_EMOJI
+            and reaction.message.id == announcement.id
         ):
             if self.already_playing(user):
                 self.bot.loop.create_task(
@@ -256,7 +269,9 @@ class TicTacToe(Cog):
 
             if user in self.waiting:
                 self.bot.loop.create_task(
-                    ctx.send(f"{user.mention} Please cancel your game first before joining another one.")
+                    ctx.send(
+                        f"{user.mention} Please cancel your game first before joining another one."
+                    )
                 )
                 self.bot.loop.create_task(announcement.remove_reaction(reaction, user))
                 return False
@@ -264,9 +279,9 @@ class TicTacToe(Cog):
             return True
 
         if (
-                user.id == ctx.author.id
-                and str(reaction.emoji) == CROSS_EMOJI
-                and reaction.message.id == announcement.id
+            user.id == ctx.author.id
+            and str(reaction.emoji) == CROSS_EMOJI
+            and reaction.message.id == announcement.id
         ):
             return True
 
@@ -276,11 +291,27 @@ class TicTacToe(Cog):
         """Check if someone is already in a game."""
         return any(player in game.players for game in self.games)
 
-    @guild_only()
     @is_requester_channel_free()
-    @group(name="tictactoe", aliases=("ttt",), invoke_without_command=True)
-    async def tic_tac_toe(self, ctx: Context) -> None:
+    @group(
+        name="tictactoe",
+        aliases=("ttt",),
+        invoke_without_command=True,
+        case_insensitive=True,
+    )
+    async def tic_tac_toe(
+        self,
+        ctx: Context,
+        emoji1: EMOJI_CHECK = Emojis.cucumber,
+        emoji2: EMOJI_CHECK = Emojis.watermelon,
+    ) -> None:
         """Tic Tac Toe game. Play against friends or AI. Use reactions to add your mark to field."""
+        if isinstance(emoji1, str) and len(emoji1) > 1:
+            print("raising error")
+            raise discord.ext.commands.EmojiNotFound(emoji1)
+        if isinstance(emoji2, str) and len(emoji2) > 1:
+            print("raising error")
+            raise discord.ext.commands.EmojiNotFound(emoji2)
+
         announcement = await ctx.send(
             "**Tic Tac Toe**: A new game is about to start!\n"
             f"Press {HAND_RAISED_EMOJI} to play against {ctx.author.mention}!\n"
@@ -315,19 +346,19 @@ class TicTacToe(Cog):
         self.waiting.remove(ctx.author)
 
         game = Game(
-            [Player(ctx.author, ctx, Emojis.cucumber), Player(user, ctx, Emojis.watermelon)],
+            [Player(ctx.author, ctx, str(emoji1)), Player(user, ctx, str(emoji2))],
             ctx,
         )
         self.games.append(game)
         await game.play()
 
-    @tic_tac_toe.group(aliases=["AI", "CPU", "computer", "cpu", "Computer"])
-    async def ai(self, ctx: Context, emoji1: t.Union[discord.Emoji, str]) -> None:
+    @tic_tac_toe.group(aliases=["bot", "computer", "cpu"])
+    async def ai(self, ctx: Context, emoji1: EMOJI_CHECK = Emojis.cucumber) -> None:
+        """Play tic-tac-toe against a computer player."""
         if isinstance(emoji1, str) and len(emoji1) > 1:
+            print("raising error")
             raise discord.ext.commands.EmojiNotFound(emoji1)
-        game = Game(
-            [Player(ctx.author, ctx, str(emoji1)), AI(Emojis.watermelon)], ctx
-        )
+        game = Game([Player(ctx.author, ctx, str(emoji1)), AI(Emojis.watermelon)], ctx)
         self.games.append(game)
         await game.play()
 
