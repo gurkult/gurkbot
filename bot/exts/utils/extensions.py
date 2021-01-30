@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.ext.commands.errors import (
     BadArgument,
     ExtensionAlreadyLoaded,
-    ExtensionNotLoaded,
+    ExtensionNotLoaded, UserNotFound,
 )
 
 from loguru import logger
@@ -21,27 +21,16 @@ class Extension(commands.Converter):
     Qualifying the name of the extension and make sure it exists.
 
     If it does then try to get its path.
-    The * value bypass this when used with the reload command.
+    The * value bypass this when used with the reload command. 
     """
 
     async def convert(self, ctx: commands.Context, argument: str) -> str:
         """Make sure the extension exists and get its full path."""
         # special value to reload all extension
-        if argument == "*":
-            logger.info("Recieved all extension to perform action on")
-            return " ".join(e.EXTENSIONS)
-
-        elif "**" in argument:
-            folders = argument.split("**")
-            logger.info(f'Recieved {" ".join(folders)} to perform action on.')
-            matches = []
-            for folder in folders:
-                for extension in [ext for ext in e.EXTENSIONS]:
-                    if folder in extension:
-                        matches.append(extension)
-
-            return " ".join(matches)
-
+        if '*' == argument or '**' in argument:
+            return argument
+                        
+        
         argument = argument.lower()
 
         matches = []
@@ -49,12 +38,13 @@ class Extension(commands.Converter):
             argument != check_extension[len(check_extension) - 1]
             for check_extension in [ext.split(".") for ext in e.EXTENSIONS]
         ):
-            raise BadArgument(f"\n **{argument} is not an extension name.**")
+            raise BadArgument(f"{argument} is not an extension name. \n")
 
         for ext in e.EXTENSIONS:
             check_extension = ext.split(".")
             if argument == check_extension[len(check_extension) - 1]:
                 matches.append("".join(ext))
+        
         return " ".join(matches)
 
 
@@ -75,36 +65,59 @@ class Extensions(commands.Cog):
 
     @extension_group.command(name="load", aliases=["l"])
     async def loading(self, ctx: commands.Context, *extensions: Extension) -> None:
-        """Loads the given extensions."""
+        """Loads the given extensions.
+        If `*` is provided as the extension then loads every single extension.
+        To reload the extension of an entire folder, `**` must be before the folder name.
+        """
         if not extensions:
             await ctx.send_help(ctx.command)
             return
+                        
+        if '*' in extensions:
+            extensions = e.EXTENSIONS
 
         messages = self.manage("load", extensions)
         await ctx.channel.send(messages)
 
     @extension_group.command(name="reload", aliases=["rl"])
     async def reloading(self, ctx: commands.Cog, *extensions: Extension) -> None:
-        """Reloads the given extensions."""
+        """
+        Reloads the given extensions.
+        If `*` is provided as the extension then reloads all the extensions.
+        To reload the extension of an entire folder, `**` must be before the folder name.
+        """
         if not extensions:
             await ctx.send_help(ctx.command)
             return
+        
+        if '*' in extensions:
+            extensions = e.EXTENSIONS
 
         messages = self.manage("reload", extensions)
         await ctx.channel.send(messages)
 
     @extension_group.command(name="unload", aliases=["ul"])
     async def unloading(self, ctx: commands.Cog, *extensions: Extension) -> None:
-        """Unloads the given extensions."""
+        """
+        Unloads the given extensions.
+        If `*` is provided as the extension then unloads every all the extensions.
+        To reload the extension of an entire folder, `**` must be before the folder name.
+        """
         if not extensions:
             await ctx.send_help(ctx.command)
             return
+        
+        if '*' in extensions:
+            extensions = [  ext for ext in e.EXTENSIONS 
+                            if ext not in UNLOAD_BLACKLIST
+                        ]
 
         blacklists = [
             blacklisted_extesnion
             for blacklisted_extesnion in extensions
             if blacklisted_extesnion in UNLOAD_BLACKLIST
         ]
+        
         if blacklists:
             await ctx.channel.send(
                 f":x: `{' ,'.join(blacklists)}` extensions may not be unloaded"
@@ -117,6 +130,7 @@ class Extensions(commands.Cog):
 
         messages = self.manage("unload", extensions)
         await ctx.channel.send(messages)
+    
 
     def manage(
         self,
@@ -135,9 +149,27 @@ class Extensions(commands.Cog):
             "unload": self.bot.unload_extension,
             "reload": self.bot.reload_extension,
         }
+ 
+        folders = [
+            folder[folder.index('*')+2:]
+            for folder in extensions
+            if '**' in folder
+        ]
+        extensions_ = []
 
-        message = ""
+        for folder in folders:
+            for ext in e.EXTENSIONS:
+                ext_folder = ext.split('.')[ext.split('.').index('exts')+1]
+                if folder == ext_folder:
+                    if action == 'unload' and ext in UNLOAD_BLACKLIST:
+                        continue
+                    else:
+                        extensions_.append(ext)
 
+        
+        extensions = [ext for ext in extensions if '**' not in ext] + extensions_
+        
+        message = ""            
         for ext in extensions:
             try:
                 actions[action](ext)
@@ -157,7 +189,7 @@ class Extensions(commands.Cog):
     async def cog_check(self, ctx):
         """Only allow steering councila and lords to use the extensions command"""
         return await commands.has_any_role(
-            789213682332598302, 789197216869777440
+            793864455666532353, 793864455666532354
         ).predicate(ctx)
 
 
