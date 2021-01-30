@@ -1,6 +1,7 @@
+import logging
 import math
 import random
-from typing import Iterable, Union
+from typing import Optional
 
 import discord
 from bot.constants import Channels, Colours, ERROR_REPLIES, NEGATIVE_REPLIES
@@ -26,13 +27,10 @@ class CommandErrorHandler(commands.Cog):
             )
 
     @staticmethod
-    def error_embed(message: str, title: Union[Iterable, str] = ERROR_REPLIES) -> Embed:
+    def error_embed(message: str, title: Optional[str] = None) -> Embed:
         """Build a basic embed with red colour and either a random error title or a title provided."""
-        embed = Embed(colour=Colours.soft_red)
-        if isinstance(title, str):
-            embed.title = title
-        else:
-            embed.title = random.choice(title)
+        title = title or random.choice(ERROR_REPLIES)
+        embed = Embed(colour=Colours.soft_red, title=title)
         embed.description = message
         return embed
 
@@ -52,15 +50,23 @@ class CommandErrorHandler(commands.Cog):
         if isinstance(error, commands.CommandNotFound):
             return  # Skip logging CommandNotFound Error
 
-        if isinstance(error, commands.UserInputError):
-            self.revert_cooldown_counter(ctx.command, ctx.message)
-            embed = self.error_embed(
-                f"Your input was invalid: {error}\n\nUsage:\n"
-                f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```"
-            )
+        elif isinstance(error, commands.UserInputError):
+            if isinstance(error, commands.MissingRequiredArgument):
+                description = (
+                    f"`{error.param.name}` is a required argument that is missing."
+                    "\n\nUsage:\n"
+                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```"
+                )
+            else:
+                description = (
+                    f"Your input was invalid: {error}\n\nUsage:\n"
+                    f"```{ctx.prefix}{ctx.command} {ctx.command.signature}```"
+                )
+
+            embed = self.error_embed(description)
             await ctx.send(embed=embed)
 
-        if isinstance(error, commands.CommandOnCooldown):
+        elif isinstance(error, commands.CommandOnCooldown):
             mins, secs = divmod(math.ceil(error.retry_after), 60)
             embed = self.error_embed(
                 f"This command is on cooldown:\nPlease retry in **{mins} minutes {secs} seconds**.",
@@ -89,6 +95,8 @@ class CommandErrorHandler(commands.Cog):
                 f"{error}\n\nUsage:\n```{ctx.prefix}{ctx.command} {ctx.command.signature}```"
             )
             await ctx.send(embed=embed)
+        elif isinstance(error, commands.MissingAnyRole):
+            logger.info(f"{ctx.command} Invoked with missing roles by {ctx.author}")
         else:
             await self.handle_unexpected_error(ctx, error)
             return  # Exit early to avoid logging.
