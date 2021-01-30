@@ -1,7 +1,6 @@
 import typing as t
 
 import bot.utils.extension as e
-from bot.constants import Emojis
 
 from discord.ext import commands
 from discord.ext.commands.errors import (
