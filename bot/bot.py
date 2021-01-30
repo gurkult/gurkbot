@@ -28,7 +28,7 @@ class Bot(commands.Bot):
     async def on_ready(self) -> None:
         """Ran when the bot has connected to discord and is ready."""
         logger.info("Bot online")
-        # await self.startup_greeting()
+        await self.startup_greeting()
 
     async def startup_greeting(self) -> None:
         """Announce presence to the devlog channel."""
