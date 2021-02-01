@@ -306,10 +306,8 @@ class TicTacToe(Cog):
     ) -> None:
         """Tic Tac Toe game. Play against friends or AI. Use reactions to add your mark to field."""
         if isinstance(emoji1, str) and len(emoji1) > 1:
-            print("raising error")
             raise discord.ext.commands.EmojiNotFound(emoji1)
         if isinstance(emoji2, str) and len(emoji2) > 1:
-            print("raising error")
             raise discord.ext.commands.EmojiNotFound(emoji2)
 
         announcement = await ctx.send(
@@ -356,7 +354,6 @@ class TicTacToe(Cog):
     async def ai(self, ctx: Context, emoji1: EMOJI_CHECK = Emojis.cucumber) -> None:
         """Play tic-tac-toe against a computer player."""
         if isinstance(emoji1, str) and len(emoji1) > 1:
-            print("raising error")
             raise discord.ext.commands.EmojiNotFound(emoji1)
         game = Game([Player(ctx.author, ctx, str(emoji1)), AI(Emojis.watermelon)], ctx)
         self.games.append(game)
