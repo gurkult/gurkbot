@@ -5,13 +5,7 @@ from bot.constants import TOKEN, PREFIX
 
 from discord import AllowedMentions
 
-intents = discord.Intents.all()
-intents.dm_typing = False
-intents.dm_reactions = False
-intents.invites = False
-intents.webhooks = False
-intents.integrations = False
-
+intents = discord.Intents.default()
 
 bot = Bot(
     command_prefix=PREFIX,
