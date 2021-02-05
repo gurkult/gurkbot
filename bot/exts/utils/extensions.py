@@ -1,6 +1,7 @@
 import typing as t
 
 import bot.utils.extension as extension
+from bot.constants import Roles
 
 from discord.ext import commands
 from discord.ext.commands.errors import (
@@ -192,7 +193,7 @@ class Extensions(commands.Cog):
     async def cog_check(self, ctx):
         """Only allow steering councila and lords to use the extensions command"""
         return await commands.has_any_role(
-            793864455666532353, 793864455666532354
+            Roles.steering_council, Roles.lords
         ).predicate(ctx)
 
 
