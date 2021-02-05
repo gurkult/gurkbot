@@ -23,7 +23,7 @@ class Bot(commands.Bot):
 
         for ext in EXTENSIONS:
             self.load_extension(ext)
-            logger.info(f"Successfully loaded extensions: {ext}")
+            logger.info(f"Successfully loaded extension: {ext}")
 
     async def on_ready(self) -> None:
         """Ran when the bot has connected to discord and is ready."""
