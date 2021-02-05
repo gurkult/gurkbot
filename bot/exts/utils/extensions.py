@@ -165,9 +165,7 @@ class Extensions(commands.Cog):
             for ext in extension.EXTENSIONS:
                 ext_folder = ext.split('.')[ext.split('.').index('exts')+1]
                 if folder == ext_folder:
-                    if action == 'unload' and ext in UNLOAD_BLACKLIST:
-                        continue
-                    else:
+                    if action == 'unload' and ext not in UNLOAD_BLACKLIST:
                         extensions_.append(ext)
 
         
