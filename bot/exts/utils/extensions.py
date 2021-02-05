@@ -148,12 +148,12 @@ class Extensions(commands.Cog):
             "unload": self.bot.unload_extension,
             "reload": self.bot.reload_extension,
         }
- 
+
         if action not in actions:
             raise BadArgument(
                 f"{action} could not be found."
             )
- 
+
         folders = [
             folder[folder.index('*')+2:]
             for folder in extensions
@@ -164,14 +164,18 @@ class Extensions(commands.Cog):
         for folder in folders:
             for ext in extension.EXTENSIONS:
                 ext_folder = ext.split('.')[ext.split('.').index('exts')+1]
-                if folder == ext_folder:
-                    if action == 'unload' and ext not in UNLOAD_BLACKLIST:
-                        extensions_.append(ext)
+                if (
+                    folder == ext_folder
+                    and action == 'unload'
+                    and ext not in UNLOAD_BLACKLIST
+                ):
 
-        
+                    extensions_.append(ext)
+
+
         extensions = [ext for ext in extensions if '**' not in ext] + extensions_
-        
-        message = ""            
+
+        message = ""
         for ext in extensions:
             try:
                 actions[action](ext)
