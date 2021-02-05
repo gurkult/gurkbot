@@ -44,6 +44,10 @@ class Channels(NamedTuple):
     dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
 
+class Channels(NamedTuple):
+    supereme_cucmber = int(os.getenv('SUPREME_CUCUMBER'))
+    steering_council = int(os.getenv('STEERING_COUNCIL'))
+    lords = int(os.getenv('LORDS'))
 
 # Bot replies
 with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf8") as file:
