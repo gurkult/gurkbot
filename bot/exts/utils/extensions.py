@@ -121,7 +121,7 @@ class Extensions(commands.Cog):
         
         if blacklists:
             await ctx.channel.send(
-                f":x: `{' ,'.join(blacklists)}` extensions may not be unloaded"
+                f":x: `{' ,'.join(blacklists)}` extensions can not be unloaded"
             )
             logger.info(
                 f"{str(ctx.author)} Tried to unload blacklisted extension"
