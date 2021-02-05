@@ -172,9 +172,7 @@ class Extensions(commands.Cog):
 
                     extensions_.append(ext)
 
-
         extensions = [ext for ext in extensions if '**' not in ext] + extensions_
-
         message = ""
         for ext in extensions:
             try:
