@@ -1,6 +1,6 @@
 import typing as t
 
-import bot.utils.extension as e
+import bot.utils.extension as extension
 
 from discord.ext import commands
 from discord.ext.commands.errors import (
@@ -28,18 +28,20 @@ class Extension(commands.Converter):
         # special value to reload all extension
         if '*' == argument or '**' in argument:
             return argument
-                        
+        
+        if argument in extension.EXTENSIONS:
+            return argument
         
         argument = argument.lower()
 
         matches = []
         if all(
             argument != check_extension[len(check_extension) - 1]
-            for check_extension in [ext.split(".") for ext in e.EXTENSIONS]
+            for check_extension in [ext.split(".") for ext in extension.EXTENSIONS]
         ):
             raise BadArgument(f"{argument} is not an extension name. \n")
 
-        for ext in e.EXTENSIONS:
+        for ext in extension.EXTENSIONS:
             check_extension = ext.split(".")
             if argument == check_extension[len(check_extension) - 1]:
                 matches.append("".join(ext))
@@ -73,7 +75,7 @@ class Extensions(commands.Cog):
             return
                         
         if '*' in extensions:
-            extensions = e.EXTENSIONS
+            extensions = extension.EXTENSIONS
 
         messages = self.manage("load", extensions)
         await ctx.channel.send(messages)
@@ -90,7 +92,7 @@ class Extensions(commands.Cog):
             return
         
         if '*' in extensions:
-            extensions = e.EXTENSIONS
+            extensions = extension.EXTENSIONS
 
         messages = self.manage("reload", extensions)
         await ctx.channel.send(messages)
@@ -107,7 +109,7 @@ class Extensions(commands.Cog):
             return
         
         if '*' in extensions:
-            extensions = [  ext for ext in e.EXTENSIONS 
+            extensions = [  ext for ext in extension.EXTENSIONS 
                             if ext not in UNLOAD_BLACKLIST
                         ]
 
@@ -157,7 +159,7 @@ class Extensions(commands.Cog):
         extensions_ = []
 
         for folder in folders:
-            for ext in e.EXTENSIONS:
+            for ext in extension.EXTENSIONS:
                 ext_folder = ext.split('.')[ext.split('.').index('exts')+1]
                 if folder == ext_folder:
                     if action == 'unload' and ext in UNLOAD_BLACKLIST:

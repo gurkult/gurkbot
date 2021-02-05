@@ -1,11 +1,9 @@
 import discord
-from bot import constants
 from bot.bot import Bot
-from bot.constants import TOKEN
+from bot.constants import TOKEN, PREFIX
 
 
 from discord import AllowedMentions
-
 
 intents = discord.Intents.all()
 intents.dm_typing = False
@@ -16,10 +14,10 @@ intents.integrations = False
 
 
 bot = Bot(
-    command_prefix=constants.PREFIX,
+    command_prefix=PREFIX,
     case_insensitive=False,
     allowed_mentions=AllowedMentions(everyone=False),
-    activity=discord.Game(name=f"Commands: {constants.PREFIX}help"),
+    activity=discord.Game(name=f"Commands: {PREFIX}help"),
     intents=intents,
 )
 
