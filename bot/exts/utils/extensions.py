@@ -7,7 +7,7 @@ from discord.ext import commands
 from discord.ext.commands.errors import (
     BadArgument,
     ExtensionAlreadyLoaded,
-    ExtensionNotLoaded, UserNotFound,
+    ExtensionNotLoaded,
 )
 
 from loguru import logger
