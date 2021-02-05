@@ -169,7 +169,6 @@ class Extensions(commands.Cog):
                     and action == 'unload'
                     and ext not in UNLOAD_BLACKLIST
                 ):
-
                     extensions_.append(ext)
 
         extensions = [ext for ext in extensions if '**' not in ext] + extensions_
