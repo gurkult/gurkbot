@@ -142,14 +142,16 @@ class Extensions(commands.Cog):
         if not extensions:
             raise ValueError("Extension not provided.")
 
-        if all(actions != action for actions in ["load", "unload", "reload"]):
-            raise KeyError("Missing action to perform in the extension.")
-
         actions = {
             "load": self.bot.load_extension,
             "unload": self.bot.unload_extension,
             "reload": self.bot.reload_extension,
         }
+ 
+        if action not in actions:
+            raise BadArgument(
+                f"{action} could not be found."
+            )
  
         folders = [
             folder[folder.index('*')+2:]
@@ -183,7 +185,7 @@ class Extensions(commands.Cog):
                     f"Failed to {action} on {ext}." f"{ext} Already not loaded."
                 )
             else:
-                message += f":ok_hand: Successfully {action}ed `{ext}`. \n"
+                message += f":ok_hand: Successfully {action}ed: `{ext}`. \n"
 
         return message
 
