@@ -16,7 +16,7 @@ def dotted_path() -> t.Generator:
         yield "{}".format(value.replace("/", ".")[:-3])  # removing the py
 
 
-def qualify_extension() -> t.Union[set, bool]:
+def qualify_extension() -> set:
     """Returns only the set of modules that actually have cogs."""
     extensions = set()
     for module in dotted_path():
