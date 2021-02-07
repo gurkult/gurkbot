@@ -14,4 +14,4 @@ def gurkan_rate(name: str) -> float:
     for match in re.finditer("gurkan|urkan|gurk", name.lower()):
         begin, end = match.span()
         gurkanness += end - begin
-    return round((gurkanness / len(name)) * 100, 2)
+    return int((gurkanness / len(name)) * 100)
