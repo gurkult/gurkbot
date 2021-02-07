@@ -38,6 +38,11 @@ class Channels(NamedTuple):
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
 
 
+class Emojis(NamedTuple):
+    cucumber_emoji = "\U0001f952"
+    invalid_emoji = "\u274c"
+
+
 # Bot replies
 with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf8") as file:
     bot_replies = yaml.safe_load(file)

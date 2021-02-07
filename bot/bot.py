@@ -1,7 +1,7 @@
 import os
 
 from aiohttp import ClientSession
-from discord import Embed
+from discord import Embed, Intents
 from discord.ext import commands
 from loguru import logger
 
@@ -12,8 +12,11 @@ class Bot(commands.Bot):
     """The core of the bot."""
 
     def __init__(self) -> None:
+        intents = Intents.default()
+        intents.members = True
+
         self.http_session = ClientSession()
-        super().__init__(command_prefix=constants.PREFIX)
+        super().__init__(command_prefix=constants.PREFIX, intents=intents)
         self.load_extensions()
 
     def load_extensions(self) -> None:
