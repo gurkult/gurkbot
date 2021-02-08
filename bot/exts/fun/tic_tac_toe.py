@@ -4,6 +4,7 @@ import typing as t
 from functools import partial
 
 import discord
+import emojis
 from bot.bot import Bot
 from bot.constants import Emojis
 from discord.ext.commands import Cog, Context, check, group
@@ -294,6 +295,17 @@ class TicTacToe(Cog):
         """Check if someone is already in a game."""
         return any(player in game.players for game in self.games)
 
+    @staticmethod
+    def check_emojis(
+        e1: EMOJI_CHECK, e2: EMOJI_CHECK
+    ) -> t.Tuple[bool, t.Optional[str]]:
+        """Validate the emojis, the user put."""
+        if isinstance(e1, str) and emojis.count(e1) != 1:
+            return False, e1
+        if isinstance(e2, str) and emojis.count(e2) != 1:
+            return False, e2
+        return True, None
+
     @is_requester_channel_free()
     @group(
         name="tictactoe",
@@ -308,10 +320,9 @@ class TicTacToe(Cog):
         emoji2: EMOJI_CHECK = Emojis.watermelon,
     ) -> None:
         """Tic Tac Toe game. Play against friends or AI. Use reactions to add your mark to field."""
-        if isinstance(emoji1, str) and len(emoji1) > 1:
-            raise discord.ext.commands.EmojiNotFound(emoji1)
-        if isinstance(emoji2, str) and len(emoji2) > 1:
-            raise discord.ext.commands.EmojiNotFound(emoji2)
+        check_emoji, emoji = self.check_emojis(emoji1, emoji2)
+        if not check_emoji:
+            raise discord.ext.commands.EmojiNotFound(emoji)
 
         announcement = await ctx.send(
             "**Tic Tac Toe**: A new game is about to start!\n"
@@ -354,11 +365,18 @@ class TicTacToe(Cog):
         await game.play()
 
     @tic_tac_toe.group(aliases=["bot", "computer", "cpu"])
-    async def ai(self, ctx: Context, emoji1: EMOJI_CHECK = Emojis.cucumber) -> None:
+    async def ai(
+        self,
+        ctx: Context,
+        emoji1: EMOJI_CHECK = Emojis.cucumber,
+        emoji2: EMOJI_CHECK = Emojis.watermelon,
+    ) -> None:
         """Play tic-tac-toe against a computer player."""
-        if isinstance(emoji1, str) and len(emoji1) > 1:
-            raise discord.ext.commands.EmojiNotFound(emoji1)
-        game = Game([Player(ctx.author, ctx, str(emoji1)), AI(Emojis.watermelon)], ctx)
+        check_emoji, emoji = self.check_emojis(emoji1, emoji2)
+        if not check_emoji:
+            raise discord.ext.commands.EmojiNotFound(emoji)
+
+        game = Game([Player(ctx.author, ctx, str(emoji1)), AI(str(emoji2))], ctx)
         self.games.append(game)
         await game.play()
 
