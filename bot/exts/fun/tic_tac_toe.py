@@ -227,7 +227,10 @@ def is_requester_channel_free() -> t.Callable:
         )
 
         requester_free = all(
-            ctx.author not in (player.user for player in game.players if player != "AI")
+            ctx.author
+            not in (
+                player.user for player in game.players if isinstance(player, Player)
+            )
             for game in ctx.cog.games
             if not game.over
         )
