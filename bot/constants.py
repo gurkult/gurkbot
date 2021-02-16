@@ -20,6 +20,8 @@ class Emojis(NamedTuple):
     pull_request_emoji = "<:PROpen:794834041416187935>"
     pull_request_closed_emoji = "<:PRClosed:794834041073172501>"
     merge_emoji = "<:PRMerged:794834041173704744>"
+    cucumber_emoji = "\U0001f952"
+    invalid_emoji = "\u274c"
 
 
 class Colours:
@@ -36,11 +38,6 @@ class Channels(NamedTuple):
     dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789241204696416287))
     dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
-
-
-class Emojis(NamedTuple):
-    cucumber_emoji = "\U0001f952"
-    invalid_emoji = "\u274c"
 
 
 # Bot replies
