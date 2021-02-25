@@ -1,16 +1,16 @@
 from discord.ext import commands
 
 
-class Command(commands.Command):
+class Group(commands.Group):
     """
-    A `discord.ext.commands.Command` subclass which supports root aliases.
+    A `discord.ext.commands.Group` subclass which supports root aliases.
 
     A `root_aliases` keyword argument is added, which is a sequence of alias names that will act as
-    top-level commands rather than being aliases of the command's group.
+    top-level groups rather than being aliases of the group's group
 
     Example:
-        `!gh issue 72` can also be called as `!issue 72`.
-        `!gh src eval` can also be called as `!src eval`.
+        `!cmd gh issue 72` can also be called as `!gh issue 72`.
+        `!cmd src eval` can also be called as `!gh src eval`.
     """
 
     def __init__(self, *args, **kwargs):

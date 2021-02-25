@@ -6,6 +6,7 @@ from functools import partial, partialmethod
 
 import loguru
 from bot.command import Command
+from bot.group import Group
 from discord.ext import commands
 from loguru import logger
 
@@ -33,3 +34,6 @@ logger.info("Logging Process Started")
 # Must be patched before any cogs are added.
 commands.command = partial(commands.command, cls=Command)
 commands.GroupMixin.command = partialmethod(commands.GroupMixin.command, cls=Command)
+
+commands.group = partial(commands.group, cls=Group)
+commands.GroupMixin.group = partialmethod(commands.GroupMixin.group, cls=Group)
