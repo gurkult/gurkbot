@@ -30,7 +30,7 @@ class Issues:
     @staticmethod
     def get_repo(channel: discord.TextChannel) -> Optional[str]:
         """Get repository for the particular channel."""
-        return REPO_CHANNEL_MAP.get(channel.id)
+        return REPO_CHANNEL_MAP.get(channel.id, "gurkbot")
 
     @staticmethod
     def error_embed(error_msg: str) -> Embed:
