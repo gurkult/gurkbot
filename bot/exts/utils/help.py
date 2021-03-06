@@ -135,9 +135,7 @@ class Help(HelpCommand):
         await menu.start(self.context, wait=True)
 
     async def send_command_help(self, command: commands.Command):
-        embed = discord.Embed(
-            title=self.get_command_signature(command), colour=green
-        )
+        embed = discord.Embed(title=self.get_command_signature(command), colour=green)
         embed.add_field(
             name="Help",
             value=command.help or "No description for this command.",
