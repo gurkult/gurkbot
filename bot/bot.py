@@ -6,6 +6,7 @@ from discord.ext import commands
 from loguru import logger
 
 from . import constants
+from ext.utils import Help
 
 
 class Bot(commands.Bot):
@@ -16,7 +17,7 @@ class Bot(commands.Bot):
         intents.members = True
 
         self.http_session = ClientSession()
-        super().__init__(command_prefix=constants.PREFIX, intents=intents)
+        super().__init__(command_prefix=constants.PREFIX, intents=intents, help_command=Help())
         self.load_extensions()
 
     def load_extensions(self) -> None:
