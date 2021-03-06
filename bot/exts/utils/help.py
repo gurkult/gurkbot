@@ -4,8 +4,6 @@ from discord.ext.commands import HelpCommand
 
 import typing as t
 
-from internal.context import Context
-
 green = discord.from_rgb(50, 168, 82)
 
 
@@ -23,7 +21,7 @@ class HelpMenu(menus.Menu):
         return len(self.pages) > 1
 
     async def send_initial_message(
-        self, ctx: Context, channel: discord.abc.Messageable
+        self, ctx: commands.Context, channel: discord.abc.Messageable
     ):
         """Sends the initial message for the menu session."""
         return await ctx.reply(embed=self.pages[0])
