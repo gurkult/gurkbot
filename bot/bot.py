@@ -17,7 +17,9 @@ class Bot(commands.Bot):
         intents.members = True
 
         self.http_session = ClientSession()
-        super().__init__(command_prefix=constants.PREFIX, intents=intents, help_command=Help())
+        super().__init__(
+            command_prefix=constants.PREFIX, intents=intents, help_command=Help()
+        )
         self.load_extensions()
 
     def load_extensions(self) -> None:
