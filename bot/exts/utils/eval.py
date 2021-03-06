@@ -1,6 +1,5 @@
 import datetime
 import json
-import re
 from pathlib import Path
 from typing import Optional
 
@@ -111,7 +110,7 @@ class Eval(Cog):
                 # Code in message
                 text = code.strip("`")
                 first_line = text.splitlines()[0]
-                if re.fullmatch(r"( |[0-9A-z]*)\b", first_line):
+                if not language.startswith("```"):
                     text = text[len(first_line) + 1 :]
 
             if text is None:
