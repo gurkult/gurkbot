@@ -8,7 +8,7 @@ from discord.utils import get
 
 
 class MakeGurkan(commands.Cog):
-    """Make Gurkan Cog adds or removes the gurkan role depending on if the user has gurkan in their name."""
+    """Makes sure that only members with gurkan names have the gurkan role."""
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
