@@ -1,9 +1,11 @@
-from PIL import Image, ImageSequence, ImageDraw
-import discord
-from discord.ext import commands
-import json
 import asyncio
 import concurrent.futures
+import json
+
+import discord
+from PIL import Image, ImageDraw, ImageSequence
+from discord.ext import commands
+
 
 LARGE_DIAMETER = 80
 SMALL_DIAMETER = 75
@@ -29,11 +31,13 @@ white_bg = Image.new("RGBA", BONK_GIF.size, "WHITE")
 
 
 class Bonk(commands.Cog):
-    def __init__(self, bot):
+    """Cog for sending bonking gifs."""
+
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @staticmethod
-    def generate_gif():
+    def _generate_gif() -> None:
         pfp = Image.open("pfp.png")
         pfps = [pfp.resize((LARGE_DIAMETER,) * 2), pfp.resize((SMALL_DIAMETER,) * 2)]
         out_images = []
@@ -77,10 +81,11 @@ class Bonk(commands.Cog):
         )
 
     @commands.command()
-    async def bonk(self, ctx, member: discord.Member):
+    async def bonk(self, ctx: commands.Context, member: discord.Member) -> None:
+        """Command to send gif of mentioned member being bonked."""
         await member.avatar_url_as(format="png").save("pfp.png")
         with concurrent.futures.ProcessPoolExecutor() as pool:
-            await asyncio.get_running_loop().run_in_executor(pool, self.generate_gif)
+            await asyncio.get_running_loop().run_in_executor(pool, self._generate_gif)
         await ctx.send(file=discord.File("out.gif"))
 
 
