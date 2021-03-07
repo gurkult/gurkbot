@@ -38,7 +38,7 @@ class MakeGurkan(commands.Cog):
         if member.bot:
             return
         role = get(member.guild.roles, id=Roles.gurkans)
-        if re.search(r"gurk|urkan", str(member.name)):
+        if re.search(r"gurk|urkan", str(member.display_name)):
             await member.add_roles(role)
 
 
