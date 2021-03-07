@@ -18,8 +18,8 @@ SMALL_MASK = Image.new("L", (SMALL_DIAMETER,) * 2)
 draw = ImageDraw.Draw(SMALL_MASK)
 draw.ellipse((0, 0, SMALL_DIAMETER, SMALL_DIAMETER), fill=255)
 
-BONK_GIF = Image.open("bot/exts/fun/yodabonk.gif")
-with open("bot/exts/fun/yodabonk.json") as f:
+BONK_GIF = Image.open("bot/resources/images/yodabonk.gif")
+with open("bot/resources/yodabonk.json") as f:
     GIF_DETAILS = json.load(f)
 
 PFP_ENTRY_FRAME = GIF_DETAILS["PFP_ENTRY_FRAME"]
