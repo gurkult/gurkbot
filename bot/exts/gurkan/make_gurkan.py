@@ -34,7 +34,7 @@ class MakeGurkan(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:
-        """When the member joins, this function will check if member is classified to be a gurkan or not."""
+        """Adds the gurkan role to new members who are classified as gurkans."""
         if member.bot:
             return
         role = get(member.guild.roles, id=Roles.gurkans)
