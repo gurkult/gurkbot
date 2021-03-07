@@ -7,8 +7,8 @@ from PIL import Image, ImageDraw, ImageSequence
 from discord.ext import commands
 
 
-LARGE_DIAMETER = 80
-SMALL_DIAMETER = 75
+LARGE_DIAMETER = 110
+SMALL_DIAMETER = 80
 
 LARGE_MASK = Image.new("L", (LARGE_DIAMETER,) * 2)
 draw = ImageDraw.Draw(LARGE_MASK)
@@ -55,7 +55,7 @@ class Bonk(commands.Cog):
                         pfps[1],
                         (
                             PFP_CENTRE[0] - SMALL_DIAMETER // 2,
-                            PFP_CENTRE[1] - SMALL_DIAMETER // 2,
+                            PFP_CENTRE[1] - SMALL_DIAMETER // 2 + 10,
                         ),
                         SMALL_MASK,
                     )
