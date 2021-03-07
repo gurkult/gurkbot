@@ -1,31 +1,89 @@
-from PIL import Image, ImageSequence
+from PIL import Image, ImageSequence, ImageDraw
+import discord
+from discord.ext import commands
+import json
+import asyncio
+import concurrent.futures
 
-LARGE = (55, 55)
-SMALL = (48, 48)
+LARGE_DIAMETER = 80
+SMALL_DIAMETER = 75
 
-pfp = Image.open("pfp3.png")
-pfps = [pfp.resize(LARGE), pfp.resize(SMALL)]
+LARGE_MASK = Image.new("L", (LARGE_DIAMETER,) * 2)
+draw = ImageDraw.Draw(LARGE_MASK)
+draw.ellipse((0, 0, LARGE_DIAMETER, LARGE_DIAMETER), fill=255)
 
-bonk_gif = Image.open("tenor.gif")
-gif_dimensions = bonk_gif.size
+SMALL_MASK = Image.new("L", (SMALL_DIAMETER,) * 2)
+draw = ImageDraw.Draw(SMALL_MASK)
+draw.ellipse((0, 0, SMALL_DIAMETER, SMALL_DIAMETER), fill=255)
 
-white_bg = Image.new("RGBA", bonk_gif.size, "WHITE")
-out_images = []
+BONK_GIF = Image.open("bot/exts/fun/yodabonk.gif")
+with open("bot/exts/fun/yodabonk.json") as f:
+    GIF_DETAILS = json.load(f)
 
-for i, frame in enumerate(ImageSequence.Iterator(bonk_gif)):
-    frame = frame.convert("RGBA")
+PFP_ENTRY_FRAME = GIF_DETAILS["PFP_ENTRY_FRAME"]
+BONK_FRAME = GIF_DETAILS["BONK_FRAME"]
+PFP_EXIT_FRAME = GIF_DETAILS["PFP_EXIT_FRAME"]
+PFP_CENTRE = GIF_DETAILS["PFP_CENTRE"]
 
-    bg = white_bg.copy()
-    bg.paste(frame, (0, 0), frame)
+white_bg = Image.new("RGBA", BONK_GIF.size, "WHITE")
 
-    frame = bg.convert("RGBA")
 
-    if i == bonk_gif.n_frames - 1:
-        frame.paste(pfps[1], (0, gif_dimensions[1] - SMALL[1]))
-    else:
-        frame.paste(pfps[0], (0, gif_dimensions[1] - LARGE[1]))
-    out_images.append(frame)
+class Bonk(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
-out_images[0].save(
-    "out.gif", "GIF", save_all=True, append_images=out_images[1:], loop=0
-)
+    @staticmethod
+    def generate_gif():
+        pfp = Image.open("pfp.png")
+        pfps = [pfp.resize((LARGE_DIAMETER,) * 2), pfp.resize((SMALL_DIAMETER,) * 2)]
+        out_images = []
+        for i, frame in enumerate(ImageSequence.Iterator(BONK_GIF)):
+            frame = frame.convert("RGBA")
+
+            bg = white_bg.copy()
+            bg.paste(frame, (0, 0), frame)
+
+            frame = bg.convert("RGBA")
+
+            if PFP_ENTRY_FRAME <= i <= PFP_EXIT_FRAME:
+                if i == BONK_FRAME:
+                    frame.paste(
+                        pfps[1],
+                        (
+                            PFP_CENTRE[0] - SMALL_DIAMETER // 2,
+                            PFP_CENTRE[1] - SMALL_DIAMETER // 2,
+                        ),
+                        SMALL_MASK,
+                    )
+                else:
+                    frame.paste(
+                        pfps[0],
+                        (
+                            PFP_CENTRE[0] - LARGE_DIAMETER // 2,
+                            PFP_CENTRE[1] - LARGE_DIAMETER // 2,
+                        ),
+                        LARGE_MASK,
+                    )
+
+            out_images.append(frame)
+
+        out_images[0].save(
+            "out.gif",
+            "GIF",
+            save_all=True,
+            append_images=out_images[1:],
+            loop=0,
+            duration=50,
+        )
+
+    @commands.command()
+    async def bonk(self, ctx, member: discord.Member):
+        await member.avatar_url_as(format="png").save("pfp.png")
+        with concurrent.futures.ProcessPoolExecutor() as pool:
+            await asyncio.get_running_loop().run_in_executor(pool, self.generate_gif)
+        await ctx.send(file=discord.File("out.gif"))
+
+
+def setup(bot: commands.Bot) -> None:
+    """Load the Bonk cog."""
+    bot.add_cog(Bonk(bot))
