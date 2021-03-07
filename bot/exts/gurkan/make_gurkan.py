@@ -18,7 +18,7 @@ class MakeGurkan(commands.Cog):
         self, before: discord.Member, after: discord.Member
     ) -> None:
         """
-        Adds/Removes the role on member update.
+        Adds/Removes the gurkan role on member update.
 
         When the member updates their nickname or username, this function will check if member is
         classified to be a gurkan or not.
