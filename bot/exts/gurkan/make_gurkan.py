@@ -27,7 +27,7 @@ class MakeGurkan(commands.Cog):
             return
         if before.display_name != after.display_name:
             role = get(after.guild.roles, id=Roles.gurkans)
-            if re.search(r"g?urk?a?n?", str(after.display_name)):
+            if re.search(r"gurk|urkan", str(after.display_name)):
                 await after.add_roles(role)
             else:
                 await after.remove_roles(role)
@@ -38,7 +38,7 @@ class MakeGurkan(commands.Cog):
         if member.bot:
             return
         role = get(member.guild.roles, id=Roles.gurkans)
-        if re.search(r"g?urk?a?n?", str(member.name)):
+        if re.search(r"gurk|urkan", str(member.name)):
             await member.add_roles(role)
 
 
