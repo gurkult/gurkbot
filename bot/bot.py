@@ -14,7 +14,7 @@ class Bot(commands.Bot):
     def __init__(self) -> None:
         intents = Intents.default()
         intents.members = True
-        intents.presence = True
+        intents.presences = True
 
         self.http_session = ClientSession()
         super().__init__(command_prefix=constants.PREFIX, intents=intents)
