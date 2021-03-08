@@ -40,6 +40,10 @@ class Channels(NamedTuple):
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
 
 
+class Roles(NamedTuple):
+    gurkans = int(os.getenv("ROLE_GURKANS", 793864455527202851))
+
+
 # Bot replies
 with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf8") as file:
     bot_replies = yaml.safe_load(file)
