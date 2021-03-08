@@ -1,11 +1,12 @@
 import discord
 from discord.ext import commands
-from discord.ext.commands import HelpCommand
+from discord.ext.commands import Cog, HelpCommand
 
+from bot.bot import Bot
 from bot.utils.pagination import HelpMenu
 
 
-class Help(HelpCommand):
+class CustomHelpCommand(HelpCommand):
     """Shows help for a command, group, or cog."""
 
     def get_command_signature(self, command: commands.Command):
@@ -92,3 +93,22 @@ class Help(HelpCommand):
             title="Error", description=error, colour=discord.Colour.red()
         )
         await self.context.send(embed=embed)
+
+
+class Help(Cog):
+    """Cog for the custom help command."""
+    
+    def __init__(self, bot: Bot) -> None:
+        self.bot = bot
+        bot.old_help_command = bot.help_command
+        bot.help_command = CustomHelpCommand()
+        bot.help_command.cog = self
+
+    def cog_unload(self) -> None:
+        """Reset the help command when the cog is unloaded."""
+        self.bot.help_command = self.old_help_command
+
+
+def setup(bot: Bot) -> None:
+    """Load the Help cog."""
+    bot.add_cog(Help(bot))
