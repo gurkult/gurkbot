@@ -70,6 +70,7 @@ class Help(HelpCommand):
             await self.context.send(embed=embed)
 
     async def send_group_help(self, group: commands.Group):
+        """Sends help for a specific group of commands."""
         embed = discord.Embed(
             title=f"Help for {group.name}.",
             description=group.help or "No help for this command.",
@@ -88,6 +89,7 @@ class Help(HelpCommand):
         await self.context.send(embed=embed)
 
     async def send_error_message(self, error):
+        """Sends an error message each time one occurs."""
         embed = discord.Embed(
             title="Error", description=error, colour=discord.Colour.red()
         )
