@@ -27,9 +27,11 @@ class MakeGurkan(commands.Cog):
         if before.display_name != after.display_name:
             role = get(after.guild.roles, id=Roles.gurkans)
             if gurkan_check(after.display_name):
-                await after.add_roles(role)
+                if role not in after.roles:
+                    await after.add_roles(role)
             else:
-                await after.remove_roles(role)
+                if role in after.roles:
+                    await after.remove_roles(role)
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member) -> None:

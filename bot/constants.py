@@ -41,7 +41,7 @@ class Channels(NamedTuple):
 
 
 class Roles(NamedTuple):
-    gurkans = int(os.getenv("ROLE_GURKANS", 789195552121290823))
+    gurkans = int(os.getenv("ROLE_GURKANS", 793864455527202851))
 
 
 # Bot replies
