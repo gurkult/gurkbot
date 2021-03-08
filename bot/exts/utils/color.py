@@ -19,11 +19,13 @@ class Color(Cog):
             if len(color_code) == 6 and all(i in hexdigits for i in color_code)
             else color_code
         )
+        if "rgb" in color_code or "rgba" in color_code:
+            return color_code
         color_code = color_code.replace(",", " ")
 
         if len(ls := color_code.split()) == 3:
             color_code = "rgb(" + ", ".join(ls) + ")"
-        elif len(ls := color_code.split()) == 4:
+        elif len(ls) == 4:
             color_code = "rgba(" + ", ".join(ls) + ")"
 
         return color_code
