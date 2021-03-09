@@ -5,9 +5,10 @@ import io
 import json
 
 import discord
-from PIL import Image, ImageDraw, ImageSequence
+from PIL import Image, ImageDraw, ImageFile, ImageSequence
 from discord.ext import commands
 
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 LARGE_DIAMETER = 110
 SMALL_DIAMETER = 80
