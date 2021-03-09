@@ -2,7 +2,6 @@ import asyncio
 import concurrent.futures
 import functools
 import io
-import json
 
 import discord
 from PIL import Image, ImageDraw, ImageFile, ImageSequence
@@ -23,13 +22,11 @@ draw = ImageDraw.Draw(SMALL_MASK)
 draw.ellipse((0, 0, SMALL_DIAMETER, SMALL_DIAMETER), fill=255)
 
 BONK_GIF = Image.open("bot/resources/images/yodabonk.gif")
-with open("bot/resources/yodabonk.json") as f:
-    GIF_DETAILS = json.load(f)
 
-PFP_ENTRY_FRAME = GIF_DETAILS["PFP_ENTRY_FRAME"]
-BONK_FRAME = GIF_DETAILS["BONK_FRAME"]
-PFP_EXIT_FRAME = GIF_DETAILS["PFP_EXIT_FRAME"]
-PFP_CENTRE = GIF_DETAILS["PFP_CENTRE"]
+PFP_ENTRY_FRAME = 31
+BONK_FRAME = 43
+PFP_EXIT_FRAME = 56
+PFP_CENTRE = (355, 73)
 
 
 class Bonk(commands.Cog):
@@ -88,8 +85,11 @@ class Bonk(commands.Cog):
         """Command to send gif of mentioned member being bonked."""
         pfp = await member.avatar_url.read()
         func = functools.partial(self._generate_gif, pfp)
-        with concurrent.futures.ProcessPoolExecutor() as pool:
-            await asyncio.get_running_loop().run_in_executor(pool, func)
+
+        async with ctx.typing():
+            with concurrent.futures.ProcessPoolExecutor() as pool:
+                await asyncio.get_running_loop().run_in_executor(pool, func)
+
         await ctx.send(file=discord.File("out.gif"))
 
 
