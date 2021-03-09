@@ -98,7 +98,7 @@ Notably, version control of our projects is done using Git and Github. It can be
 Click [here](https://rogerdudler.github.io/git-guide/) to see the basic Git workflow when contributing to one of our projects
 
 
-# Rules
+# Specifications
 
 1. You must be a member of [our Discord community](https://discord.gg/W9DSfryp8Y) in order to contribute to this project.
 
