@@ -90,7 +90,7 @@ class Bonk(commands.Cog):
             with concurrent.futures.ProcessPoolExecutor() as pool:
                 await asyncio.get_running_loop().run_in_executor(pool, func)
 
-        embed = discord.Embed(title=f'get bonkt {member.display_name}')
+        embed = discord.Embed(title=f"get bonkt {member.display_name}")
         embed.set_image(url="attachment://out.gif")
         await ctx.send(file=discord.File("out.gif"), embed=embed)
 
