@@ -2,6 +2,7 @@ import asyncio
 import concurrent.futures
 import functools
 import io
+import os
 
 import discord
 from PIL import Image, ImageDraw, ImageFile, ImageSequence
@@ -36,7 +37,7 @@ class Bonk(commands.Cog):
         self.bot = bot
 
     @staticmethod
-    def _generate_gif(pfp: bytes) -> None:
+    def _generate_gif(pfp: bytes, out_filename: str) -> None:
         pfp = Image.open(io.BytesIO(pfp))
         pfps = [pfp.resize((LARGE_DIAMETER,) * 2), pfp.resize((SMALL_DIAMETER,) * 2)]
 
@@ -72,7 +73,7 @@ class Bonk(commands.Cog):
             out_images.append(canvas)
 
         out_images[0].save(
-            "out.gif",
+            out_filename,
             "GIF",
             save_all=True,
             append_images=out_images[1:],
@@ -81,18 +82,24 @@ class Bonk(commands.Cog):
         )
 
     @commands.command()
+    @commands.cooldown(1, 10)
     async def bonk(self, ctx: commands.Context, member: discord.Member) -> None:
         """Command to send gif of mentioned member being bonked."""
         pfp = await member.avatar_url.read()
-        func = functools.partial(self._generate_gif, pfp)
+        created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M-%S")
+
+        out_filename = f"bonk_{member.display_name}_{created_at}.gif"
+
+        func = functools.partial(self._generate_gif, pfp, out_filename)
 
         async with ctx.typing():
             with concurrent.futures.ProcessPoolExecutor() as pool:
                 await asyncio.get_running_loop().run_in_executor(pool, func)
 
-        embed = discord.Embed(title=f"get bonkt {member.display_name}")
-        embed.set_image(url="attachment://out.gif")
-        await ctx.send(file=discord.File("out.gif"), embed=embed)
+        embed = discord.Embed(title=f"Get bonkt {member.display_name}!")
+        embed.set_image(url=f"attachment://{out_filename}")
+        await ctx.send(file=discord.File(out_filename), embed=embed)
+        os.remove(out_filename)
 
 
 def setup(bot: commands.Bot) -> None:
