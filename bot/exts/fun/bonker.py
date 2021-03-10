@@ -1,8 +1,7 @@
 import asyncio
 import concurrent.futures
 import functools
-import io
-import os
+from io import BytesIO
 
 import discord
 from PIL import Image, ImageDraw, ImageFile, ImageSequence
@@ -37,8 +36,8 @@ class Bonk(commands.Cog):
         self.bot = bot
 
     @staticmethod
-    def _generate_gif(pfp: bytes, out_filename: str) -> None:
-        pfp = Image.open(io.BytesIO(pfp))
+    def _generate_gif(pfp: bytes) -> BytesIO:
+        pfp = Image.open(BytesIO(pfp))
         pfps = [pfp.resize((LARGE_DIAMETER,) * 2), pfp.resize((SMALL_DIAMETER,) * 2)]
 
         out_images = []
@@ -72,34 +71,37 @@ class Bonk(commands.Cog):
 
             out_images.append(canvas)
 
+        out_gif = BytesIO()
         out_images[0].save(
-            out_filename,
+            out_gif,
             "GIF",
             save_all=True,
             append_images=out_images[1:],
             loop=0,
             duration=50,
         )
+        return out_gif
 
     @commands.command()
-    @commands.cooldown(1, 10)
+    @commands.max_concurrency(3)
     async def bonk(self, ctx: commands.Context, member: discord.Member) -> None:
         """Sends gif of mentioned member being bonked [whacked by Yoda]."""
         pfp = await member.avatar_url.read()
-        created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M-%S")
+        created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M-%S-%f")
 
         out_filename = f"bonk_{member.display_name}_{created_at}.gif"
 
-        func = functools.partial(self._generate_gif, pfp, out_filename)
+        func = functools.partial(self._generate_gif, pfp)
 
         async with ctx.typing():
             with concurrent.futures.ProcessPoolExecutor() as pool:
-                await asyncio.get_running_loop().run_in_executor(pool, func)
+                out_gif = await asyncio.get_running_loop().run_in_executor(pool, func)
 
         embed = discord.Embed(title=f"Get bonkt {member.display_name}!")
         embed.set_image(url=f"attachment://{out_filename}")
-        await ctx.send(file=discord.File(out_filename), embed=embed)
-        os.remove(out_filename)
+
+        out_gif.seek(0)
+        await ctx.send(file=discord.File(out_gif, out_filename), embed=embed)
 
 
 def setup(bot: commands.Bot) -> None:
