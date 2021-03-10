@@ -2,6 +2,7 @@ import asyncio
 import functools
 from concurrent import futures
 from io import BytesIO
+from typing import Dict
 
 import discord
 from PIL import Image, ImageDraw, ImageFile, ImageSequence
@@ -36,39 +37,47 @@ class Bonk(commands.Cog):
         self.bot = bot
 
     @staticmethod
-    def _generate_gif(pfp: bytes) -> BytesIO:
+    def _generate_frame(
+        i: int, frame: Image.Image, pfps_by_size: Dict[str, int]
+    ) -> Image.Image:
+        canvas = Image.new("RGBA", BONK_GIF.size)
+        canvas.paste(frame.convert("RGBA"), (0, 0))
+
+        if PFP_ENTRY_FRAME <= i <= PFP_EXIT_FRAME:
+            if i == BONK_FRAME:
+                canvas.paste(
+                    pfps_by_size["small"],
+                    (
+                        PFP_CENTRE[0] - SMALL_DIAMETER // 2,
+                        PFP_CENTRE[1]
+                        - SMALL_DIAMETER // 2
+                        + 10,  # Shift avatar down by 10 px in the bonk frame
+                    ),
+                    SMALL_MASK,
+                )
+            else:
+                canvas.paste(
+                    pfps_by_size["large"],
+                    (
+                        PFP_CENTRE[0] - LARGE_DIAMETER // 2,
+                        PFP_CENTRE[1] - LARGE_DIAMETER // 2,
+                    ),
+                    LARGE_MASK,
+                )
+
+        return canvas
+
+    def _generate_gif(self, pfp: bytes) -> BytesIO:
         pfp = Image.open(BytesIO(pfp))
-        pfps = [pfp.resize((LARGE_DIAMETER,) * 2), pfp.resize((SMALL_DIAMETER,) * 2)]
+        pfps_by_size = {
+            "large": pfp.resize((LARGE_DIAMETER,) * 2),
+            "small": pfp.resize((SMALL_DIAMETER,) * 2),
+        }
 
         out_images = []
 
         for i, frame in enumerate(ImageSequence.Iterator(BONK_GIF)):
-            canvas = Image.new("RGBA", BONK_GIF.size)
-            canvas.paste(frame.convert("RGBA"), (0, 0))
-
-            if PFP_ENTRY_FRAME <= i <= PFP_EXIT_FRAME:
-                if i == BONK_FRAME:
-                    canvas.paste(
-                        pfps[1],
-                        (
-                            PFP_CENTRE[0] - SMALL_DIAMETER // 2,
-                            PFP_CENTRE[1]
-                            - SMALL_DIAMETER // 2
-                            + 10,  # Shift avatar down by 10 px in the bonk frame
-                        ),
-                        SMALL_MASK,
-                    )
-                else:
-                    canvas.paste(
-                        pfps[0],
-                        (
-                            PFP_CENTRE[0] - LARGE_DIAMETER // 2,
-                            PFP_CENTRE[1] - LARGE_DIAMETER // 2,
-                        ),
-                        LARGE_MASK,
-                    )
-
-            out_images.append(canvas)
+            out_images.append(self._generate_frame(i, frame, pfps_by_size))
 
         out_gif = BytesIO()
         out_images[0].save(
@@ -84,17 +93,17 @@ class Bonk(commands.Cog):
     @commands.command()
     @commands.max_concurrency(3)
     async def bonk(self, ctx: commands.Context, member: discord.Member) -> None:
-        """Sends gif of mentioned member being bonked [whacked by Yoda]."""
+        """Sends gif of mentioned member being "bonked" by Yoda."""
         pfp = await member.avatar_url.read()
-        created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M-%S-%f")
+        created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M").replace(" ", "")
         out_filename = f"bonk_{member.display_name}_{created_at}.gif"
         func = functools.partial(self._generate_gif, pfp)
 
         async with ctx.typing():
-            with futures.ProcessPoolExecutor() as pool:
+            with futures.ThreadPoolExecutor() as pool:
                 out_gif = await asyncio.get_running_loop().run_in_executor(pool, func)
 
-        embed = discord.Embed(title=f"Get bonkt {member.display_name}!")
+        embed = discord.Embed()
         embed.set_image(url=f"attachment://{out_filename}")
 
         out_gif.seek(0)
