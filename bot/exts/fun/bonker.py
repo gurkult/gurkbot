@@ -1,6 +1,6 @@
 import asyncio
-import concurrent.futures
 import functools
+from concurrent import futures
 from io import BytesIO
 
 import discord
@@ -43,7 +43,6 @@ class Bonk(commands.Cog):
         out_images = []
 
         for i, frame in enumerate(ImageSequence.Iterator(BONK_GIF)):
-
             canvas = Image.new("RGBA", BONK_GIF.size)
             canvas.paste(frame.convert("RGBA"), (0, 0))
 
@@ -88,13 +87,11 @@ class Bonk(commands.Cog):
         """Sends gif of mentioned member being bonked [whacked by Yoda]."""
         pfp = await member.avatar_url.read()
         created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M-%S-%f")
-
         out_filename = f"bonk_{member.display_name}_{created_at}.gif"
-
         func = functools.partial(self._generate_gif, pfp)
 
         async with ctx.typing():
-            with concurrent.futures.ProcessPoolExecutor() as pool:
+            with futures.ProcessPoolExecutor() as pool:
                 out_gif = await asyncio.get_running_loop().run_in_executor(pool, func)
 
         embed = discord.Embed(title=f"Get bonkt {member.display_name}!")
