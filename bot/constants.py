@@ -23,6 +23,8 @@ class Emojis(NamedTuple):
     cucumber_emoji = "\U0001f952"
     invalid_emoji = "\u274c"
 
+    wolfram_emoji = "<:wolfram:818541752351719477>"
+
 
 class Colours:
     green = 0x1F8B4C
@@ -38,6 +40,10 @@ class Channels(NamedTuple):
     dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789241204696416287))
     dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
+
+
+class Tokens(NamedTuple):
+    wolfram_id = os.getenv("WOLFRAM_TOKEN") or None
 
 
 # Bot replies
