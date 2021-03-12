@@ -95,8 +95,8 @@ class Bonk(commands.Cog):
     async def bonk(self, ctx: commands.Context, member: discord.Member) -> None:
         """Sends gif of mentioned member being "bonked" by Yoda."""
         pfp = await member.avatar_url.read()
-        created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M").replace(" ", "")
-        out_filename = f"bonk_{member.display_name}_{created_at}.gif"
+        created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M")
+        out_filename = f"bonk_{member.display_name}_{created_at}.gif".replace(" ", "")
         func = functools.partial(self._generate_gif, pfp)
 
         async with ctx.typing():
