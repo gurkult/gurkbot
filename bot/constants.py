@@ -14,6 +14,16 @@ EXTENSIONS = pathlib.Path("bot/exts/")
 LOG_FILE = pathlib.Path("log/gurkbot.log")
 
 
+class Roles(NamedTuple):
+    announcements = int(os.getenv("ANNOUNCEMENTS_ID", "789978290844598272"))
+    polls = int(os.getenv("POLLS_ID", "790043110360350740"))
+
+
+class Emojis(NamedTuple):
+    confirmation_emoji = "<:confirmation:794231332770938901>"
+    warning_emoji = "\u26a0"
+
+
 class Colours:
     green = 0x1F8B4C
     yellow = 0xF1C502
