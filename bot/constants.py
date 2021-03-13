@@ -8,6 +8,7 @@ import yaml
 PREFIX = os.getenv("PREFIX") or "!"
 TOKEN = os.getenv("TOKEN")
 BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # paths
 EXTENSIONS = pathlib.Path("bot/exts/")
