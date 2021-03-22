@@ -7,6 +7,7 @@ from typing import Dict
 import discord
 from PIL import Image, ImageDraw, ImageFile, ImageSequence
 from discord.ext import commands
+from loguru import logger
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -38,13 +39,13 @@ class Bonk(commands.Cog):
 
     @staticmethod
     def _generate_frame(
-        i: int, frame: Image.Image, pfps_by_size: Dict[str, int]
+        frame_number: int, frame: Image.Image, pfps_by_size: Dict[str, int]
     ) -> Image.Image:
         canvas = Image.new("RGBA", BONK_GIF.size)
         canvas.paste(frame.convert("RGBA"), (0, 0))
 
-        if PFP_ENTRY_FRAME <= i <= PFP_EXIT_FRAME:
-            if i == BONK_FRAME:
+        if PFP_ENTRY_FRAME <= frame_number <= PFP_EXIT_FRAME:
+            if frame_number == BONK_FRAME:
                 canvas.paste(
                     pfps_by_size["small"],
                     (
@@ -68,16 +69,18 @@ class Bonk(commands.Cog):
         return canvas
 
     def _generate_gif(self, pfp: bytes) -> BytesIO:
+        logger.trace("Starting bonk gif generation.")
+
         pfp = Image.open(BytesIO(pfp))
         pfps_by_size = {
             "large": pfp.resize((LARGE_DIAMETER,) * 2),
             "small": pfp.resize((SMALL_DIAMETER,) * 2),
         }
 
-        out_images = []
-
-        for i, frame in enumerate(ImageSequence.Iterator(BONK_GIF)):
-            out_images.append(self._generate_frame(i, frame, pfps_by_size))
+        out_images = [
+            self._generate_frame(i, frame, pfps_by_size)
+            for i, frame in enumerate(ImageSequence.Iterator(BONK_GIF))
+        ]
 
         out_gif = BytesIO()
         out_images[0].save(
@@ -88,6 +91,8 @@ class Bonk(commands.Cog):
             loop=0,
             duration=50,
         )
+
+        logger.trace("Bonk gif generated.")
         return out_gif
 
     @commands.command()
