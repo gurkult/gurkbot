@@ -2,8 +2,7 @@ import discord
 from bot.bot import Bot
 from bot.constants import Colours, Emojis, Roles
 from discord import Embed
-from discord.ext import commands
-from discord.ext.commands import Cog, Context
+from discord.ext.commands import Cog, Context, group
 
 
 class Subscription(Cog):
@@ -70,19 +69,8 @@ class Subscription(Cog):
             ctx.guild.get_role(Roles.announcements),
             ctx.guild.get_role(Roles.polls),
         )
-        role_check = ()
 
-        for i in roles:
-            role_check += (await self.apply_role(ctx, i),)
-
-        role_check_dict = {
-            roles[role].name: role_check[role] for role in range(len(roles))
-        }
-
-        role_lst = []
-        for role in list(role_check_dict.keys()):
-            if role_check_dict[role]:
-                role_lst.append(role)
+        role_lst = [role.name for role in roles if await self.apply_role(ctx, role)]
         if len(role_lst) != 0:
             msg = (
                 f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
@@ -108,19 +96,8 @@ class Subscription(Cog):
             ctx.guild.get_role(Roles.announcements),
             ctx.guild.get_role(Roles.polls),
         )
-        role_check = ()
 
-        for i in roles:
-            role_check += (await self.de_apply_role(ctx, i),)
-
-        role_check_dict = {
-            roles[role].name: role_check[role] for role in range(len(roles))
-        }
-
-        role_lst = []
-        for role in list(role_check_dict.keys()):
-            if role_check_dict[role]:
-                role_lst.append(role)
+        role_lst = [role.name for role in roles if await self.de_apply_role(ctx, role)]
         if len(role_lst) != 0:
             msg = (
                 f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
@@ -140,12 +117,12 @@ class Subscription(Cog):
             )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
-    @commands.group(name="subscribe", invoke_without_command=True)
+    @group(name="subscribe", invoke_without_command=True)
     async def subscribe_group(self, ctx: Context) -> None:
         """Subscribe to announcements and polls notifications by assigning yourself the role."""
         await self.subscribe_group_helper(ctx)
 
-    @commands.group(name="unsubscribe", invoke_without_command=True)
+    @group(name="unsubscribe", invoke_without_command=True)
     async def unsubscribe_group(self, ctx: Context) -> None:
         """Unsubscribe to announcements and polls notifications by assigning yourself the role."""
         await self.unsubscribe_group_helper(ctx)
