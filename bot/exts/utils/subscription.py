@@ -13,14 +13,14 @@ class Subscription(Cog):
         self.bot = bot
 
     async def apply_role(self, ctx: Context, role_name: discord.Role) -> bool:
-        """Adding Roles and returning True otherwise False."""
+        """Adding roles and returning `True` otherwise `False`."""
         if role_name in ctx.author.roles:
             return False  # user already has the role
         await ctx.author.add_roles(role_name, reason=f"Subscribed to {role_name}")
         return True
 
     async def de_apply_role(self, ctx: Context, role_name: discord.Role) -> bool:
-        """Removing Roles and returning True otherwise False."""
+        """Removing roles and returning `True` otherwise `False`."""
         if role_name in ctx.author.roles:
             await ctx.author.remove_roles(
                 role_name, reason=f"Unsubscribed to {role_name}"
@@ -75,39 +75,31 @@ class Subscription(Cog):
         for i in roles:
             role_check += (await self.apply_role(ctx, i),)
 
-        role_check_dict = {}
+        role_check_dict = {
+            roles[role].name: role_check[role] for role in range(len(roles))
+        }
 
-        for i in range(len(roles)):
-            role_check_dict[roles[i].name] = role_check[i]
-
-        if not any(role_check):
+        role_lst = []
+        for role in list(role_check_dict.keys()):
+            if role_check_dict[role]:
+                role_lst.append(role)
+        if len(role_lst) != 0:
+            msg = (
+                f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
+                if len(role_lst) > 1
+                else role_lst[0]
+            )
+            embed = Embed(
+                title=f"{Emojis.confirmation_emoji} Subscribed",
+                description=f"You've subscribed to {ctx.guild}'s {msg}.",
+                color=Colours.green,
+            )
+        else:
             embed = Embed(
                 title=f"{Emojis.warning_emoji} Already subscribed",
                 description=f"You're already subscribed to {ctx.guild}'s announcements and polls.",
                 color=Colours.soft_red,
             )
-        elif all(role_check):
-            embed = Embed(
-                title=f"{Emojis.confirmation_emoji} Subscribed",
-                description=f"You've subscribed to {ctx.guild}'s announcements and polls.",
-                color=Colours.green,
-            )
-        else:
-            for i in range(len(roles)):
-                if role_check_dict[roles[i].name]:
-                    embed = Embed(
-                        title=f"{Emojis.confirmation_emoji} Subscribed",
-                        description=f"You've subscribed to {ctx.guild}'s announcements.",
-                        color=Colours.green,
-                    )
-                    break
-                else:
-                    embed = Embed(
-                        title=f"{Emojis.confirmation_emoji} Subscribed",
-                        description=f"You've subscribed to {ctx.guild}'s polls.",
-                        color=Colours.green,
-                    )
-                    break
         await ctx.send(content=ctx.author.mention, embed=embed)
 
     async def unsubscribe_group_helper(self, ctx: Context) -> None:
@@ -121,39 +113,31 @@ class Subscription(Cog):
         for i in roles:
             role_check += (await self.de_apply_role(ctx, i),)
 
-        role_check_dict = {}
+        role_check_dict = {
+            roles[role].name: role_check[role] for role in range(len(roles))
+        }
 
-        for i in range(len(roles)):
-            role_check_dict[roles[i].name] = role_check[i]
-
-        if not any(role_check):
+        role_lst = []
+        for role in list(role_check_dict.keys()):
+            if role_check_dict[role]:
+                role_lst.append(role)
+        if len(role_lst) != 0:
+            msg = (
+                f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
+                if len(role_lst) > 1
+                else role_lst[0]
+            )
+            embed = Embed(
+                title=f"{Emojis.confirmation_emoji} Unsubscribed",
+                description=f"You've unsubscribed to {ctx.guild}'s {msg}.",
+                color=Colours.green,
+            )
+        else:
             embed = Embed(
                 title=f"{Emojis.warning_emoji} Already unsubscribed",
                 description=f"You're already unsubscribed to {ctx.guild}'s announcements and polls.",
                 color=Colours.soft_red,
             )
-        elif all(role_check):
-            embed = Embed(
-                title=f"{Emojis.confirmation_emoji} Unsubscribed",
-                description=f"You've unsubscribed to {ctx.guild}'s announcements and polls.",
-                color=Colours.green,
-            )
-        else:
-            for i in range(len(roles)):
-                if role_check_dict[roles[i].name]:
-                    embed = Embed(
-                        title=f"{Emojis.confirmation_emoji} Unsubscribed",
-                        description=f"You've unsubscribed to {ctx.guild}'s announcements.",
-                        color=Colours.green,
-                    )
-                    break
-                else:
-                    embed = Embed(
-                        title=f"{Emojis.confirmation_emoji} Unsubscribed",
-                        description=f"You've unsubscribed to {ctx.guild}'s polls.",
-                        color=Colours.green,
-                    )
-                    break
         await ctx.send(content=ctx.author.mention, embed=embed)
 
     @commands.group(name="subscribe", invoke_without_command=True)
