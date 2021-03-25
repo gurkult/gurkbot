@@ -44,8 +44,8 @@ class Channels(NamedTuple):
 
 class Roles(NamedTuple):
     gurkans = int(os.getenv("ROLE_GURKANS", 789195552121290823))
-    announcements = int(os.getenv("ANNOUNCEMENTS_ID", "789978290844598272"))
-    polls = int(os.getenv("POLLS_ID", "790043110360350740"))
+    announcements = int(os.getenv("ANNOUNCEMENTS_ID", 789978290844598272))
+    polls = int(os.getenv("POLLS_ID", 790043110360350740))
 
 
 # Bot replies
