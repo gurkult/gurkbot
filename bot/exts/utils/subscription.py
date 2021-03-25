@@ -19,14 +19,14 @@ class Subscription(Cog):
         return roles
 
     async def apply_role(self, ctx: Context, role_name: Role) -> bool:
-        """Returns `True` if role is successfully added otherwise it returns `False`."""
+        """Returns `True` if role was successfully added otherwise it returns `False`."""
         if role_name in ctx.author.roles:
             return False  # user already has the role
         await ctx.author.add_roles(role_name, reason=f"Subscribed to {role_name}")
         return True
 
-    async def de_apply_role(self, ctx: Context, role_name: Role) -> bool:
-        """Returns `True` if role is successfully removed otherwise it returns `False`."""
+    async def remove_role(self, ctx: Context, role_name: Role) -> bool:
+        """Returns `True` if role was successfully removed otherwise it returns `False`."""
         if role_name in ctx.author.roles:
             await ctx.author.remove_roles(
                 role_name, reason=f"Unsubscribed to {role_name}"
@@ -55,7 +55,7 @@ class Subscription(Cog):
     async def unsubscribe_helper(self, ctx: Context, role_id: int) -> None:
         """Helper function for unsubscribing to announcements and polls."""
         role_name = ctx.guild.get_role(role_id)
-        if await self.de_apply_role(ctx, role_name):
+        if await self.remove_role(ctx, role_name):
             embed = Embed(
                 title=f"{Emojis.confirmation_emoji} Unsubscribed",
                 description=f"You've unsubscribed to {ctx.guild}'s {role_name}.",
@@ -96,7 +96,7 @@ class Subscription(Cog):
     async def unsubscribe_group_helper(self, ctx: Context) -> None:
         """Helper function for unsubscribe_group. Sends embed for role unsubscription."""
         roles = await self.get_roles(ctx)
-        role_lst = [role.name for role in roles if await self.de_apply_role(ctx, role)]
+        role_lst = [role.name for role in roles if await self.remove_role(ctx, role)]
         if len(role_lst) != 0:
             msg = (
                 f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
