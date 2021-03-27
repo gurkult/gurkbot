@@ -1,10 +1,11 @@
 import os
 
-import asyncpg
 from aiohttp import ClientSession
+from bot.postgres import db_init
 from discord import Embed, Intents
 from discord.ext import commands
 from loguru import logger
+from tortoise import Tortoise
 
 from . import constants
 
@@ -50,9 +51,8 @@ class Bot(commands.Bot):
         await self.startup_greeting()
 
     async def login(self, *args, **kwargs) -> None:
-        """Setup database connection before logging into discord."""
-        self.db_pool = await asyncpg.create_pool(constants.DATABASE_URL)
-
+        """Setup database before logging into discord."""
+        await db_init()
         await super().login(*args, **kwargs)
 
     async def startup_greeting(self) -> None:
@@ -69,5 +69,5 @@ class Bot(commands.Bot):
 
         if self.http_session:
             await self.http_session.close()
-        if self.db_pool:
-            await self.db_pool.close()
+
+        Tortoise.close_connections()

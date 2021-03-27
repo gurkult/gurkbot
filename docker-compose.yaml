@@ -5,12 +5,9 @@ services:
     ports:
       - "127.0.0.1:5000:5432"
     environment:
-      POSTGRES_DB: gurkbotdb
+      POSTGRES_DB: gurkbot
       POSTGRES_USER: gurkbotdb
       POSTGRES_PASSWORD: gurkbotdb
-
-    volumes:
-      - ./bot/postgres/tables:/docker-entrypoint-initdb.d/
 
   gurkbot:
     build:
@@ -22,7 +19,7 @@ services:
     restart: always
 
     environment:
-      - DATABASE_URL=postgres://gurkbotdb:gurkbotdb@postgres:5432/gurkbotdb
+      - DATABASE_URL=postgres://gurkbotdb:gurkbotdb@postgres:5432/gurkbot
       - TOKEN
       - PREFIX
       - CHANNEL_DEVLOG
