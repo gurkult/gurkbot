@@ -20,6 +20,7 @@ services:
 
     environment:
       - DATABASE_URL=postgres://gurkbotdb:gurkbotdb@postgres:5432/gurkbot
+      - CHANNEL_OFF_TOPIC
       - TOKEN
       - PREFIX
       - CHANNEL_DEVLOG
