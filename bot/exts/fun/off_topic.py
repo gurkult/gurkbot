@@ -75,10 +75,8 @@ class OffTopicNames(Cog):
             while name == self.ot_channel.name:
                 name = random.choice(self.ot_names)
 
-            logger.info(name)
-
             await self.ot_channel.edit(name=name)
-            logger.info(f"Channel name changed to {name}.")
+            logger.info(f"Off-topic Channel name changed to {name}.")
 
 
 def setup(bot: Bot) -> None:

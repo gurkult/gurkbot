@@ -70,4 +70,4 @@ class Bot(commands.Bot):
         if self.http_session:
             await self.http_session.close()
 
-        Tortoise.close_connections()
+        await Tortoise.close_connections()
