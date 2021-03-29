@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
-"discord.py" = "==1.6.0"
+"discord.py" = "~=1.6.0"
 loguru = "~=0.5.3"
 PyYAML = "~=5.3.1"
 pillow = "~=8.1.2"
