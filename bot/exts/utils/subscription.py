@@ -1,3 +1,5 @@
+from typing import Callable
+
 from bot.bot import Bot
 from bot.constants import Colours, Emojis, Roles
 from discord import Embed, Role
@@ -5,12 +7,13 @@ from discord.ext.commands import Cog, Context, group
 
 
 class Subscription(Cog):
-    """Subscribing and Unsubscrbing to announcements and polls notifications."""
+    """Subscribe and Unsubscribe to announcements and polls notifications."""
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
-    async def get_roles(self, ctx: Context) -> tuple:
+    @staticmethod
+    async def get_roles(ctx: Context) -> tuple:
         """Gets announcements and polls role from the guild of the context."""
         roles = (
             ctx.guild.get_role(Roles.announcements),
@@ -18,14 +21,16 @@ class Subscription(Cog):
         )
         return roles
 
-    async def apply_role(self, ctx: Context, role_name: Role) -> bool:
+    @staticmethod
+    async def apply_role(ctx: Context, role_name: Role) -> bool:
         """Returns `True` if role was successfully added otherwise it returns `False`."""
         if role_name in ctx.author.roles:
             return False  # user already has the role
         await ctx.author.add_roles(role_name, reason=f"Subscribed to {role_name}")
         return True
 
-    async def remove_role(self, ctx: Context, role_name: Role) -> bool:
+    @staticmethod
+    async def remove_role(ctx: Context, role_name: Role) -> bool:
         """Returns `True` if role was successfully removed otherwise it returns `False`."""
         if role_name in ctx.author.roles:
             await ctx.author.remove_roles(
@@ -34,84 +39,56 @@ class Subscription(Cog):
             return True
         return False  # user doesn't have the role
 
-    async def subscribe_helper(self, ctx: Context, role_id: int) -> None:
-        """Helper function for subscribing to announcements and polls."""
-        role_name = ctx.guild.get_role(role_id)
-        if await self.apply_role(ctx, role_name):
-            embed = Embed(
-                title=f"{Emojis.confirmation_emoji} Subscribed",
-                description=f"You've subscribed to {ctx.guild}'s {role_name}.",
-                color=Colours.green,
-            )
-            await ctx.send(content=ctx.author.mention, embed=embed)
-        else:
-            embed = Embed(
-                title=f"{Emojis.warning_emoji} Already subscribed",
-                description=f"You're already subscribed to {ctx.guild}'s {role_name}.",
-                color=Colours.soft_red,
-            )
-            await ctx.send(content=ctx.author.mention, embed=embed)
+    async def sub_unsub_helper(
+        self, ctx: Context, role_id: int, func: Callable, action: str
+    ) -> None:
+        """
+        Helper function for sending embeds for subscribe and unsubscribe to announcements or polls.
 
-    async def unsubscribe_helper(self, ctx: Context, role_id: int) -> None:
-        """Helper function for unsubscribing to announcements and polls."""
+        If `func` is `apply_role`, it checks if user have the role (returns `False`) or not (returns `True`)
+        If `func` is `remove_role`, it checks if user have the role (returns `True`) or not (returns `False`)
+        """
         role_name = ctx.guild.get_role(role_id)
-        if await self.remove_role(ctx, role_name):
+        if await func(ctx, role_name):
             embed = Embed(
-                title=f"{Emojis.confirmation_emoji} Unsubscribed",
-                description=f"You've unsubscribed to {ctx.guild}'s {role_name}.",
-                color=Colours.green,
-            )
-            await ctx.send(content=ctx.author.mention, embed=embed)
-        else:
-            embed = Embed(
-                title=f"{Emojis.warning_emoji} Already unsubscribed",
-                description=f"You're already unsubscribed to {ctx.guild}'s {role_name}.",
-                color=Colours.soft_red,
-            )
-            await ctx.send(content=ctx.author.mention, embed=embed)
-
-    async def subscribe_group_helper(self, ctx: Context) -> None:
-        """Helper function for subscribe_group. Sends embed for role subscription."""
-        roles = await self.get_roles(ctx)
-        role_lst = [role.name for role in roles if await self.apply_role(ctx, role)]
-        if len(role_lst) != 0:
-            msg = (
-                f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
-                if len(role_lst) > 1
-                else role_lst[0]
-            )  # stores a string which tells what roles are added to the user
-            embed = Embed(
-                title=f"{Emojis.confirmation_emoji} Subscribed",
-                description=f"You've subscribed to {ctx.guild}'s {msg}.",
+                title=f"{Emojis.confirmation_emoji} {action}",
+                description=f"You've {action.lower()} to {ctx.guild}'s {role_name}.",
                 color=Colours.green,
             )
         else:
             embed = Embed(
-                title=f"{Emojis.warning_emoji} Already subscribed",
-                description=f"You're already subscribed to {ctx.guild}'s announcements and polls.",
+                title=f"{Emojis.warning_emoji} Already {action.lower()}",
+                description=f"You're already {action.lower()} to {ctx.guild}'s {role_name}.",
                 color=Colours.soft_red,
             )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
-    async def unsubscribe_group_helper(self, ctx: Context) -> None:
-        """Helper function for unsubscribe_group. Sends embed for role unsubscription."""
+    async def sub_unsub_group_helper(
+        self, ctx: Context, func: Callable, action: str
+    ) -> None:
+        """
+        Helper function for subscribe_group and unsubscribe_group.
+
+        If `func` is `apply_role`, `role_lst` stores the role(s) which are added to the user
+        If `func` is `remove_role`, `role_lst` stores the role(s) which are removed from the user
+        """
         roles = await self.get_roles(ctx)
-        role_lst = [role.name for role in roles if await self.remove_role(ctx, role)]
-        if len(role_lst) != 0:
+        role_lst = [role.name for role in roles if await func(ctx, role)]
+        if role_lst:
             msg = (
                 f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
                 if len(role_lst) > 1
                 else role_lst[0]
-            )  # stores a string which tells what roles are removed from the user
+            )  # stores a string which tells what role(s) is/are added to or removed from the user
             embed = Embed(
-                title=f"{Emojis.confirmation_emoji} Unsubscribed",
-                description=f"You've unsubscribed to {ctx.guild}'s {msg}.",
+                title=f"{Emojis.confirmation_emoji} {action}",
+                description=f"You've {action.lower()} to {ctx.guild}'s {msg}.",
                 color=Colours.green,
             )
         else:
             embed = Embed(
-                title=f"{Emojis.warning_emoji} Already unsubscribed",
-                description=f"You're already unsubscribed to {ctx.guild}'s announcements and polls.",
+                title=f"{Emojis.warning_emoji} Already {action.lower()}",
+                description=f"You're already {action.lower()} to {ctx.guild}'s announcements and polls.",
                 color=Colours.soft_red,
             )
         await ctx.send(content=ctx.author.mention, embed=embed)
@@ -119,32 +96,36 @@ class Subscription(Cog):
     @group(name="subscribe", invoke_without_command=True)
     async def subscribe_group(self, ctx: Context) -> None:
         """Subscribe to announcements and polls notifications, by assigning yourself the roles."""
-        await self.subscribe_group_helper(ctx)
+        await self.sub_unsub_group_helper(ctx, self.apply_role, "Subscribed")
 
     @subscribe_group.command(name="announcements", aliases=("announcement",))
     async def announcements_subscribe(self, ctx: Context) -> None:
-        """Subscribe to announcements by assigning yourself the role."""
-        await self.subscribe_helper(ctx, Roles.announcements)
+        """Subscribe to announcements notifications, by assigning yourself the role."""
+        await self.sub_unsub_helper(
+            ctx, Roles.announcements, self.apply_role, "Subscribed"
+        )
 
     @subscribe_group.command(name="polls", aliases=("poll",))
     async def polls_subscribe(self, ctx: Context) -> None:
-        """Subscribe to polls by assigning yourself the role."""
-        await self.subscribe_helper(ctx, Roles.polls)
+        """Subscribe to polls notification, by assigning yourself the role."""
+        await self.sub_unsub_helper(ctx, Roles.polls, self.apply_role, "Subscribed")
 
     @group(name="unsubscribe", invoke_without_command=True)
     async def unsubscribe_group(self, ctx: Context) -> None:
         """Unsubscribe to announcements and polls notifications, by removing your roles."""
-        await self.unsubscribe_group_helper(ctx)
+        await self.sub_unsub_group_helper(ctx, self.remove_role, "Unsubscribed")
 
     @unsubscribe_group.command(name="announcements", aliases=("announcement",))
     async def announcements_unsubscribe(self, ctx: Context) -> None:
-        """Unsubscribe to announcements by removing your role."""
-        await self.unsubscribe_helper(ctx, Roles.announcements)
+        """Unsubscribe to announcements notification, by removing your role."""
+        await self.sub_unsub_helper(
+            ctx, Roles.announcements, self.remove_role, "Unsubscribed"
+        )
 
     @unsubscribe_group.command(name="polls", aliases=("poll",))
     async def polls_unsubscribe(self, ctx: Context) -> None:
-        """Unsubscribe to polls by removing your role."""
-        await self.unsubscribe_helper(ctx, Roles.polls)
+        """Unsubscribe to polls notification, by removing your role."""
+        await self.sub_unsub_helper(ctx, Roles.polls, self.remove_role, "Unsubscribed")
 
 
 def setup(bot: Bot) -> None:
