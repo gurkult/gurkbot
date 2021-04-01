@@ -108,11 +108,8 @@ class Bonk(commands.Cog):
             with futures.ThreadPoolExecutor() as pool:
                 out_gif = await asyncio.get_running_loop().run_in_executor(pool, func)
 
-        embed = discord.Embed()
-        embed.set_image(url=f"attachment://{out_filename}")
-
-        out_gif.seek(0)
-        await ctx.send(file=discord.File(out_gif, out_filename), embed=embed)
+            out_gif.seek(0)
+            await ctx.send(file=discord.File(out_gif, out_filename))
 
 
 def setup(bot: commands.Bot) -> None:
