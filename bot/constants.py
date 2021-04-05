@@ -24,7 +24,7 @@ class Emojis(NamedTuple):
     cucumber_emoji = "\U0001f952"
 
     invalid_emoji = "\u274c"
-    trashcan = "<:trashcan:814274677723365426>"
+    trashcan = "<:trash:798179380626587658>"
 
 
 class Colours:
