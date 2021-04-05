@@ -168,7 +168,7 @@ class LinePaginator(Paginator):
         max_lines: t.Optional[int] = None,
         max_size: int = 500,
         scale_to_size: int = 2000,
-        empty: bool = True,
+        empty: bool = False,
         restrict_to_user: User = None,
         timeout: int = 300,
         footer_text: str = None,
