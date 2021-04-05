@@ -187,10 +187,10 @@ class LinePaginator(Paginator):
         to any user with a moderation role.
 
         Example:
-        >>> people = ["Jason Terror", "Fishurkan", "Gurkbot", "Vestergurkan", "Akgurkan"]
+        >>> people = ["Guido van Rossum", "Linus Torvalds", "Gurkbot", "Bjarne Stroustrup"]
         >>> e = discord.Embed()
         >>> e.set_author(name="Ain't these people just awesome?")
-        >>> await LinePaginator.paginate([person for person in people], ctx, e)
+        >>> await LinePaginator.paginate(people, ctx, e)
         """
 
         def event_check(reaction_: discord.Reaction, user_: discord.Member) -> bool:
