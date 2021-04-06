@@ -6,7 +6,7 @@
 3. [Fork the project repository](#Fork-the-Project)
 4. [Configure the development environment](#Development-Environment)
 5. [Run the project](#Run-The-Project)
-6. [Work with git to make changes](#Working-with-Git)
+6. [Working with git to make changes](#Working-with-Git)
 
 ## Requirements
 
@@ -21,7 +21,7 @@ You will need your own test server and bot account on Discord to test your chang
 1. Create a test server.
 2. Create a bot account and invite it to the server you just created.
 3. Create the following text channels:
-   \#dev-log
+   \#dev-log, \#dev-alerts
 
 Note down the IDs for your server, as well as any channels and roles created.
 Learn how to obtain the ID of a server, channel or role **[here](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-).**
@@ -71,7 +71,7 @@ pipenv run lint
 Note: The entire file name is literally .env
 
 3. Open the file with any text editor.
-4. Each environment variable is on its own line, with the variable and the value separated by a = sign.
+4. Each environment variable is on its own line, with the variable and the value separated by a `=` sign.
 
 ## The following variables are needed for running Gurkbot:
 |ENV VARIABLE NAME |WHAT IS IT?                                                              |
@@ -93,7 +93,7 @@ $ pipenv run start
 
 Now that you have everything setup, it is finally time to make changes to the bot!  Contributions that do not adhere to this guide may be rejected.
 
-Notably, version control of our projects is done using Git and Github. It can be intimidating at first, so feel free to ask for any help in the server.
+Notably, version control of our projects is done using Git and GitHub. It can be intimidating at first, so feel free to ask for any help in the server.
 
 Click [here](https://rogerdudler.github.io/git-guide/) to see the basic Git workflow when contributing to one of our projects
 
@@ -102,7 +102,7 @@ Click [here](https://rogerdudler.github.io/git-guide/) to see the basic Git work
 
 1. You must be a member of [our Discord community](https://discord.gg/W9DSfryp8Y) in order to contribute to this project.
 
-2. Your pull request must solve an issue created or approved by a gurkan lord. Feel free to suggest issues of your own, which lords can review for approval.
+2. Your pull request must solve an issue created or approved by a Gurkan Lord. Feel free to suggest issues of your own, which lords can review for approval.
 
 3. If you have direct access to the repository, **create a branch for your changes** and create a pull request for that branch. If not, create a branch on a fork of the repository and create a pull request from there.
     * If PRing from your own fork, **ensure that "Allow edits from maintainers" is checked**. This gives permission for maintainers to commit changes directly to your fork, speeding up the review process.
