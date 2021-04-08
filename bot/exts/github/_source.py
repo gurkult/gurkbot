@@ -1,5 +1,6 @@
 import re
 from inspect import getsourcelines
+from textwrap import dedent
 from typing import Optional
 
 import discord
@@ -37,6 +38,9 @@ class Source:
         sanitized = re.sub(doc_reg_class, "", sanitized)
         # The help argument of commands.command gets changed to `help=`
         sanitized = sanitized.replace("help=", 'help=""')
+
+        # Remove the extra indentation in the code.
+        sanitized = dedent(sanitized)
 
         if len(sanitized) > self.MAX_FIELD_LENGTH:
             sanitized = (
