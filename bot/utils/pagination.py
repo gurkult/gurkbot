@@ -138,8 +138,9 @@ class LinePaginator(Paginator):
         self._count = len(self.prefix) + 1
         self.close_page()
 
+    @staticmethod
     def _split_remaining_words(
-        self, line: str, max_chars: int
+        line: str, max_chars: int
     ) -> t.Tuple[str, t.Optional[str]]:
         """
         Internal: split a line into two strings.
