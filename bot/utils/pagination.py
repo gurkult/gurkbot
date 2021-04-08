@@ -88,7 +88,7 @@ class LinePaginator(Paginator):
 
         If a line on a page exceeds `max_size` characters, then `max_size` will go up to
         `scale_to_size` for a single line before creating a new page for the overflow words. If it
-        is still exceeded, the excess characters are stored and placed on the next pages unti
+        is still exceeded, the excess characters are stored and placed on the next pages until
         there are none remaining (by word boundary). The line is truncated if `scale_to_size` is
         still exceeded after attempting to continue onto the next page.
 
@@ -106,7 +106,7 @@ class LinePaginator(Paginator):
                     line = line[: self.scale_to_size]
 
         # Check if we should start a new page or continue the line on the current one
-        if self.max_lines is not None and self._line_count >= self.max_lines:
+        if self.max_lines and self._line_count >= self.max_lines:
             logger.debug("max_lines exceeded, creating new page.")
             self._new_page()
         elif self._count + len(line) + 1 > self.max_size and self._line_count > 0:
