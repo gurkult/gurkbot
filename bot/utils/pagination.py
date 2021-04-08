@@ -224,7 +224,7 @@ class LinePaginator(Paginator):
         restrict_to_user = restrict_to_user or ctx.author
 
         if not lines:
-            if allow_empty_lines:
+            if not allow_empty_lines:
                 logger.exception(
                     "`Empty lines found, raising error as `allow_empty_lines` is `False`."
                 )
