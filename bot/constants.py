@@ -21,8 +21,11 @@ class Emojis(NamedTuple):
     pull_request_emoji = "<:PROpen:794834041416187935>"
     pull_request_closed_emoji = "<:PRClosed:794834041073172501>"
     merge_emoji = "<:PRMerged:794834041173704744>"
+
     cucumber_emoji = "\U0001f952"
+
     invalid_emoji = "\u274c"
+    trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
 
 
 class Colours:
