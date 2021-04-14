@@ -8,6 +8,7 @@ verify_ssl = true
 loguru = "~=0.5.3"
 PyYAML = "~=5.3.1"
 emojis = "~=0.6.0"
+pillow = "~=8.1.2"
 
 [dev-packages]
 flake8 = "~=3.8.4"
