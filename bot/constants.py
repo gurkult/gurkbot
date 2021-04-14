@@ -23,7 +23,7 @@ class Emojis(NamedTuple):
     cucumber_emoji = "\U0001f952"
     invalid_emoji = "\u274c"
 
-    # TicTacToe Emojis
+    # Number unicode emojis for TicTacToe
     number_emojis = {
         1: "\u0031\ufe0f\u20e3",
         2: "\u0032\ufe0f\u20e3",
