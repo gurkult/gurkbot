@@ -10,12 +10,13 @@ class OffTopicName(Converter):
 
     async def convert(self, ctx: Context, argument: str) -> str:
         """Attempt to replace any invalid characters with their approximate Unicode equivalent."""
+        argument = argument.lower()
         allowed_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!?'`-"
 
         # Chain multiple words to a single one
         argument = "-".join(argument.split())
 
-        if not (2 <= len(argument) <= 96):
+        if not (2 <= len(argument) <= 29):
             raise BadArgument("Channel name must be between 2 and 96 chars long")
 
         elif not all(c.isalnum() or c in allowed_characters for c in argument):
