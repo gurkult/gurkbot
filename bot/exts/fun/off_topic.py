@@ -169,7 +169,7 @@ class OffTopicNames(Cog):
             )
             till_midnight = int((midnight_datetime - now).total_seconds())
             logger.info(f"Waiting {till_midnight}s before re-naming off topic channel.")
-            await asyncio.sleep(till_midnight)
+            await asyncio.sleep(10)
 
             name = self.ot_channel.name
 
@@ -185,6 +185,13 @@ class OffTopicNames(Cog):
 
             while name == self.ot_channel.name:
                 name = random.choice(chosen_ot_names)
+
+            self.ot_names[name] += 1
+            await db_execute(
+                self.bot.db_pool,
+                "UPDATE offtopicnames SET num_used=num_used+1 WHERE name=$1",
+                name,
+            )
 
             await self.ot_channel.edit(name=f"ot-{name}")
             logger.info(f"Off-topic Channel name changed to {name}.")
