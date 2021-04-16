@@ -16,7 +16,7 @@ services:
     container_name: gurkbot
     init: true
 
-    restart: always
+    restart: on-failure
 
     environment:
       - DATABASE_URL=postgres://gurkbotdb:gurkbotdb@postgres:5432/gurkbot
