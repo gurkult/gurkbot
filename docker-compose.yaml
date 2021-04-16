@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: gurkbot
       POSTGRES_USER: gurkbotdb
       POSTGRES_PASSWORD: gurkbotdb
+    volumes:
+      - ./bot/postgres/tables:/docker-entrypoint-initdb.d/
 
   gurkbot:
     build:
