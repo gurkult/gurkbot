@@ -1,14 +1,15 @@
 import asyncio
 import random
 from datetime import datetime, time, timedelta
-from typing import List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from bot import constants
+from bot.bot import Bot
 from bot.converters import OffTopicName as OT_Converter
-from bot.postgres.models import OffTopicName as OT_Model
+from bot.postgres.utils import db_execute, db_fetch
 from bot.utils.pagination import LinePaginator
 from discord import Embed, Reaction, TextChannel, User
-from discord.ext.commands import Bot, Cog, Context, group
+from discord.ext.commands import Cog, Context, group
 from fuzzywuzzy import fuzz
 from loguru import logger
 
@@ -26,7 +27,7 @@ class OffTopicNames(Cog):
         self.bot = bot
 
         self.ot_channel: TextChannel = ...
-        self.ot_names: List[str] = ...
+        self.ot_names: Dict[str:int] = ...
 
         self.bot.loop.create_task(self._cache())
         self.bot.loop.create_task(self.update_ot_channel_name())
@@ -38,7 +39,9 @@ class OffTopicNames(Cog):
         self.ot_channel: TextChannel = self.bot.get_channel(
             constants.Channels.off_topic
         )
-        self.ot_names = await OT_Model.all().values_list("name", flat=True)
+        self.ot_names = dict(
+            await db_fetch(self.bot.db_pool, "SELECT * FROM offtopicnames")
+        )
 
     @group(name="offtopicnames", aliases=("otn",), invoke_without_command=True)
     async def off_topic_names(self, ctx: Context) -> None:
@@ -69,7 +72,6 @@ class OffTopicNames(Cog):
 
             async def _exit() -> None:
                 await ctx.send(f"Off topic name `{name}` not added.")
-                return
 
             try:
                 reaction, _ = await self.bot.wait_for(
@@ -81,37 +83,39 @@ class OffTopicNames(Cog):
             if str(reaction.emoji) == CROSS_MARK_EMOJI:
                 return await _exit()
 
-        ot_ins = await OT_Model.create(name=name)
-        self.ot_names.append(ot_ins.name)
+        # ot_ins = await OT_Model.create(name=name)
+        await db_execute(
+            self.bot.db_pool, "INSERT INTO offtopicnames VALUES ($1)", name
+        )
+        self.ot_names[name] = 0
 
         await ctx.send(f":ok_hand: `{name}` has been added!")
 
     @off_topic_names.command(name="delete", aliases=("d", "r", "remove"))
     async def delete_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Delete off topic channel name."""
-        otn_instance = (
-            await OT_Model.filter(name=name) if OT_Model.exists(name=name) else None
-        )
-
-        if not otn_instance:
+        # otn_instance = (
+        #     await OT_Model.filter(name=name) if OT_Model.exists(name=name) else None
+        # )
+        if name not in self.ot_names:
             await ctx.send(f":x: `{name}` not found!")
             if names := self._find(name):
                 await self._send_paginated_embed(ctx, names, "Did you mean ❓")
             return
 
-        await otn_instance[0].delete()
-        self.ot_names.remove(name)
+        await db_execute(
+            self.bot.db_pool, "DELETE FROM offtopicnames WHERE name=$1", name
+        )
+        del self.ot_names[name]
 
         await ctx.send(f"`{name}` has been deleted :white_check_mark:")
 
     @off_topic_names.command(name="find", aliases=("f", "search"))
     async def find_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Find similar off-topic names in database."""
-        # if self.ot_names:
         await self._send_paginated_embed(
             ctx, self._find(name), f"🔎 Search result: {name}"
         )
-        # await ctx.send(":x: No Off Topic Names found!")
 
     def _find(self, name: OT_Converter) -> List[str]:
         """Find similar Off-topic names."""
@@ -123,25 +127,29 @@ class OffTopicNames(Cog):
         ]
 
     @staticmethod
-    def _find_embed_builder(_list: List[str], title: str) -> Optional[Embed]:
+    def _find_embed_builder(ot_names: List[str], title: str) -> Optional[Embed]:
         """Build embed with a list of Off Topic names."""
         return Embed(
             title=title,
             description=(
-                "\n".join(f"{i}. {ot_name}" for i, ot_name in enumerate(_list, start=1))
-                if _list
+                "\n".join(
+                    f"{i}. {ot_name}" for i, ot_name in enumerate(ot_names, start=1)
+                )
+                if ot_names
                 else ":x: 0 Matches found."
             ),
-            colour=constants.Colours.green if _list else constants.Colours.soft_red,
+            colour=constants.Colours.green if ot_names else constants.Colours.soft_red,
         )
 
     @off_topic_names.command(name="list", aliases=("l",))
     async def list_ot_names(self, ctx: Context) -> None:
         """List all Off Topic names."""
-        await self._send_paginated_embed(ctx, self.ot_names, "Off Topic Names")
+        await self._send_paginated_embed(ctx, self.ot_names.keys(), "Off Topic Names")
 
     @staticmethod
-    async def _send_paginated_embed(ctx: Context, lines: List[str], title: str) -> None:
+    async def _send_paginated_embed(
+        ctx: Context, lines: Iterable[str], title: str
+    ) -> None:
         """Send paginated embed."""
         embed = Embed()
         embed.set_author(name=title)
@@ -161,11 +169,22 @@ class OffTopicNames(Cog):
             )
             till_midnight = int((midnight_datetime - now).total_seconds())
             logger.info(f"Waiting {till_midnight}s before re-naming off topic channel.")
-            await asyncio.sleep(60)
+            await asyncio.sleep(till_midnight)
 
             name = self.ot_channel.name
+
+            # Algorithm to select next off topic name based on usage/number of times the name has been used.
+            # Least used names have a higher chance of being selected.
+            usage = set(self.ot_names.values())
+            distribution = [1 / (i + 1) for i in usage]
+            chosen_usage = random.choices(list(usage), distribution)[0]
+
+            chosen_ot_names = [
+                name for name, usage in self.ot_names.items() if usage == chosen_usage
+            ]
+
             while name == self.ot_channel.name:
-                name = random.choice(self.ot_names)
+                name = random.choice(chosen_ot_names)
 
             await self.ot_channel.edit(name=f"ot-{name}")
             logger.info(f"Off-topic Channel name changed to {name}.")
