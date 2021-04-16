@@ -1,12 +1,12 @@
 import os
 from typing import Optional
 
+import asyncpg
 from aiohttp import ClientSession
-from bot.postgres import db_init
+from bot.postgres import create_tables
 from discord import Embed, Intents
 from discord.ext import commands
 from loguru import logger
-from tortoise import Tortoise
 
 from . import constants
 
@@ -20,6 +20,7 @@ class Bot(commands.Bot):
         intents.presences = True
 
         self.http_session = ClientSession()
+        self.db_pool: asyncpg.Pool = asyncpg.create_pool(constants.DATABASE_URL)
 
         super().__init__(command_prefix=constants.PREFIX, intents=intents)
 
@@ -30,18 +31,19 @@ class Bot(commands.Bot):
     async def _db_setup(self) -> None:
         """Setup and initialize database connection."""
         try:
-            await db_init()
+            await self.db_pool
+            await create_tables(self.db_pool)
         except Exception as e:
-            logger.info("Initializing database...FAILED...closing bot connection.")
-            await self.wait_until_ready()
             error_msg = f"**{e.__class__.__name__}**\n```{e}```"
-            embed = Embed(
-                title="Database error",
-                description=error_msg,
-                colour=constants.Colours.soft_red,
-            )
+            logger.error(f"Database ERROR: {error_msg}")
 
-            await self.notify_dev_alert(embed=embed)
+            await self.notify_dev_alert(
+                embed=Embed(
+                    title="Database error",
+                    description=error_msg,
+                    colour=constants.Colours.soft_red,
+                )
+            )
             await self.close()
 
     def load_extensions(self) -> None:
@@ -80,6 +82,7 @@ class Bot(commands.Bot):
         self, content: Optional[str] = None, embed: Optional[Embed] = None
     ) -> None:
         """Notify dev alert channel."""
+        await self.wait_until_ready()
         await self.get_channel(constants.Channels.devalerts).send(
             content=content, embed=embed
         )
@@ -89,5 +92,7 @@ class Bot(commands.Bot):
         if self.http_session:
             await self.http_session.close()
 
-        await Tortoise.close_connections()
+        if self.db_pool:
+            await self.db_pool.close()
+
         await super().close()
