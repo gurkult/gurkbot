@@ -169,7 +169,7 @@ class OffTopicNames(Cog):
             )
             till_midnight = int((midnight_datetime - now).total_seconds())
             logger.info(f"Waiting {till_midnight}s before re-naming off topic channel.")
-            await asyncio.sleep(10)
+            await asyncio.sleep(till_midnight)
 
             name = self.ot_channel.name
 
@@ -183,7 +183,7 @@ class OffTopicNames(Cog):
                 name for name, usage in self.ot_names.items() if usage == chosen_usage
             ]
 
-            while name == self.ot_channel.name:
+            while f"ot-{name}" == self.ot_channel.name:
                 name = random.choice(chosen_ot_names)
 
             self.ot_names[name] += 1
