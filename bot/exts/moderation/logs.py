@@ -14,6 +14,7 @@ class ModerationLog(Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.log_channel: Optional[TextChannel] = None
+        self.dm_log_channel: Optional[TextChannel] = None
         super().__init__()
 
     async def post_message(self, embed: Embed) -> Optional[Message]:
@@ -115,6 +116,31 @@ class ModerationLog(Cog):
 
         await self.post_formatted_message(
             after, "updated their nickname.", body=f"`{before.nick}` -> `{after.nick}`"
+        )
+
+    @Cog.listener()
+    async def on_message(self, message: Message) -> None:
+        """Log DM messages to #dm-logs."""
+        # If the guild attribute is set it isn't a DM
+        if message.guild:
+            return
+
+        if not self.dm_log_channel:
+            await self.bot.wait_until_ready()
+            self.dm_log_channel = await self.bot.fetch_channel(Channels.dm_log)
+
+            if not self.dm_log_channel:
+                logger.error(
+                    f"Failed to get the #log channel with ID {Channels.dm_log}."
+                )
+                return
+
+        await self.dm_log_channel.send(
+            embed=Embed(
+                title=f"Direct message from {message.author.name}#{message.author.discriminator}",
+                description=message.content,
+                color=Colours.green,
+            )
         )
 
 

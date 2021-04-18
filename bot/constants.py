@@ -43,6 +43,7 @@ class Channels(NamedTuple):
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
 
     log = int(os.getenv("CHANNEL_LOGS", 831432092226158652))
+    dm_log = int(os.getenv("CHANNEL_LOGS", 833345326675918900))
 
 
 class Roles(NamedTuple):
