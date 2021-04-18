@@ -36,7 +36,7 @@ class ModerationLog(Cog):
         *,
         body: Optional[str] = None,
         link: Optional[str] = None,
-        color: int = Colours.green,
+        colour: int = Colours.green,
     ) -> None:
         """Format and post a message to the #log channel."""
         logger.trace(f'Creating log "{actor.id} {action}"')
@@ -44,13 +44,13 @@ class ModerationLog(Cog):
         await self.post_message(
             Embed(
                 title=(
-                    f"{actor.name}#{actor.discriminator} "
+                    f"{actor} "
                     f"{f'({actor.display_name}) ' if actor.display_name != actor.name else ''}"
                     f"({actor.id}) {action}"
                 ),
                 description=body or "<no additional information provided>",
                 url=link,
-                color=color,
+                colour=colour,
                 timestamp=datetime.utcnow(),
             ).set_thumbnail(url=actor.avatar_url)
         )
@@ -71,7 +71,7 @@ class ModerationLog(Cog):
                 message.author,
                 f"deleted a message in #{message.channel}.",
                 body=message.content,
-                color=Colours.soft_red,
+                colour=Colours.soft_red,
             )
         else:
             await self.post_message(
@@ -81,7 +81,7 @@ class ModerationLog(Cog):
                         f"#{await self.bot.fetch_channel(payload.channel_id)}."
                     ),
                     description="The message wasn't cached so it cannot be displayed.",
-                    color=Colours.soft_red,
+                    colour=Colours.soft_red,
                 )
             )
 
@@ -95,7 +95,7 @@ class ModerationLog(Cog):
             after.author,
             f"edited a message in #{after.channel}.",
             body=f"Before:\n{before.content}\n\nAfter:\n{after.content}",
-            color=Colours.yellow,
+            colour=Colours.yellow,
         )
 
     @Cog.listener()
@@ -106,7 +106,7 @@ class ModerationLog(Cog):
     @Cog.listener()
     async def on_member_remove(self, member: Member) -> None:
         """Log members leaving."""
-        await self.post_formatted_message(member, "left.", color=Colours.soft_red)
+        await self.post_formatted_message(member, "left.", colour=Colours.soft_red)
 
     @Cog.listener()
     async def on_member_update(self, before: Member, after: Member) -> None:
@@ -137,9 +137,9 @@ class ModerationLog(Cog):
 
         await self.dm_log_channel.send(
             embed=Embed(
-                title=f"Direct message from {message.author.name}#{message.author.discriminator}",
+                title=f"Direct message from {message.author}",
                 description=message.content,
-                color=Colours.green,
+                colour=Colours.green,
             )
         )
 
