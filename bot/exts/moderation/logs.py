@@ -56,11 +56,6 @@ class ModerationLog(Cog):
         )
 
     @Cog.listener()
-    async def on_ready(self) -> None:
-        """Post a message to #logs saying that the bot logged in."""
-        await self.post_formatted_message(self.bot.user, "logged in!")
-
-    @Cog.listener()
     async def on_raw_message_delete(self, payload: RawMessageDeleteEvent) -> None:
         """Log message deletion."""
         if message := payload.cached_message:
