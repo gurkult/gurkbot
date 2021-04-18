@@ -94,7 +94,7 @@ class ModerationLog(Cog):
         await self.post_formatted_message(
             after.author,
             f"edited a message in #{after.channel}.",
-            body=f"Before:\n{before.content}\n\nAfter:\n{after.content}",
+            body=f"**Before:**\n{before.content}\n\n**After:**\n{after.content}",
             colour=Colours.yellow,
         )
 
