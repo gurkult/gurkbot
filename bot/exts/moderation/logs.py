@@ -126,7 +126,7 @@ class ModerationLog(Cog):
 
             if not self.dm_log_channel:
                 logger.error(
-                    f"Failed to get the #log channel with ID {Channels.dm_log}."
+                    f"Failed to get the #dm-log channel with ID {Channels.dm_log}."
                 )
                 return
 
