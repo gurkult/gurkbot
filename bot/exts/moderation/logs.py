@@ -140,7 +140,7 @@ class ModerationLog(Cog):
                 title=f"Direct message from {message.author}",
                 description=message.content,
                 colour=Colours.green,
-            )
+            ).set_thumbnail(url=message.author.avatar_url)
         )
 
 
