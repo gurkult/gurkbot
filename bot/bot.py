@@ -25,8 +25,16 @@ class Bot(commands.Bot):
         super().__init__(command_prefix=constants.PREFIX, intents=intents)
 
         self.loop.create_task(self._db_setup())
-
         self.load_extensions()
+
+    async def notify_dev_alert(
+        self, content: Optional[str] = None, embed: Optional[Embed] = None
+    ) -> None:
+        """Notify dev alert channel."""
+        await self.wait_until_ready()
+        await self.get_channel(constants.Channels.devalerts).send(
+            content=content, embed=embed
+        )
 
     async def _db_setup(self) -> None:
         """Setup and initialize database connection."""
@@ -77,15 +85,6 @@ class Bot(commands.Bot):
             name="Gurkbot", url=constants.BOT_REPO_URL, icon_url=self.user.avatar_url
         )
         await self.get_channel(constants.Channels.devlog).send(embed=embed)
-
-    async def notify_dev_alert(
-        self, content: Optional[str] = None, embed: Optional[Embed] = None
-    ) -> None:
-        """Notify dev alert channel."""
-        await self.wait_until_ready()
-        await self.get_channel(constants.Channels.devalerts).send(
-            content=content, embed=embed
-        )
 
     async def close(self) -> None:
         """Close Http session when bot is shutting down."""
