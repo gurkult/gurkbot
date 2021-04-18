@@ -1,5 +1,6 @@
 import typing
 
+from bot.bot import Bot
 from bot.constants import BOT_REPO_URL
 from discord import Embed
 from discord.ext import commands
@@ -18,7 +19,7 @@ class Github(commands.Cog):
         └ source        Displays information about the bot's source code.
     """
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
     @commands.group(name="github", aliases=("gh",), invoke_without_command=True)
@@ -26,7 +27,7 @@ class Github(commands.Cog):
         """Commands for Github."""
         await ctx.send_help(ctx.command)
 
-    @github_group.command(name="profile")
+    @github_group.command(name="profile", root_aliases=("profile",))
     @commands.cooldown(1, 10, BucketType.user)
     async def profile(self, ctx: commands.Context, username: str) -> None:
         """
@@ -39,7 +40,7 @@ class Github(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @github_group.command(name="issue", aliases=("pr",))
+    @github_group.command(name="issue", aliases=("pr",), root_aliases=("pr", "issue"))
     async def issue(
         self,
         ctx: commands.Context,
@@ -63,7 +64,11 @@ class Github(commands.Cog):
 
         await ctx.send(embed=embed)
 
-    @github_group.command(name="source", aliases=("src", "inspect"))
+    @github_group.command(
+        name="source",
+        aliases=("src", "inspect"),
+        root_aliases=("src", "inspect", "source"),
+    )
     async def source_command(
         self, ctx: commands.Context, *, source_item: typing.Optional[str] = None
     ) -> None:
@@ -86,6 +91,6 @@ class Github(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot: commands.Bot) -> None:
+def setup(bot: Bot) -> None:
     """Load the Github cog."""
     bot.add_cog(Github(bot))
