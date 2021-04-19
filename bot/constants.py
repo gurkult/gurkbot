@@ -42,6 +42,9 @@ class Channels(NamedTuple):
     dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
 
+    log = int(os.getenv("CHANNEL_LOGS", 831432092226158652))
+    dm_log = int(os.getenv("CHANNEL_LOGS", 833345326675918900))
+
 
 class Roles(NamedTuple):
     gurkans = int(os.getenv("ROLE_GURKANS", 789195552121290823))

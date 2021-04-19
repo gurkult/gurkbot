@@ -18,6 +18,7 @@ services:
       - CHANNEL_DEV_REAGURK
       - CHANNEL_DEV_GURKLANG
       - CHANNEL_DEV_BRANDING
+      - CHANNEL_LOGS
 
     volumes:
       - .:/bot
