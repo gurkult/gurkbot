@@ -1,7 +1,7 @@
 import logging
 import re
-from random import randint
 from datetime import datetime
+from random import randint
 from typing import Dict, Optional, Union
 
 from bot.bot import Bot
