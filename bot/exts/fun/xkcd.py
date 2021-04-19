@@ -87,7 +87,9 @@ class XKCD(Cog):
         embed.url = f"{BASE_URL}/{info['num']}"
 
         if info["img"][-3:] in ("jpg", "png", "gif"):
-            date = datetime(year=int(info["year"]), month=int(info["month"]), day=int(info["day"]))
+            date = datetime(
+                year=int(info["year"]), month=int(info["month"]), day=int(info["day"])
+            )
             embed.timestamp = date
 
             embed.set_image(url=info["img"])
