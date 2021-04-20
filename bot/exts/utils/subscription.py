@@ -15,11 +15,10 @@ class Subscription(Cog):
     @staticmethod
     async def get_roles(ctx: Context) -> tuple:
         """Gets announcements and polls role from the guild of the context."""
-        roles = (
+        return (
             ctx.guild.get_role(Roles.announcements),
             ctx.guild.get_role(Roles.polls),
         )
-        return roles
 
     @staticmethod
     async def apply_role(ctx: Context, role_name: Role) -> bool:
@@ -93,7 +92,18 @@ class Subscription(Cog):
             )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
-    @group(name="subscribe", invoke_without_command=True)
+    async def subscribe_list(self, ctx: Context) -> None:
+        """Sends an embed for list of Roles that you can subscribe to."""
+        roles = await self.get_roles(ctx)
+        escape = "\n- "
+        embed = Embed(
+            title=f"{Emojis.confirmation_emoji} Subscribe List",
+            description=f"- {escape.join(role.name for role in roles)}",
+            color=Colours.green,
+        )
+        await ctx.send(content=ctx.author.mention, embed=embed)
+
+    @group(name="subscribe", aliases=("sub",), invoke_without_command=True)
     async def subscribe_group(self, ctx: Context) -> None:
         """Subscribe to announcements and polls notifications, by assigning yourself the roles."""
         await self.sub_unsub_group_helper(ctx, self.apply_role, "Subscribed")
@@ -110,7 +120,7 @@ class Subscription(Cog):
         """Subscribe to polls notification, by assigning yourself the role."""
         await self.sub_unsub_helper(ctx, Roles.polls, self.apply_role, "Subscribed")
 
-    @group(name="unsubscribe", invoke_without_command=True)
+    @group(name="unsubscribe", aliases=("unsub",), invoke_without_command=True)
     async def unsubscribe_group(self, ctx: Context) -> None:
         """Unsubscribe to announcements and polls notifications, by removing your roles."""
         await self.sub_unsub_group_helper(ctx, self.remove_role, "Unsubscribed")
@@ -126,6 +136,11 @@ class Subscription(Cog):
     async def polls_unsubscribe(self, ctx: Context) -> None:
         """Unsubscribe to polls notification, by removing your role."""
         await self.sub_unsub_helper(ctx, Roles.polls, self.remove_role, "Unsubscribed")
+
+    @group(name="subscribelist", aliases=("sublist",), invoke_without_command=True)
+    async def subscribelist(self, ctx: Context) -> None:
+        """Gives a list of roles that you can subscribe to."""
+        await self.subscribe_list(ctx)
 
 
 def setup(bot: Bot) -> None:
