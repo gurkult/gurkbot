@@ -16,12 +16,14 @@ from loguru import logger
 
 CHECK_MARK_EMOJI = "\U00002705"
 CROSS_MARK_EMOJI = "\U0000274C"
+MAG_RIGHT_EMOJI = "\U0001f50e"
+
+FUZZ_RATIO = 80
+FUZZ_PARTIAL_RATIO = 100
 
 
 class OffTopicNames(Cog):
     """Manage off-topic channel names."""
-
-    use_db = True
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
@@ -71,6 +73,7 @@ class OffTopicNames(Cog):
                 return reaction.message == confirmation_msg and user == ctx.author
 
             async def _exit() -> None:
+                await confirmation_msg.delete()
                 await ctx.send(f"Off topic name `{name}` not added.")
 
             try:
@@ -83,7 +86,6 @@ class OffTopicNames(Cog):
             if str(reaction.emoji) == CROSS_MARK_EMOJI:
                 return await _exit()
 
-        # ot_ins = await OT_Model.create(name=name)
         await db_execute(
             self.bot.db_pool, "INSERT INTO offtopicnames VALUES ($1)", name
         )
@@ -94,13 +96,12 @@ class OffTopicNames(Cog):
     @off_topic_names.command(name="delete", aliases=("d", "r", "remove"))
     async def delete_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Delete off topic channel name."""
-        # otn_instance = (
-        #     await OT_Model.filter(name=name) if OT_Model.exists(name=name) else None
-        # )
         if name not in self.ot_names:
             await ctx.send(f":x: `{name}` not found!")
             if names := self._find(name):
-                await self._send_paginated_embed(ctx, names, "Did you mean ❓")
+                await self._send_paginated_embed(
+                    ctx, names, "Did you mean one of the following?"
+                )
             return
 
         await db_execute(
@@ -114,7 +115,7 @@ class OffTopicNames(Cog):
     async def find_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Find similar off-topic names in database."""
         await self._send_paginated_embed(
-            ctx, self._find(name), f"🔎 Search result: {name}"
+            ctx, self._find(name), f"{MAG_RIGHT_EMOJI} Search result: {name}"
         )
 
     def _find(self, name: OT_Converter) -> List[str]:
@@ -122,8 +123,8 @@ class OffTopicNames(Cog):
         return [
             ot_name
             for ot_name in self.ot_names
-            if fuzz.ratio(ot_name, name) > 80
-            or fuzz.partial_ratio(ot_name, name) == 100
+            if fuzz.ratio(ot_name, name) > FUZZ_RATIO
+            or fuzz.partial_ratio(ot_name, name) == FUZZ_PARTIAL_RATIO
         ]
 
     @staticmethod
@@ -183,7 +184,10 @@ class OffTopicNames(Cog):
                 name for name, usage in self.ot_names.items() if usage == chosen_usage
             ]
 
-            while f"ot-{name}" == self.ot_channel.name:
+            def to_channel_name(ot_name: str) -> str:
+                return f"ot｜{ot_name}"
+
+            while to_channel_name(name) == self.ot_channel.name:
                 name = random.choice(chosen_ot_names)
 
             self.ot_names[name] += 1
@@ -193,7 +197,7 @@ class OffTopicNames(Cog):
                 name,
             )
 
-            await self.ot_channel.edit(name=f"ot-{name}")
+            await self.ot_channel.edit(name=to_channel_name(name))
             logger.info(f"Off-topic Channel name changed to {name}.")
 
 
