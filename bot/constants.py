@@ -1,3 +1,4 @@
+
 import os
 import pathlib
 from typing import NamedTuple
@@ -20,15 +21,14 @@ class Emojis(NamedTuple):
     pull_request_emoji = "<:PROpen:794834041416187935>"
     pull_request_closed_emoji = "<:PRClosed:794834041073172501>"
     merge_emoji = "<:PRMerged:794834041173704744>"
+
     cucumber_emoji = "\U0001f952"
-    invalid_emoji = "\u274c"
-    confirmation_emoji = "<:confirmation:824252277262123029>"
-    warning_emoji = "\u26a0"
-    
-    cucumber_emoji = "\U0001f952"
-    
+
     invalid_emoji = "\u274c"
     trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
+    
+    confirmation_emoji = "<:confirmation:824252277262123029>"
+    warning_emoji = "\u26a0"
 
 
 class Colours:
@@ -40,18 +40,19 @@ class Colours:
 class Channels(NamedTuple):
     devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
     devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
-    
+
     dev_gurkbot = int(os.getenv("CHANNEL_DEV_GURKBOT", 789295038315495455))
     dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789241204696416287))
     dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
-    
+
     log = int(os.getenv("CHANNEL_LOGS", 831432092226158652))
     dm_log = int(os.getenv("CHANNEL_LOGS", 833345326675918900))
 
 
 class Roles(NamedTuple):
     gurkans = int(os.getenv("ROLE_GURKANS", 789195552121290823))
+    
     announcements = int(os.getenv("ANNOUNCEMENTS_ID", 789978290844598272))
     polls = int(os.getenv("POLLS_ID", 790043110360350740))
 
