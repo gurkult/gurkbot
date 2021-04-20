@@ -1,6 +1,7 @@
 import os
 
-from discord import Embed
+from aiohttp import ClientSession
+from discord import Embed, Intents
 from discord.ext import commands
 from loguru import logger
 
@@ -11,7 +12,12 @@ class Bot(commands.Bot):
     """The core of the bot."""
 
     def __init__(self) -> None:
-        super().__init__(command_prefix=constants.PREFIX)
+        intents = Intents.default()
+        intents.members = True
+        intents.presences = True
+
+        self.http_session = ClientSession()
+        super().__init__(command_prefix=constants.PREFIX, intents=intents)
         self.load_extensions()
 
     def load_extensions(self) -> None:
@@ -43,8 +49,13 @@ class Bot(commands.Bot):
         """Announce presence to the devlog channel."""
         embed = Embed(description="Connected!")
         embed.set_author(
-            name="Gurkbot",
-            url=constants.BOT_REPO_URL,
-            icon_url=self.user.avatar_url,
+            name="Gurkbot", url=constants.BOT_REPO_URL, icon_url=self.user.avatar_url
         )
         await self.get_channel(constants.Channels.devlog).send(embed=embed)
+
+    async def close(self) -> None:
+        """Close Http session when bot is shutting down."""
+        await super().close()
+
+        if self.http_session:
+            await self.http_session.close()

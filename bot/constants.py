@@ -24,6 +24,11 @@ class Emojis(NamedTuple):
     invalid_emoji = "\u274c"
     confirmation_emoji = "<:confirmation:824252277262123029>"
     warning_emoji = "\u26a0"
+    
+    cucumber_emoji = "\U0001f952"
+    
+    invalid_emoji = "\u274c"
+    trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
 
 
 class Colours:
@@ -40,6 +45,9 @@ class Channels(NamedTuple):
     dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789241204696416287))
     dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
+
+    log = int(os.getenv("CHANNEL_LOGS", 831432092226158652))
+    dm_log = int(os.getenv("CHANNEL_LOGS", 833345326675918900))
 
 
 class Roles(NamedTuple):
