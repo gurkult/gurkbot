@@ -1,5 +1,6 @@
 import logging
 import re
+from datetime import datetime
 from random import randint
 from typing import Dict, Optional, Union
 
@@ -81,14 +82,18 @@ class XKCD(Cog):
                     await ctx.send(embed=embed)
                     return
 
-        embed.title = f"XKCD comic #{info['num']}"
+        embed.title = f"{info['safe_title']} (#{info['num']})"
         embed.description = info["alt"]
         embed.url = f"{BASE_URL}/{info['num']}"
 
         if info["img"][-3:] in ("jpg", "png", "gif"):
+            date = datetime(
+                year=int(info["year"]), month=int(info["month"]), day=int(info["day"])
+            )
+            embed.timestamp = date
+
             embed.set_image(url=info["img"])
-            date = f"{info['year']}/{info['month']}/{info['day']}"
-            embed.set_footer(text=f"{date} - #{info['num']}, '{info['safe_title']}'")
+            embed.set_footer(text=f"#{info['num']} • {info['safe_title']}")
             embed.colour = Colours.green
         else:
             embed.description = (
