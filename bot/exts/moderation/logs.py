@@ -1,11 +1,29 @@
 from datetime import datetime
-from typing import Optional
+from typing import Callable, Optional
 
 from bot.bot import Bot
 from bot.constants import Channels, Colours
 from discord import Embed, Member, Message, RawMessageDeleteEvent, TextChannel, User
 from discord.ext.commands import Cog
 from loguru import logger
+
+
+def get_post_message(bot: Bot) -> Callable:
+    """Magic function returning the `post_message` function."""
+    cog = bot.get_cog("ModerationLog")
+    if not cog:
+        raise ValueError("The ModerationLog cog can't be found.")
+
+    return cog.post_message
+
+
+def get_post_formatted_message(bot: Bot) -> Callable:
+    """Magic function returning the `post_formatted_message` function."""
+    cog = bot.get_cog("ModerationLog")
+    if not cog:
+        raise ValueError("The ModerationLog cog can't be found.")
+
+    return cog.post_formatted_message
 
 
 class ModerationLog(Cog):
