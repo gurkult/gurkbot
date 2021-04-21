@@ -13,11 +13,6 @@ from discord.ext.commands import Cog, Context, group
 from fuzzywuzzy import fuzz
 from loguru import logger
 
-
-CHECK_MARK_EMOJI = "\U00002705"
-CROSS_MARK_EMOJI = "\U0000274C"
-MAG_RIGHT_EMOJI = "\U0001f50e"
-
 FUZZ_RATIO = 80
 FUZZ_PARTIAL_RATIO = 100
 
@@ -66,8 +61,8 @@ class OffTopicNames(Cog):
             embed.set_footer(text="Do you still prefer to add the off topic name?")
             confirmation_msg = await ctx.send(embed=embed)
 
-            await confirmation_msg.add_reaction(CHECK_MARK_EMOJI)
-            await confirmation_msg.add_reaction(CROSS_MARK_EMOJI)
+            await confirmation_msg.add_reaction(constants.Emojis.CHECK_MARK_EMOJI)
+            await confirmation_msg.add_reaction(constants.Emojis.CROSS_MARK_EMOJI)
 
             def check(reaction: Reaction, user: User) -> bool:
                 return reaction.message == confirmation_msg and user == ctx.author
@@ -83,7 +78,7 @@ class OffTopicNames(Cog):
             except asyncio.TimeoutError:
                 return await _exit()
 
-            if str(reaction.emoji) == CROSS_MARK_EMOJI:
+            if str(reaction.emoji) == constants.Emojis.CROSS_MARK_EMOJI:
                 return await _exit()
 
         await db_execute(
@@ -115,7 +110,9 @@ class OffTopicNames(Cog):
     async def find_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Find similar off-topic names in database."""
         await self._send_paginated_embed(
-            ctx, self._find(name), f"{MAG_RIGHT_EMOJI} Search result: {name}"
+            ctx,
+            self._find(name),
+            f"{constants.Emojis.MAG_RIGHT_EMOJI} Search result: {name}",
         )
 
     def _find(self, name: OT_Converter) -> List[str]:

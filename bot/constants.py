@@ -27,6 +27,10 @@ class Emojis(NamedTuple):
     invalid_emoji = "\u274c"
     trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
 
+    CHECK_MARK_EMOJI = "\U00002705"
+    CROSS_MARK_EMOJI = "\U0000274C"
+    MAG_RIGHT_EMOJI = "\U0001f50e"
+
 
 class Colours:
     green = 0x1F8B4C
