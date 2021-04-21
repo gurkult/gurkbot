@@ -15,6 +15,7 @@ from loguru import logger
 
 FUZZ_RATIO = 80
 FUZZ_PARTIAL_RATIO = 100
+OT_NAME_PREFIX = "ot｜"
 
 
 class OffTopicNames(Cog):
@@ -169,8 +170,6 @@ class OffTopicNames(Cog):
             logger.info(f"Waiting {till_midnight}s before re-naming off topic channel.")
             await asyncio.sleep(till_midnight)
 
-            name = self.ot_channel.name
-
             # Algorithm to select next off topic name based on usage/number of times the name has been used.
             # Least used names have a higher chance of being selected.
             usage = set(self.ot_names.values())
@@ -182,20 +181,37 @@ class OffTopicNames(Cog):
             ]
 
             def to_channel_name(ot_name: str) -> str:
-                return f"ot｜{ot_name}"
+                """Append off topic name prefix."""
+                return f"{OT_NAME_PREFIX}{ot_name}"
 
-            while to_channel_name(name) == self.ot_channel.name:
-                name = random.choice(chosen_ot_names)
+            def from_channel_name(ot_name: str) -> str:
+                """Detach off topic name prefix."""
+                return ot_name[len(OT_NAME_PREFIX) :]
 
-            self.ot_names[name] += 1
+            current_name = from_channel_name(self.ot_channel.name)
+            new_name = current_name
+
+            while new_name == current_name:
+                new_name = random.choice(chosen_ot_names)
+
+            self.ot_names[new_name] += 1
             await db_execute(
                 self.bot.db_pool,
                 "UPDATE offtopicnames SET num_used=num_used+1 WHERE name=$1",
-                name,
+                new_name,
             )
 
-            await self.ot_channel.edit(name=to_channel_name(name))
-            logger.info(f"Off-topic Channel name changed to {name}.")
+            new_name = to_channel_name(new_name)
+            await self.ot_channel.edit(name=new_name)
+
+            await self.ot_channel.send(
+                embed=Embed(
+                    title="Today's Off-Topic Name !",
+                    description=f"{new_name}",
+                    colour=constants.Colours.green,
+                )
+            )
+            logger.info(f"Off-topic Channel name changed to {new_name}.")
 
 
 def setup(bot: Bot) -> None:
