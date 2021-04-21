@@ -6,6 +6,8 @@ class OffTopicName(Converter):
     A converter that ensures an added off-topic name is valid.
 
     Adopted from python-discord/bot https://github.com/python-discord/bot/blob/master/bot/converters.py#L344
+    License: MIT License
+    Copyright (c) 2018 Python Discord
     """
 
     allowed_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!?'`-"
