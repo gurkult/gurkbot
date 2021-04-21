@@ -6,7 +6,7 @@ from loguru import logger
 
 
 class ModUtils(Cog):
-    """Cog used for various utility moderation commands."""
+    """Cog used for various moderation utility commands."""
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
@@ -26,5 +26,5 @@ class ModUtils(Cog):
 
 
 def setup(bot: Bot) -> None:
-    """Load the moderation log during setup."""
+    """Load the moderation utils cog during setup."""
     bot.add_cog(ModUtils(bot))
