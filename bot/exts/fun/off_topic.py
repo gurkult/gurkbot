@@ -1,7 +1,7 @@
 import asyncio
 import random
 from datetime import datetime, time, timedelta
-from typing import Dict, Iterable, List, Optional
+from typing import Dict, Iterable, List
 
 from bot import constants
 from bot.bot import Bot
@@ -59,7 +59,7 @@ class OffTopicNames(Cog):
             embed = self._find_embed_builder(
                 similar_names[:5], "Found similar existing names :name_badge:"
             )
-            embed.set_footer(text="Do you still prefer to add the off topic name?")
+            embed.set_footer(text="Do you still want to add the off topic name?")
             confirmation_msg = await ctx.send(embed=embed)
 
             await confirmation_msg.add_reaction(constants.Emojis.CHECK_MARK_EMOJI)
@@ -107,7 +107,7 @@ class OffTopicNames(Cog):
 
         await ctx.send(f"`{name}` has been deleted :white_check_mark:")
 
-    @off_topic_names.command(name="find", aliases=("f", "search"))
+    @off_topic_names.command(name="find", aliases=("f", "s", "search"))
     async def find_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Find similar off-topic names in database."""
         await self._send_paginated_embed(
@@ -126,7 +126,7 @@ class OffTopicNames(Cog):
         ]
 
     @staticmethod
-    def _find_embed_builder(ot_names: List[str], title: str) -> Optional[Embed]:
+    def _find_embed_builder(ot_names: List[str], title: str) -> Embed:
         """Build embed with a list of Off Topic names."""
         return Embed(
             title=title,
