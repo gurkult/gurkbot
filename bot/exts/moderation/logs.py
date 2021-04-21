@@ -138,6 +138,10 @@ class ModerationLog(Cog):
         if message.guild:
             return
 
+        # Outbound messages shouldn't be logged
+        if message.author.id == self.bot.user.id:
+            return
+
         if not self.dm_log_channel:
             await self.bot.wait_until_ready()
             self.dm_log_channel = await self.bot.fetch_channel(Channels.dm_log)
