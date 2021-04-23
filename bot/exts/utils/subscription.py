@@ -22,21 +22,29 @@ class Subscription(Cog):
 
     @staticmethod
     async def apply_role(ctx: Context, role_name: Role) -> bool:
-        """Returns `True` if role was successfully added otherwise it returns `False`."""
+        """
+        Applies the provided role to the user.
+
+        Returns `True` if role was successfully added otherwise it returns `False`.
+        """
         if role_name in ctx.author.roles:
-            return False  # user already has the role
+            return False  # User already has the role
         await ctx.author.add_roles(role_name, reason=f"Subscribed to {role_name}")
         return True
 
     @staticmethod
     async def remove_role(ctx: Context, role_name: Role) -> bool:
-        """Returns `True` if role was successfully removed otherwise it returns `False`."""
+        """
+        Removes the provided role from the user.
+
+        Returns `True` if role was successfully removed otherwise it returns `False`.
+        """
         if role_name in ctx.author.roles:
             await ctx.author.remove_roles(
                 role_name, reason=f"Unsubscribed to {role_name}"
             )
             return True
-        return False  # user doesn't have the role
+        return False  # User doesn't have the role
 
     async def sub_unsub_helper(
         self, ctx: Context, role_id: int, func: Callable, action: str
@@ -78,7 +86,7 @@ class Subscription(Cog):
                 f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
                 if len(role_lst) > 1
                 else role_lst[0]
-            )  # stores a string which tells what role(s) is/are added to or removed from the user
+            )  # Stores a string which tells what role(s) is/are added to or removed from the user
             embed = Embed(
                 title=f"{Emojis.confirmation_emoji} {action}",
                 description=f"You've {action.lower()} to {ctx.guild}'s {msg}.",
@@ -98,7 +106,7 @@ class Subscription(Cog):
         escape = "\n- "
         embed = Embed(
             title=f"{Emojis.confirmation_emoji} Subscribe List",
-            description=f"- {escape.join(role.name for role in roles)}",
+            description=f"- {escape.join(role.name for role in roles)}",  # Creates a bullet list
             color=Colours.green,
         )
         await ctx.send(content=ctx.author.mention, embed=embed)

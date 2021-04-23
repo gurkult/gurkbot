@@ -25,7 +25,7 @@ class Emojis(NamedTuple):
 
     invalid_emoji = "\u274c"
     trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
-    
+
     confirmation_emoji = "<:confirmation:824252277262123029>"
     warning_emoji = "\u26a0"
 
@@ -51,7 +51,7 @@ class Channels(NamedTuple):
 
 class Roles(NamedTuple):
     gurkans = int(os.getenv("ROLE_GURKANS", 789195552121290823))
-    
+
     announcements = int(os.getenv("ANNOUNCEMENTS_ID", 789978290844598272))
     polls = int(os.getenv("POLLS_ID", 790043110360350740))
 
