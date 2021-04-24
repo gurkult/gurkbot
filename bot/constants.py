@@ -48,6 +48,8 @@ class Channels(NamedTuple):
 
 class Roles(NamedTuple):
     gurkans = int(os.getenv("ROLE_GURKANS", 789195552121290823))
+    steering_council = int(os.getenv("ROLE_STEERING_COUNCIL", 789213682332598302))
+    moderators = int(os.getenv("ROLE_MODERATORS", 818107766585163808))
 
 
 # Bot replies

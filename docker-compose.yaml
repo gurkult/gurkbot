@@ -19,6 +19,8 @@ services:
       - CHANNEL_DEV_GURKLANG
       - CHANNEL_DEV_BRANDING
       - CHANNEL_LOGS
+      - ROLE_STEERING_COUNCIL
+      - ROLE_MODERATORS
 
     volumes:
       - .:/bot
