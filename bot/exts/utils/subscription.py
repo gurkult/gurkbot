@@ -80,7 +80,9 @@ class Subscription(Cog):
         If `func` is `remove_role`, `role_lst` stores the role(s) which are removed from the user
         """
         roles = await self.get_roles(ctx)
-        role_lst = [role.name for role in roles if await func(ctx, role)]
+        role_lst = [
+            role.name for role in roles if await func(ctx, role)
+        ]  # Applies/Removes the role(s) and stores a list of applied/removed role(s)
         if role_lst:
             msg = (
                 f"{', '.join(role_lst[:-1])} and {role_lst[-1]}"
