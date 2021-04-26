@@ -5,11 +5,7 @@ from loguru import logger
 
 
 async def db_execute(pool: Pool, sql_statement: str, *args) -> None:
-    """
-    Execute SQL statement.
-
-    Use CREATE, DELETE, INSERT, and UPDATE.
-    """
+    """Execute SQL statement."""
     async with pool.acquire() as connection:
         logger.info(f"Executing SQL: {sql_statement}")
         logger.info(f"with args: {args}")
@@ -18,11 +14,7 @@ async def db_execute(pool: Pool, sql_statement: str, *args) -> None:
 
 
 async def db_fetch(pool: Pool, sql_statement: str, *args) -> List[Record]:
-    """
-    Execute SQL statement.
-
-    Use for SELECT.
-    """
+    """Execute SQL statement."""
     async with pool.acquire() as connection:
         result = await connection.fetch(
             sql_statement,
