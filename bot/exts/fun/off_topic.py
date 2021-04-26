@@ -10,6 +10,7 @@ from bot.postgres.utils import db_execute, db_fetch
 from bot.utils.pagination import LinePaginator
 from discord import Embed, Reaction, TextChannel, User
 from discord.ext.commands import Cog, Context, group
+from discord.utils import sleep_until
 from fuzzywuzzy import fuzz
 from loguru import logger
 
@@ -81,7 +82,10 @@ class OffTopicNames(Cog):
 
     @staticmethod
     async def _send_ot_embed(
-        ctx: Context, description: str, positive: bool, title: str = "Off Topic Names"
+        channel: TextChannel,
+        description: str,
+        positive: bool,
+        title: str = "Off Topic Names",
     ) -> None:
         """Embed helper for Off Topic Names cog."""
         embed = Embed(
@@ -89,7 +93,7 @@ class OffTopicNames(Cog):
             description=description,
             colour=constants.Colours.green if positive else constants.Colours.soft_red,
         )
-        await ctx.send(embed=embed)
+        await channel.send(embed=embed)
 
     @group(name="offtopicnames", aliases=("otn",), invoke_without_command=True)
     async def off_topic_names(self, ctx: Context) -> None:
@@ -100,7 +104,9 @@ class OffTopicNames(Cog):
     async def add_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Add off topic channel name."""
         if name in self.ot_names:
-            await self._send_ot_embed(ctx, f":x:`{name}` already exists!", False)
+            await self._send_ot_embed(
+                ctx.channel, f":x:`{name}` already exists!", False
+            )
             return
 
         similar_names = self._find(name)
@@ -121,7 +127,7 @@ class OffTopicNames(Cog):
             async def _exit() -> None:
                 await confirmation_msg.delete()
                 await self._send_ot_embed(
-                    ctx, f"Off topic name `{name}` not added.", False
+                    ctx.channel, f"Off topic name `{name}` not added.", False
                 )
 
             try:
@@ -139,13 +145,15 @@ class OffTopicNames(Cog):
         )
         self.ot_names[name] = 0
 
-        await self._send_ot_embed(ctx, f"`{name}` has been added :ok_hand:", True)
+        await self._send_ot_embed(
+            ctx.channel, f"`{name}` has been added :ok_hand:", True
+        )
 
     @off_topic_names.command(name="delete", aliases=("d", "r", "remove"))
     async def delete_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Delete off topic channel name."""
         if name not in self.ot_names:
-            await self._send_ot_embed(ctx, f":x: `{name}` not found!", False)
+            await self._send_ot_embed(ctx.channel, f":x: `{name}` not found!", False)
             if names := self._find(name):
                 await self._send_paginated_embed(
                     ctx, names, "Did you mean one of the following?"
@@ -158,7 +166,7 @@ class OffTopicNames(Cog):
         del self.ot_names[name]
 
         await self._send_ot_embed(
-            ctx, f"`{name}` has been deleted :white_check_mark:", True
+            ctx.channel, f"`{name}` has been deleted :white_check_mark:", True
         )
 
     @off_topic_names.command(name="find", aliases=("f", "s", "search"))
@@ -182,9 +190,10 @@ class OffTopicNames(Cog):
             midnight_datetime = datetime.combine(
                 now.date() + timedelta(days=1), time(0)
             )
-            till_midnight = int((midnight_datetime - now).total_seconds())
-            logger.info(f"Waiting {till_midnight}s before re-naming off topic channel.")
-            await asyncio.sleep(30)
+            logger.info(
+                f"Waiting until {midnight_datetime} for re-naming off-topic channel name."
+            )
+            await sleep_until(midnight_datetime)
 
             # Algorithm to select next off topic name based on usage/number of times the name has been used.
             # Least used names have a higher chance of being selected.
@@ -220,12 +229,8 @@ class OffTopicNames(Cog):
             new_name = to_channel_name(new_name)
             await self.ot_channel.edit(name=new_name)
 
-            await self.ot_channel.send(
-                embed=Embed(
-                    title="Today's Off-Topic Name !",
-                    description=f"{new_name}",
-                    colour=constants.Colours.green,
-                )
+            await self._send_ot_embed(
+                self.ot_channel, f"{new_name}", True, "Today's Off-Topic Name!"
             )
             logger.info(f"Off-topic Channel name changed to {new_name}.")
 
