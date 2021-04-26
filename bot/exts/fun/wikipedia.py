@@ -4,8 +4,9 @@ from html import unescape
 from typing import List, Optional
 
 from bot.bot import Bot
-from bot.utils import LinePaginator
-from discord import Color, Embed, TextChannel
+from bot.constants import Colours
+from bot.utils.pagination import LinePaginator
+from discord import Embed, TextChannel
 from discord.ext import commands
 from loguru import logger
 
@@ -77,7 +78,7 @@ class WikipediaSearch(commands.Cog):
         contents = await self.wiki_request(ctx.channel, search)
 
         if contents:
-            embed = Embed(title="Wikipedia Search Results", colour=Color.blurple())
+            embed = Embed(title="Wikipedia Search Results", colour=Colours.green)
             embed.set_thumbnail(url=WIKI_THUMBNAIL)
             embed.timestamp = datetime.utcnow()
             await LinePaginator.paginate(contents, ctx, embed)
