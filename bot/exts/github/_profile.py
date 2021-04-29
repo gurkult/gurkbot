@@ -39,6 +39,7 @@ class GithubInfo:
                 if user_data["bio"] is not None
                 else "",
                 colour=discord.Colour.green(),
+                url=user_data['html_url'],
                 timestamp=datetime.strptime(
                     user_data["created_at"], "%Y-%m-%dT%H:%M:%SZ"
                 ),
