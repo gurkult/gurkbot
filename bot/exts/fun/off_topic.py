@@ -9,7 +9,7 @@ from bot.converters import OffTopicName as OT_Converter
 from bot.postgres.utils import db_execute, db_fetch
 from bot.utils.pagination import LinePaginator
 from discord import Embed, Reaction, TextChannel, User
-from discord.ext.commands import Cog, Context, group
+from discord.ext.commands import Cog, Context, group, has_any_role
 from discord.utils import sleep_until
 from fuzzywuzzy import fuzz
 from loguru import logger
@@ -233,6 +233,12 @@ class OffTopicNames(Cog):
                 self.ot_channel, f"{new_name}", True, "Today's Off-Topic Name!"
             )
             logger.info(f"Off-topic Channel name changed to {new_name}.")
+
+    async def cog_check(self, ctx: Context) -> bool:
+        """Check if user is gurkult lord or mod."""
+        return await has_any_role(
+            constants.Roles.moderators, constants.Roles.gurkult_lords
+        ).predicate(ctx)
 
 
 def setup(bot: Bot) -> None:
