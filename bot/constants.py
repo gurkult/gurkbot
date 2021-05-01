@@ -57,6 +57,7 @@ class Roles(NamedTuple):
     gurkans = int(os.getenv("ROLE_GURKANS", 789195552121290823))
     steering_council = int(os.getenv("ROLE_STEERING_COUNCIL", 789213682332598302))
     moderators = int(os.getenv("ROLE_MODERATORS", 818107766585163808))
+    gurkult_lords = int(os.getenv("ROLE_GURKULT_LORDS", 789197216869777440))
 
 
 # Bot replies
