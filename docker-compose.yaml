@@ -1,5 +1,16 @@
 version: "3.7"
 services:
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - "127.0.0.1:5000:5432"
+    environment:
+      POSTGRES_DB: gurkbot
+      POSTGRES_USER: gurkbotdb
+      POSTGRES_PASSWORD: gurkbotdb
+    volumes:
+      - ./bot/postgres/tables:/docker-entrypoint-initdb.d/
+
   gurkbot:
     build:
       context: .
@@ -7,9 +18,11 @@ services:
     container_name: gurkbot
     init: true
 
-    restart: always
+    restart: on-failure
 
     environment:
+      - DATABASE_URL=postgres://gurkbotdb:gurkbotdb@postgres:5432/gurkbot
+      - CHANNEL_OFF_TOPIC
       - TOKEN
       - PREFIX
       - CHANNEL_DEVLOG
@@ -24,3 +37,6 @@ services:
 
     volumes:
       - .:/bot
+
+    depends_on:
+      - postgres

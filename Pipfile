@@ -8,6 +8,8 @@ verify_ssl = true
 loguru = "~=0.5.3"
 PyYAML = "~=5.4"
 pillow = "~=8.1.2"
+fuzzywuzzy = "*"
+asyncpg = "*"
 
 [dev-packages]
 flake8 = "~=3.8.4"

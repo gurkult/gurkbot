@@ -8,6 +8,7 @@ import yaml
 PREFIX = os.getenv("PREFIX") or "!"
 TOKEN = os.getenv("TOKEN")
 BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # paths
 EXTENSIONS = pathlib.Path("bot/exts/")
@@ -26,6 +27,10 @@ class Emojis(NamedTuple):
     invalid_emoji = "\u274c"
     trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
 
+    CHECK_MARK_EMOJI = "\U00002705"
+    CROSS_MARK_EMOJI = "\U0000274C"
+    MAG_RIGHT_EMOJI = "\U0001f50e"
+
 
 class Colours:
     green = 0x1F8B4C
@@ -34,6 +39,8 @@ class Colours:
 
 
 class Channels(NamedTuple):
+    off_topic = int(os.getenv("CHANNEL_OFF_TOPIC", 789198156218892358))
+
     devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
     devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
 
