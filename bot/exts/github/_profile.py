@@ -39,6 +39,7 @@ class GithubInfo:
                 if user_data["bio"] is not None
                 else "",
                 colour=discord.Colour.green(),
+                url=user_data["html_url"],
                 timestamp=datetime.strptime(
                     user_data["created_at"], "%Y-%m-%dT%H:%M:%SZ"
                 ),
@@ -82,6 +83,7 @@ class GithubInfo:
             embed = discord.Embed(
                 title=choice(ERROR_REPLIES),
                 description=f"The profile for `{username}` was not found.",
+                url=None,
                 colour=discord.Colour.red(),
             )
             return embed
