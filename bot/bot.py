@@ -1,6 +1,9 @@
 import os
+from typing import Optional
 
+import asyncpg
 from aiohttp import ClientSession
+from bot.postgres import create_tables
 from discord import Embed, Intents
 from discord.ext import commands
 from loguru import logger
@@ -14,10 +17,42 @@ class Bot(commands.Bot):
     def __init__(self) -> None:
         intents = Intents.default()
         intents.members = True
+        intents.presences = True
 
         self.http_session = ClientSession()
+        self.db_pool: asyncpg.Pool = asyncpg.create_pool(constants.DATABASE_URL)
+
         super().__init__(command_prefix=constants.PREFIX, intents=intents)
+
+        self.loop.create_task(self._db_setup())
         self.load_extensions()
+
+    async def notify_dev_alert(
+        self, content: Optional[str] = None, embed: Optional[Embed] = None
+    ) -> None:
+        """Notify dev alert channel."""
+        await self.wait_until_ready()
+        await self.get_channel(constants.Channels.devalerts).send(
+            content=content, embed=embed
+        )
+
+    async def _db_setup(self) -> None:
+        """Setup and initialize database connection."""
+        try:
+            await self.db_pool
+            await create_tables(self.db_pool)
+        except Exception as e:
+            error_msg = f"**{e.__class__.__name__}**\n```{e}```"
+            logger.error(f"Database ERROR: {error_msg}")
+
+            await self.notify_dev_alert(
+                embed=Embed(
+                    title="Database error",
+                    description=error_msg,
+                    colour=constants.Colours.soft_red,
+                )
+            )
+            await self.close()
 
     def load_extensions(self) -> None:
         """Load all the extensions in the exts/ folder."""
@@ -26,7 +61,6 @@ class Bot(commands.Bot):
             if extension.name.startswith("_"):
                 continue  # ignore files starting with _
             dot_path = str(extension).replace(os.sep, ".")[:-3]  # remove the .py
-
             self.load_extension(dot_path)
             logger.info(f"Successfully loaded extension:  {dot_path}")
 
@@ -54,7 +88,10 @@ class Bot(commands.Bot):
 
     async def close(self) -> None:
         """Close Http session when bot is shutting down."""
-        await super().close()
-
         if self.http_session:
             await self.http_session.close()
+
+        if self.db_pool:
+            await self.db_pool.close()
+
+        await super().close()

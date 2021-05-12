@@ -8,6 +8,7 @@ import yaml
 PREFIX = os.getenv("PREFIX") or "!"
 TOKEN = os.getenv("TOKEN")
 BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # paths
 EXTENSIONS = pathlib.Path("bot/exts/")
@@ -20,8 +21,15 @@ class Emojis(NamedTuple):
     pull_request_emoji = "<:PROpen:794834041416187935>"
     pull_request_closed_emoji = "<:PRClosed:794834041073172501>"
     merge_emoji = "<:PRMerged:794834041173704744>"
+
     cucumber_emoji = "\U0001f952"
+
     invalid_emoji = "\u274c"
+    trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
+
+    CHECK_MARK_EMOJI = "\U00002705"
+    CROSS_MARK_EMOJI = "\U0000274C"
+    MAG_RIGHT_EMOJI = "\U0001f50e"
 
     # Number unicode emojis for TicTacToe
     number_emojis = {
@@ -48,6 +56,8 @@ class Colours:
 
 
 class Channels(NamedTuple):
+    off_topic = int(os.getenv("CHANNEL_OFF_TOPIC", 789198156218892358))
+
     devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
     devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
 
@@ -55,6 +65,16 @@ class Channels(NamedTuple):
     dev_reagurk = int(os.getenv("CHANNEL_DEV_REAGURK", 789241204696416287))
     dev_gurklang = int(os.getenv("CHANNEL_DEV_GURKLANG", 789249499800535071))
     dev_branding = int(os.getenv("CHANNEL_DEV_BRANDING", 789193817051234306))
+
+    log = int(os.getenv("CHANNEL_LOGS", 831432092226158652))
+    dm_log = int(os.getenv("CHANNEL_LOGS", 833345326675918900))
+
+
+class Roles(NamedTuple):
+    gurkans = int(os.getenv("ROLE_GURKANS", 789195552121290823))
+    steering_council = int(os.getenv("ROLE_STEERING_COUNCIL", 789213682332598302))
+    moderators = int(os.getenv("ROLE_MODERATORS", 818107766585163808))
+    gurkult_lords = int(os.getenv("ROLE_GURKULT_LORDS", 789197216869777440))
 
 
 # Bot replies
