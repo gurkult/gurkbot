@@ -27,6 +27,9 @@ class Emojis(NamedTuple):
     invalid_emoji = "\u274c"
     trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
 
+    confirmation_emoji = "<:confirmation:824252277262123029>"
+    warning_emoji = "\u26a0"
+
     CHECK_MARK_EMOJI = "\U00002705"
     CROSS_MARK_EMOJI = "\U0000274C"
     MAG_RIGHT_EMOJI = "\U0001f50e"
@@ -58,6 +61,9 @@ class Roles(NamedTuple):
     steering_council = int(os.getenv("ROLE_STEERING_COUNCIL", 789213682332598302))
     moderators = int(os.getenv("ROLE_MODERATORS", 818107766585163808))
     gurkult_lords = int(os.getenv("ROLE_GURKULT_LORDS", 789197216869777440))
+
+    announcements = int(os.getenv("ANNOUNCEMENTS_ID", 789978290844598272))
+    polls = int(os.getenv("POLLS_ID", 790043110360350740))
 
 
 # Bot replies
