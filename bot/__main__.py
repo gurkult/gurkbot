@@ -1,6 +1,11 @@
 from .bot import Bot
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Starts bot."""
     bot = Bot()
     bot.run()
+
+
+if __name__ == "__main__":
+    main()

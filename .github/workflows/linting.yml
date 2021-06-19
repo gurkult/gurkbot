@@ -13,7 +13,6 @@ jobs:
 
     env:
       PIP_CACHE_DIR: /tmp/pip-cache-dir
-      PIPENV_CACHE_DIR: /tmp/pip-cache-dir
 
     steps:
       - name: Checks out repository
@@ -36,12 +35,12 @@ jobs:
           path: ${{ env.PIP_CACHE_DIR }}
           key: "python-0-${{ runner.os }}-\
           ${{ steps.python.outputs.python-version }}-\
-          ${{ hashFiles('./Pipfile', './Pipfile.lock') }}"
+          ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
 
       - name: Install dependencies
         run: |
-          pip install pipenv
-          pipenv install --dev --deploy --system
+          pip install poetry
+          poetry install
 
       # Run flake8 and have it format the linting errors in the format of
       # the GitHub Workflow command to register error annotations. This
@@ -52,9 +51,9 @@ jobs:
       # Format used:
       # ::error file={filename},line={line},col={col}::{message}
       - name: Run flake8
-        run: "flake8 \
+        run: "poetry run flake8 \
         --format='::error file=%(path)s,line=%(row)d,col=%(col)d::[flake8] %(code)s: %(text)s'"
 
       # Run black
       - name: Run black
-        run: black . --check --diff
+        run: poetry run black . --check --diff
