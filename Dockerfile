@@ -3,10 +3,10 @@ FROM python:3.8-slim
 # Create the working directory
 WORKDIR /bot
 
-# Install pipenv
+# Install the latest version of poetry
 RUN pip install -U poetry
 
-# Install dependencies using poetry
+# Install production dependencies using poetry
 COPY poetry.lock poetry.toml pyproject.toml ./
 RUN poetry install --no-dev
 

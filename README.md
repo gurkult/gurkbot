@@ -19,7 +19,9 @@ To get a **token**, go to [Discord Developer Portal](https://discord.com/develop
 1. Clone the repository:
 - Traditional way: `git clone https://github.com/gurkult/gurkbot.git` or `git clone git@github.com:gurkult/gurkbot.git`.
 
-- Using Github CLI: `gh repo clone gurkult/gurkbot`. Then navigate to the directory `cd gurkbot/`
+- Using Github CLI: `gh repo clone gurkult/gurkbot`.
+
+Then navigate to the directory `cd gurkbot/`
 
 2. Create a new branch by `git checkout -b <name of new local branch> main` or `git switch -c <name of new local branch> main`. Make sure the new branch name is related to the feature or the fix you have in mind.
 
@@ -47,7 +49,7 @@ To get a **token**, go to [Discord Developer Portal](https://discord.com/develop
    poetry run bot
 
    ```
-5. Lint and format your code properly (use black or flake8) or `poetry run task lint`, and push changes `git push -u origin <name of new remote branch>`
+5. Lint and format your code properly using `poetry run task lint`, and push changes `git push -u origin <name of new remote branch>`
 
 ## Commands to Remember
 `poetry run task precommit` - Installs the pre-commit git hook
