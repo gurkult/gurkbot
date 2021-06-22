@@ -34,10 +34,8 @@ pep8-naming = "^0.11.1"
 pre-commit = "^2.13.0"
 taskipy = "^1.8.1"
 
-[tool.poetry.scripts]
-bot = 'bot.__main__:main'
-
 [tool.taskipy.tasks]
+bot = { cmd = "python -m bot", help = "Runs Bot"}
 lint = { cmd = "pre-commit run --all-files", help = "Lints project" }
 precommit = { cmd = "pre-commit install", help = "Installs the pre-commit git hook" }
 format = { cmd = "black --check .", help = "Runs the black python formatter" }
