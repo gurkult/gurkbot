@@ -11,6 +11,7 @@ pillow = "~=8.1.2"
 fuzzywuzzy = "*"
 asyncpg = "*"
 python-dateutil = "*"
+humanize = "*"
 
 [dev-packages]
 flake8 = "~=3.8.4"
