@@ -67,10 +67,6 @@ class Bot(commands.Bot):
     def run(self) -> None:
         """Run the bot with the token in constants.py/.env ."""
         logger.info("Starting bot")
-        if constants.TOKEN is None:
-            raise EnvironmentError(
-                "token value is None. Make sure you have configured the TOKEN field in .env"
-            )
         super().run(constants.TOKEN)
 
     async def on_ready(self) -> None:

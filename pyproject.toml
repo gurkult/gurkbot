@@ -33,6 +33,7 @@ black = "^21.6b0"
 pep8-naming = "^0.11.1"
 pre-commit = "^2.13.0"
 taskipy = "^1.8.1"
+python-dotenv = "^0.18.0"
 
 [tool.taskipy.tasks]
 bot = { cmd = "python -m bot", help = "Runs Bot"}
