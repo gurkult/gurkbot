@@ -45,3 +45,13 @@ To get a **token**, go to [Discord Developer Portal](https://discord.com/develop
 
    ```
 5. Lint and format your code properly (use black or flake8) or `pipenv run lint`, and push changes `git push -u origin <name of new remote branch>`
+
+## Set Development Environment up With Editor
+
+### VSCode
+<img src="assets/task.png"></img>
+
+1. Run the setup task by pressing `Ctrl + P` and typing `"task Setup"`
+
+2. Run the bot in development using the `Run Bot` task(You can run it just like the Setup task
+in the previous step). You can also run this task by pressing `Ctrl + Shift + B`
