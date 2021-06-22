@@ -25,7 +25,6 @@ class Bot(commands.Bot):
         super().__init__(command_prefix=constants.PREFIX, intents=intents)
 
         self.loop.create_task(self._db_setup())
-        self.load_extensions()
 
     async def notify_dev_alert(
         self, content: Optional[str] = None, embed: Optional[Embed] = None
@@ -53,6 +52,8 @@ class Bot(commands.Bot):
                 )
             )
             await self.close()
+
+        self.load_extensions()
 
     def load_extensions(self) -> None:
         """Load all the extensions in the exts/ folder."""
