@@ -1,7 +1,7 @@
 import random
 
 from bot.bot import Bot
-from bot.constants import Colours, Gurks, NEGATIVE_REPLIES
+from bot.constants import Colours, Gurks, NEGATIVE_REPLIES, POSITIVE_REPLIES
 from discord import Embed
 from discord.ext import commands
 
@@ -16,7 +16,7 @@ class Gurkify(commands.Cog):
 
         if len(display_name) > 26:
             embed = Embed(
-                title=f"{random.choice(NEGATIVE_REPLIES)}",
+                title=random.choice(NEGATIVE_REPLIES),
                 description=(
                     "Your nick name is too long to be gurkified. "
                     "Please change it to be under 26 characters."
@@ -28,7 +28,12 @@ class Gurkify(commands.Cog):
         else:
             display_name += random.choice(Gurks.gurks)
             await ctx.author.edit(nick=display_name)
-            await ctx.send("Done!")
+            embed = Embed(
+                title=random.choice(POSITIVE_REPLIES),
+                description="You nick name has been gurkified.",
+                color=Colours.green,
+            )
+            await ctx.send(content=ctx.author.mention, embed=embed)
 
 
 def setup(bot: Bot) -> None:
