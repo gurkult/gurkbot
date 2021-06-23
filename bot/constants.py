@@ -14,7 +14,6 @@ if os.getenv("ENVIRONMENT") is None:
 # env vars
 PREFIX = os.getenv("PREFIX", "!")
 TOKEN = environment("TOKEN", required=True)
-print(TOKEN)
 BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
 DATABASE_URL = environment("DATABASE_URL", required=True)
 
