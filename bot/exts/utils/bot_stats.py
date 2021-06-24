@@ -1,12 +1,12 @@
 from datetime import datetime
 from platform import python_version
 
+import humanize
+
 from bot.bot import Bot
 from bot.constants import Colours
-from discord import __version__, Embed
+from discord import Embed, __version__
 from discord.ext import commands
-
-import humanize
 
 
 class BotStats(commands.Cog):
@@ -14,10 +14,10 @@ class BotStats(commands.Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-    
+
     @commands.command()
     async def ping(self, ctx: commands.Context) -> None:
-        """Ping the bot to see its latency"""
+        """Ping the bot to see its latency."""
         embed = Embed(
             title="Pong!",
             description=f"Gateway Latency: {round(self.bot.latency * 1000)}ms",
