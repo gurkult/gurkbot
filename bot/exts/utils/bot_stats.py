@@ -2,7 +2,6 @@ from datetime import datetime
 from platform import python_version
 
 import humanize
-
 from bot.bot import Bot
 from bot.constants import Colours
 from discord import Embed, __version__
