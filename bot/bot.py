@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 from typing import Optional
 
@@ -26,6 +27,8 @@ class Bot(commands.Bot):
 
         self.loop.create_task(self._db_setup())
         self.load_extensions()
+
+        self.launch_time = datetime.utcnow().timestamp()
 
     async def notify_dev_alert(
         self, content: Optional[str] = None, embed: Optional[Embed] = None
