@@ -10,6 +10,7 @@ PyYAML = "~=5.4"
 pillow = "~=8.1.2"
 fuzzywuzzy = "*"
 asyncpg = "*"
+humanize = "~=3.9.0"
 
 [dev-packages]
 flake8 = "~=3.8.4"
