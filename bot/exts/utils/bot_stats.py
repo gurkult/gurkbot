@@ -34,7 +34,9 @@ class BotStats(commands.Cog):
 
         embed.set_thumbnail(url=self.bot.user.avatar_url)
 
-        uptime = humanize.precisedelta(datetime.utcnow().timestamp() - self.bot.launch_time)
+        uptime = humanize.precisedelta(
+            datetime.utcnow().timestamp() - self.bot.launch_time
+        )
 
         fields = [
             ("Python Version", python_version()),
