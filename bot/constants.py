@@ -13,14 +13,10 @@ if os.getenv("ENVIRONMENT") is None:
 PREFIX = os.getenv("PREFIX", "!")
 
 TOKEN = os.getenv("TOKEN")
-if not TOKEN:
-    raise EnvironmentError("TOKEN not found in environment variables")
 
 BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise EnvironmentError("DATABASE_URL not found in environment variables")
 
 # paths
 EXTENSIONS = pathlib.Path("bot/exts/")
