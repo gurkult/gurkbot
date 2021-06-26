@@ -4,8 +4,6 @@ from typing import NamedTuple
 
 import yaml
 
-from bot.utils.environment import environment
-
 if os.getenv("ENVIRONMENT") is None:
     from dotenv import load_dotenv
 
@@ -13,9 +11,16 @@ if os.getenv("ENVIRONMENT") is None:
 
 # env vars
 PREFIX = os.getenv("PREFIX", "!")
-TOKEN = environment("TOKEN", required=True)
+
+TOKEN = os.getenv("TOKEN")
+if not TOKEN:
+    raise EnvironmentError("TOKEN not found in environment variables")
+
 BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
-DATABASE_URL = environment("DATABASE_URL", required=True)
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise EnvironmentError("DATABASE_URL not found in environment variables")
 
 # paths
 EXTENSIONS = pathlib.Path("bot/exts/")
@@ -32,7 +37,7 @@ class Emojis(NamedTuple):
     cucumber_emoji = "\U0001f952"
 
     invalid_emoji = "\u274c"
-    trashcan = str(environment("EMOJI_TRASHCAN", default="<:trash:798179380626587658>"))
+    trashcan = str(os.getenv("EMOJI_TRASHCAN", "<:trash:798179380626587658>"))
 
     confirmation_emoji = "<:confirmation:824252277262123029>"
     warning_emoji = "\u26a0"

@@ -58,4 +58,4 @@ Then navigate to the directory `cd gurkbot/`
 
 `poetry run task lint`- Runs pre-commit across the project, formatting and linting files.
 
-`poetry run bot` - Runs the discord bot.
+`poetry run task bot` - Runs the discord bot.
