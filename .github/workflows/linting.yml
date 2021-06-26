@@ -13,6 +13,7 @@ jobs:
 
     env:
       PIP_CACHE_DIR: /tmp/pip-cache-dir
+      POETRY_CACHE_DIR: /tmp/pip-cache-dir
 
     steps:
       - name: Checks out repository

@@ -46,7 +46,7 @@ Then navigate to the directory `cd gurkbot/`
    poetry run task lint
 
    # Run the bot
-   poetry run bot
+   poetry run task bot
 
    ```
 5. Lint and format your code properly using `poetry run task lint`, and push changes `git push -u origin <name of new remote branch>`

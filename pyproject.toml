@@ -2,7 +2,7 @@
 name = "gurkbot"
 version = "0.1.0"
 description = "Our community bot, used for running the server."
-authors = ["Your Name <you@example.com>"]
+authors = ["The Gurkult Community <noreply@gurkult.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/gurkult/gurkbot"

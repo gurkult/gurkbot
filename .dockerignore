@@ -109,3 +109,6 @@ venv.bak/
 
 # MACOS Files and Property file
 .DS_Store
+
+# Git
+.git/
