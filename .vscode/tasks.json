@@ -6,11 +6,11 @@
         {
             "label": "Setup",
             "type": "shell",
-            "command": "pipenv sync --dev && pipenv run precommit && pipenv run pre-commit run --all-files",
+            "command": "poetry install && poetry run task precommit && poetry run pre-commit run --all-files",
             "problemMatcher": []
         },
         {
-            "label": "Run Bot",
+            "label": "Run Bot With Docker",
             "type": "shell",
             "command": "docker-compose up",
             "problemMatcher": [],
@@ -18,6 +18,18 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "label": "Build and Run Bot With Docker",
+            "type": "shell",
+            "command": "docker-compose up --build",
+            "problemMatcher": [],
+        },
+        {
+            "label": "Run Bot Manually",
+            "type": "shell",
+            "command": "poetry run task bot",
+            "problemMatcher": [],
         }
     ]
 }
