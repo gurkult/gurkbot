@@ -56,6 +56,7 @@ class LinePaginator(Paginator):
 
         It overrides in order to allow us to configure the maximum number of lines per page.
         """
+        super().__init__()
         self.prefix = prefix
         self.suffix = suffix
 
