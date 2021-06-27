@@ -4,10 +4,18 @@ from typing import NamedTuple
 
 import yaml
 
+if os.getenv("ENVIRONMENT") is None:
+    from dotenv import load_dotenv
+
+    load_dotenv(dotenv_path=f"{os.getcwd()}/.env")
+
 # env vars
-PREFIX = os.getenv("PREFIX") or "!"
+PREFIX = os.getenv("PREFIX", "!")
+
 TOKEN = os.getenv("TOKEN")
+
 BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # paths

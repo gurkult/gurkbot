@@ -75,7 +75,6 @@ class Github(commands.Cog):
             await ctx.send(embed=embed)
             return
         elif not ctx.bot.get_command(source_item):
-            await ctx.send_help(ctx.command)
             raise commands.BadArgument(
                 f"Unable to convert `{source_item}` to valid command or Cog."
             )
