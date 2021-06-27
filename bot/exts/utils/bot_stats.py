@@ -38,7 +38,7 @@ class BotStats(commands.Cog):
             datetime.utcnow().timestamp() - self.bot.launch_time
         )
 
-         fields = {
+        fields = {
             "Python Version": python_version(),
             "discord.py Version": __version__,
             "Uptime": uptime,
