@@ -38,13 +38,13 @@ class BotStats(commands.Cog):
             datetime.utcnow().timestamp() - self.bot.launch_time
         )
 
-        fields = [
-            ("Python Version", python_version()),
-            ("discord.py Version", __version__),
-            ("Uptime", uptime),
-        ]
+         fields = {
+            "Python Version": python_version(),
+            "discord.py Version": __version__,
+            "Uptime": uptime,
+        }
 
-        for name, value in fields:
+        for name, value in list(fields.items()):
             embed.add_field(name=name, value=value, inline=False)
         await ctx.send(content=ctx.author.mention, embed=embed)
 
