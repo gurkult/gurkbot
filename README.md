@@ -59,8 +59,8 @@ Then navigate to the directory `cd gurkbot/`
 
 1. Run the setup task by pressing `Ctrl + P` and typing `task Setup`
 
-2. Run the bot in development using the `Run Bot` task(You can run it just like the Setup task
-in the previous step). You can also run this task by pressing `Ctrl + Shift + B`
+2. Run the bot in development using the any of the `Run Bot` tasks(You can run them just like the Setup task
+in the previous step). You can also run the default build task by pressing `Ctrl + Shift + B`
 
 ## Commands to Remember
 `poetry run task precommit` - Installs the pre-commit git hook
