@@ -52,15 +52,16 @@ Then navigate to the directory `cd gurkbot/`
 
 5. Lint and format your code properly using `poetry run task lint`, and push changes `git push -u origin <name of new remote branch>`
 
-## Set Development Environment up With Editor
+## Set up the Development Environment With an Editor
 
-### VSCode
+### 1. VSCode
 <img src="assets/task.png"></img>
 
 1. Run the setup task by pressing `Ctrl + P` and typing `task Setup`
 
-2. Run the bot in development using the any of the `Run Bot` tasks(You can run them just like the Setup task
-in the previous step). You can also run the default build task by pressing `Ctrl + Shift + B`
+2. Run the bot in development using any of the `Run Bot` tasks (You can run them just like the
+`Setup` task in the previous step). You can also run the default build task
+by pressing `Ctrl + Shift + B`
 
 ## Commands to Remember
 `poetry run task precommit` - Installs the pre-commit git hook
