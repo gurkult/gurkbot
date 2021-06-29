@@ -92,9 +92,24 @@ class Reminder(Cog):
         self.reminders.remove(reminder)
         await self.schedule_latest_reminder()
 
-    @group(name="remind", invoke_without_command=True)
+    @group(name="remind", aliases=("reminder",), invoke_without_command=True)
     async def remind_group(self, ctx: Context, duration: str, *, content: str) -> None:
-        """Set reminders."""
+        """
+        Set reminders.
+
+        syntax: !remind <duration> <message>
+        Accepted duration formats:
+            - d|day|days
+            - h|hour|hours
+            - m|min|mins|minute|minutes
+            - s|sec|secs|second|seconds
+
+        Example:
+            !remind 1hour drink water
+            !remind 10m submit assignment
+            !remind 1hour30min workout
+            !remind 20days1hour20min my birthday
+        """
         await self.remind_duration(ctx, duration, content=content)
 
     async def schedule_reminder(self, timestamp: datetime, ctx: Context, content: str) -> None:
@@ -112,8 +127,8 @@ class Reminder(Cog):
         embed.title = "Reminder set"
         embed.description = REMINDER_DESCRIPTION.format(
             reminder_id=reminder_id,
-            arrive_in=humanize.precisedelta(timestamp - datetime.utcnow(), minimum_unit="seconds"),
-            content=content[:50]
+            arrive_in=humanize.precisedelta(timestamp - datetime.utcnow(), format="%0.0f"),
+            content=content
         )
         await ctx.send(embed=embed)
         self.reminders.append(
@@ -128,7 +143,6 @@ class Reminder(Cog):
         )
         await self.schedule_latest_reminder()
 
-    @remind_group.command(name="duration")
     async def remind_duration(
         self, ctx: Context, duration: str, *, content: str
     ) -> None:
@@ -139,7 +153,7 @@ class Reminder(Cog):
             return
         await self.schedule_reminder(future_timestamp, ctx, content)
 
-    @remind_group.command(name="list")
+    @remind_group.command(name="list", aliases=("l",))
     async def list_reminders(self, ctx: Context):
         """List all your reminders."""
         reminders = [
@@ -147,8 +161,8 @@ class Reminder(Cog):
         ]
         lines = [
             f"**{i}.** `ID: {reminder['reminder_id']}` - arrives in "
-            f"**{humanize.precisedelta(reminder['end_time'] - datetime.utcnow(), minimum_unit='seconds')}**\n"
-            f"{reminder['content'][:20]}\n"
+            f"**{humanize.precisedelta(reminder['end_time'] - datetime.utcnow(), format='%0.0f')}**\n"
+            f"{reminder['content']}\n"
             for i, reminder in enumerate(reminders, start=1)
         ]
         embed = Embed()
