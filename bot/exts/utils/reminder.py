@@ -8,15 +8,12 @@ import discord
 import humanize
 from asyncpg import Record
 from bot.bot import Bot
-from bot.postgres.utils import db_execute
+from bot.postgres.utils import db_execute, db_fetch
 from bot.utils.pagination import LinePaginator
 from bot.utils.parsers import parse_duration
 from discord import Embed
-from discord.utils import sleep_until
 from discord.ext.commands import Cog, Context, group
-
-
-from bot.postgres.utils import db_fetch
+from discord.utils import sleep_until
 
 
 REMINDER_DESCRIPTION = (
@@ -38,11 +35,13 @@ class Reminder(Cog):
         self.bot.loop.create_task(self._sync_reminders())
 
     def get_recent_reminder(self) -> Optional[dict]:
+        """Get recent reminder(with the earliest end time) out of all reminders."""
         with suppress(ValueError):
             return min(self.reminders.values(), key=lambda record: record["end_time"])
         return
 
-    async def _sync_reminders(self):
+    async def _sync_reminders(self) -> None:
+        """Cache reminders from the database and schedule reminders."""
         self.reminders = {
             reminder["reminder_id"]: reminder
             for reminder in await db_fetch(self.bot.db_pool, "SELECT * FROM reminders")
@@ -68,7 +67,9 @@ class Reminder(Cog):
             # Cancel old reminder for more recent reminder.
             await self.cancel_reminder_task()
 
-            self.scheduled_coroutine = self.bot.loop.create_task(self.send_reminder(recent))
+            self.scheduled_coroutine = self.bot.loop.create_task(
+                self.send_reminder(recent)
+            )
 
     async def send_reminder(self, reminder: Union[Record, dict]) -> None:
         """Send scheduled reminder."""
@@ -84,21 +85,19 @@ class Reminder(Cog):
             color=discord.Color.green(),
         )
         embed.set_thumbnail(url=user.avatar_url)
-        embed.add_field(
-            name="Content:",
-            value=reminder['content'][:50],
-            inline=False
-        )
+        embed.add_field(name="Content:", value=reminder["content"][:50], inline=False)
         embed.add_field(
             name="Original Message:",
             value=f"[here]({reminder['jump_url']}).",
-            inline=False
+            inline=False,
         )
 
         embed.timestamp = datetime.utcnow()
 
         # taken from discord.Message.raw_mentions()
-        mentions = [f"<@{x}>" for x in re.findall(r'<@!?([0-9]+)>', reminder["content"])]
+        mentions = [
+            f"<@{x}>" for x in re.findall(r"<@!?([0-9]+)>", reminder["content"])
+        ]
         mentions.append(user.mention)
         mentions = ", ".join(mentions)
 
@@ -107,7 +106,7 @@ class Reminder(Cog):
         await db_execute(
             self.bot.db_pool,
             "DELETE FROM reminders WHERE reminder_id=$1",
-            reminder["reminder_id"]
+            reminder["reminder_id"],
         )
 
         del self.reminders[reminder["reminder_id"]]
@@ -133,7 +132,9 @@ class Reminder(Cog):
         """
         await self.remind_duration(ctx, duration, content=content)
 
-    async def append_reminder(self, timestamp: datetime, ctx: Context, content: str) -> None:
+    async def append_reminder(
+        self, timestamp: datetime, ctx: Context, content: str
+    ) -> None:
         """Add reminder to database and schedule it."""
         sql = (
             "INSERT INTO reminders(jump_url, user_id, channel_id, end_time, content) "
@@ -141,15 +142,22 @@ class Reminder(Cog):
         )
         async with self.bot.db_pool.acquire() as connection:
             reminder_id = await connection.fetchval(
-                sql, ctx.message.jump_url, ctx.author.id, ctx.channel.id, timestamp, content
+                sql,
+                ctx.message.jump_url,
+                ctx.author.id,
+                ctx.channel.id,
+                timestamp,
+                content,
             )
 
         embed = Embed()
         embed.title = "Reminder set"
         embed.description = REMINDER_DESCRIPTION.format(
             reminder_id=reminder_id,
-            arrive_in=humanize.precisedelta(timestamp - datetime.utcnow(), format="%0.0f"),
-            content=content
+            arrive_in=humanize.precisedelta(
+                timestamp - datetime.utcnow(), format="%0.0f"
+            ),
+            content=content,
         )
         await ctx.send(embed=embed)
         self.reminders[reminder_id] = {
@@ -174,10 +182,12 @@ class Reminder(Cog):
         await self.append_reminder(future_timestamp, ctx, content)
 
     @remind_group.command(name="list", aliases=("l",))
-    async def list_reminders(self, ctx: Context):
+    async def list_reminders(self, ctx: Context) -> None:
         """List all your reminders."""
         reminders = [
-            reminder for reminder in self.reminders.values() if reminder["user_id"] == ctx.author.id
+            reminder
+            for reminder in self.reminders.values()
+            if reminder["user_id"] == ctx.author.id
         ]
         lines = [
             f"**{i}.** `ID: {reminder['reminder_id']}` - arrives in "
@@ -197,14 +207,14 @@ class Reminder(Cog):
         )
 
     @remind_group.command(name="delete", aliases=("d", "del"))
-    async def delete_reminder(self, ctx: Context, reminder_id: int):
+    async def delete_reminder(self, ctx: Context, reminder_id: int) -> None:
         """Delete scheduled reminder."""
         if reminder_id in self.reminders:
             await db_execute(
                 self.bot.db_pool,
                 "DELETE FROM reminders WHERE reminder_id=$1 and user_id=$2;",
                 reminder_id,
-                ctx.author.id
+                ctx.author.id,
             )
             del self.reminders[reminder_id]
             if self.current_scheduled == reminder_id:
