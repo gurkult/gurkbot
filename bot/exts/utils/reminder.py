@@ -1,7 +1,8 @@
 import asyncio
 import re
+from contextlib import suppress
 from datetime import datetime
-from typing import Union
+from typing import Optional, Union
 
 import discord
 import humanize
@@ -13,6 +14,7 @@ from bot.utils.parsers import parse_duration
 from discord import Embed
 from discord.utils import sleep_until
 from discord.ext.commands import Cog, Context, group
+
 
 from bot.postgres.utils import db_fetch
 
@@ -29,38 +31,49 @@ class Reminder(Cog):
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
-        self.reminders = None
-        self.current_scheduled = None
-        self.scheduled_coroutine = None
+        self.reminders: dict = {}
+        self.current_scheduled: Optional[int] = None
+        self.scheduled_coroutine: Optional[asyncio.Task] = None
 
         self.bot.loop.create_task(self._sync_reminders())
 
-    async def _sync_reminders(self):
-        self.reminders = (
-            await db_fetch(self.bot.db_pool, "SELECT * FROM reminders")
-        )
-        await self.schedule_latest_reminder()
+    def get_recent_reminder(self) -> Optional[dict]:
+        with suppress(ValueError):
+            return min(self.reminders.values(), key=lambda record: record["end_time"])
+        return
 
-    async def schedule_latest_reminder(self) -> None:
+    async def _sync_reminders(self):
+        self.reminders = {
+            reminder["reminder_id"]: reminder
+            for reminder in await db_fetch(self.bot.db_pool, "SELECT * FROM reminders")
+        }
+        await self.schedule_reminder(self.get_recent_reminder())
+
+    async def cancel_reminder_task(self) -> None:
+        """Cancel reminder task."""
+        if isinstance(self.scheduled_coroutine, asyncio.Task):
+            self.scheduled_coroutine.cancel()
+
+        self.scheduled_coroutine = None
+
+    async def schedule_reminder(self, recent: Optional[dict]) -> None:
         """Pull and schedule all reminders from the database."""
-        if not self.reminders:
+        if not recent:
+            self.current_scheduled = None
             return
 
-        recent = min(self.reminders, key=lambda record: record["end_time"])
-
-        if recent != self.current_scheduled:
-            self.current_scheduled = recent
+        if recent["reminder_id"] != self.current_scheduled:
+            self.current_scheduled = recent["reminder_id"]
 
             # Cancel old reminder for more recent reminder.
-            if isinstance(self.scheduled_coroutine, asyncio.Task):
-                self.scheduled_coroutine.cancel()
+            await self.cancel_reminder_task()
 
             self.scheduled_coroutine = self.bot.loop.create_task(self.send_reminder(recent))
 
     async def send_reminder(self, reminder: Union[Record, dict]) -> None:
         """Send scheduled reminder."""
-        if reminder["end_time"] > datetime.utcnow():
-            await sleep_until(reminder["end_time"])
+        if (until := reminder["end_time"]) > datetime.utcnow():
+            await sleep_until(until)
 
         await self.bot.wait_until_ready()
         user: discord.User = self.bot.get_user(reminder["user_id"])
@@ -96,8 +109,9 @@ class Reminder(Cog):
             "DELETE FROM reminders WHERE reminder_id=$1",
             reminder["reminder_id"]
         )
-        self.reminders.remove(reminder)
-        await self.schedule_latest_reminder()
+
+        del self.reminders[reminder["reminder_id"]]
+        await self.schedule_reminder(self.get_recent_reminder())
 
     @group(name="remind", aliases=("reminder",), invoke_without_command=True)
     async def remind_group(self, ctx: Context, duration: str, *, content: str) -> None:
@@ -119,7 +133,7 @@ class Reminder(Cog):
         """
         await self.remind_duration(ctx, duration, content=content)
 
-    async def schedule_reminder(self, timestamp: datetime, ctx: Context, content: str) -> None:
+    async def append_reminder(self, timestamp: datetime, ctx: Context, content: str) -> None:
         """Add reminder to database and schedule it."""
         sql = (
             "INSERT INTO reminders(jump_url, user_id, channel_id, end_time, content) "
@@ -138,17 +152,16 @@ class Reminder(Cog):
             content=content
         )
         await ctx.send(embed=embed)
-        self.reminders.append(
-            {
-                "reminder_id": reminder_id,
-                "jump_url": ctx.message.jump_url,
-                "user_id": ctx.author.id,
-                "channel_id": ctx.channel.id,
-                "end_time": timestamp,
-                "content": content,
-            }
-        )
-        await self.schedule_latest_reminder()
+        self.reminders[reminder_id] = {
+            "reminder_id": reminder_id,
+            "jump_url": ctx.message.jump_url,
+            "user_id": ctx.author.id,
+            "channel_id": ctx.channel.id,
+            "end_time": timestamp,
+            "content": content,
+        }
+
+        await self.schedule_reminder(self.get_recent_reminder())
 
     async def remind_duration(
         self, ctx: Context, duration: str, *, content: str
@@ -158,13 +171,13 @@ class Reminder(Cog):
         if not future_timestamp:
             await ctx.send("Invalid duration!")
             return
-        await self.schedule_reminder(future_timestamp, ctx, content)
+        await self.append_reminder(future_timestamp, ctx, content)
 
     @remind_group.command(name="list", aliases=("l",))
     async def list_reminders(self, ctx: Context):
         """List all your reminders."""
         reminders = [
-            reminder for reminder in self.reminders if reminder["user_id"] == ctx.author.id
+            reminder for reminder in self.reminders.values() if reminder["user_id"] == ctx.author.id
         ]
         lines = [
             f"**{i}.** `ID: {reminder['reminder_id']}` - arrives in "
@@ -182,6 +195,25 @@ class Reminder(Cog):
             embed,
             allow_empty_lines=True,
         )
+
+    @remind_group.command(name="delete", aliases=("d", "del"))
+    async def delete_reminder(self, ctx: Context, reminder_id: int):
+        """Delete scheduled reminder."""
+        if reminder_id in self.reminders:
+            await db_execute(
+                self.bot.db_pool,
+                "DELETE FROM reminders WHERE reminder_id=$1 and user_id=$2;",
+                reminder_id,
+                ctx.author.id
+            )
+            del self.reminders[reminder_id]
+            if self.current_scheduled == reminder_id:
+                await self.cancel_reminder_task()
+                await self.schedule_reminder(self.get_recent_reminder())
+            await ctx.send("reminder deleted successfully !")
+
+        else:
+            await ctx.send(f"Reminder with ID: {reminder_id} not found!")
 
 
 def setup(bot: Bot) -> None:
