@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS reminders (
     user_id BIGINT NOT NULL,
     channel_id BIGINT NOT NULL,
     end_time TIMESTAMP NOT NULL,
-    content TEXT DEFAULT NULL,
+    content VARCHAR(512) DEFAULT NULL
 );
