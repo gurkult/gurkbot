@@ -1,4 +1,5 @@
 import asyncio
+import re
 from datetime import datetime
 from typing import Union
 
@@ -82,7 +83,13 @@ class Reminder(Cog):
         )
 
         embed.timestamp = datetime.utcnow()
-        await channel.send(content=user.mention, embed=embed)
+
+        # taken from discord.Message.raw_mentions()
+        mentions = [f"<@{x}>" for x in re.findall(r'<@!?([0-9]+)>', reminder["content"])]
+        mentions.append(user.mention)
+        mentions = ", ".join(mentions)
+
+        await channel.send(content=mentions, embed=embed)
 
         await db_execute(
             self.bot.db_pool,
