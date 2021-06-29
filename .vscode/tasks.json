@@ -6,7 +6,7 @@
         {
             "label": "Setup",
             "type": "shell",
-            "command": "poetry install && poetry run task precommit && poetry run pre-commit run --all-files",
+            "command": "python -m pip install -U poetry && poetry install && poetry run task precommit && poetry run pre-commit run --all-files",
             "problemMatcher": []
         },
         {
