@@ -189,6 +189,7 @@ class Reminder(Cog):
             for reminder in self.reminders.values()
             if reminder["user_id"] == ctx.author.id
         ]
+
         lines = [
             f"**{i}.** `ID: {reminder['reminder_id']}` - arrives in "
             f"**{humanize.precisedelta(reminder['end_time'] - datetime.utcnow(), format='%0.0f')}**\n"
@@ -196,7 +197,7 @@ class Reminder(Cog):
             for i, reminder in enumerate(reminders, start=1)
         ]
         embed = Embed()
-        embed.title = "Your reminders :hourglass:"
+        embed.title = f"Your {len(reminders)} reminders :hourglass:"
         embed.timestamp = datetime.utcnow()
 
         await LinePaginator.paginate(
