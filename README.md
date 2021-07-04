@@ -32,7 +32,7 @@ Then navigate to the directory `cd gurkbot/`
    PREFIX = "!" # the prefix the bot should use, will default to "!" if this is not present
    ```
 
-4. Install poetry: `pip install -U poetry` and run the following:
+4. [Install poetry](https://python-poetry.org/docs/#installation) and run the following:
 
    ```sh
    # This will install the development and project dependencies.
