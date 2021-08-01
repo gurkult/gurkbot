@@ -46,9 +46,9 @@ class Color(Cog):
     )
     async def color_command(self, ctx: Context, *, color_code: str) -> None:
         """Sends an image which is the color of provided as the input."""
-        color_code = self.parse_color(color_code)
+        parsed_color_code = self.parse_color(color_code)
         try:
-            new_col = Image.new("RGB", (128, 128), color_code)
+            new_col = Image.new("RGB", (128, 128), parsed_color_code)
         except ValueError:
             await ctx.send(f"Unknown color specifier `{color_code}`")
             return
@@ -56,7 +56,7 @@ class Color(Cog):
         new_col.save(bufferio, format="PNG")
         bufferio.seek(0)
 
-        file = File(bufferio, filename=f"{color_code}.png")
+        file = File(bufferio, filename=f"{parsed_color_code}.png")
 
         await ctx.send(file=file)
 
