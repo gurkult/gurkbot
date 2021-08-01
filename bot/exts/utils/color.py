@@ -33,11 +33,13 @@ class Color(Cog):
     @command(
         help="""color <color value>
             Get a visual picture for color given as input, valid formats are \
-            hex (with or without #/0x), rgb.
+            hex (with or without #/0x), rgb, rgba.
 
             Hex color codes must be 6 character long valid colors.
-            For rgb, give input as follows -
-            color rgb(v1, v2, v3), color hsv(v1, v2, v3) etc.
+            For rgb, rgba give input as follows -
+                color rgb(v1, v2, v3), color rgba(v1, v2, v3, v4), color v1, v2, v3, color v1, v2, v3, v4
+            Hex -
+                color #181818, color 0x181818
             """,
         brief="Get a image of the color given as input",
         name="color",
