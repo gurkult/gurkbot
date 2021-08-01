@@ -10,6 +10,8 @@ from discord.ext.commands import Cog, Context, command
 class Color(Cog):
     """A cog containing a parser function for parsing the colors and the command function."""
 
+    IMAGE_SIZE = (128, 128)
+
     @staticmethod
     def parse_color(color_code: str) -> str:
         """Parse a color code string to its respective mode."""
@@ -48,7 +50,7 @@ class Color(Cog):
         """Sends an image which is the color of provided as the input."""
         parsed_color_code = self.parse_color(color_code)
         try:
-            new_col = Image.new("RGB", (128, 128), parsed_color_code)
+            new_col = Image.new("RGB", self.IMAGE_SIZE, parsed_color_code)
         except ValueError:
             await ctx.send(f"Unknown color specifier `{color_code}`")
             return
