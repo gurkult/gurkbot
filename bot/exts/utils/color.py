@@ -49,6 +49,7 @@ class Color(Cog):
     async def color_command(self, ctx: Context, *, color_code: str) -> None:
         """Sends an image which is the color of provided as the input."""
         parsed_color_code = self.parse_color(color_code)
+
         try:
             new_col = Image.new("RGB", self.IMAGE_SIZE, parsed_color_code)
         except ValueError:
