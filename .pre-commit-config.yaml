@@ -10,12 +10,6 @@ repos:
         args: [ --fix=lf ]
       - id: trailing-whitespace
 
-  - repo: https://github.com/psf/black
-    rev: 20.8b1
-    hooks:
-      - id: black
-        language_version: python3
-
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.5.1
     hooks:
@@ -23,10 +17,18 @@ repos:
 
   - repo: local
     hooks:
+      - id: black
+        name: Black
+        description: Formats the python source code using black.
+        language: system
+        entry: poetry run task format
+        require_serial: true
+        pass_filenames: false
+
       - id: flake8
         name: Flake8
         description: Lints this repository using flake8.
-        entry: pipenv run flake8
-        language: python
-        types: [ python ]
+        language: system
+        entry: poetry run python -m flake8
         require_serial: true
+        pass_filenames: false

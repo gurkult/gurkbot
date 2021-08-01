@@ -21,6 +21,7 @@ services:
     restart: on-failure
 
     environment:
+      - ENVIRONMENT=DOCKER-DEVELOPMENT
       - DATABASE_URL=postgres://gurkbotdb:gurkbotdb@postgres:5432/gurkbot
       - CHANNEL_OFF_TOPIC
       - TOKEN
