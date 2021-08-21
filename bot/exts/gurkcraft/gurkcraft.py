@@ -5,15 +5,20 @@ from discord.ext.commands import Bot
 
 from mcstatus import MinecraftServer
 
+
 class Minecraft(commands.Cog):
-    def __init__(self, bot) -> NoReturn:
+    """Minecraft Cog"""
+
+
+    def __init__(self, bot: Bot) -> NoReturn:
         self.bot = bot
         self.server = MinecraftServer("129.159.251.229", 25565)
 
     @commands.command()
-    async def mcstatus(self, ctx) -> NoReturn:
+    async def mcstatus(self, ctx: discord.Context) -> NoReturn:
+        """Collects data from minecraft server"""
         status = self.server.status()
-        players = [user['name'] for user in status.raw['players']['sample']]
+        players = [user["name"] for user in status.raw["players"]["sample"]]
         embed_value = f"""\
         Server               : mc.gurkult.com
 
@@ -24,8 +29,11 @@ class Minecraft(commands.Cog):
         {("Gurkans Connected : "+", ".join(players)) if status.players.online else ""}\
         """
 
-        embed=discord.Embed(title="Gurkcraft", description=embed_value, color=0x1f8b4c)
+        embed = discord.Embed(
+            title="Gurkcraft", description=embed_value, color=0x1F8B4C
+        )
         await ctx.send(embed=embed)
+
 
 def setup(bot: Bot) -> NoReturn:
     """Loading the Minecraft cog."""
