@@ -20,9 +20,9 @@ class Minecraft(commands.Cog):
         status = self.server.status()
         players = [user["name"] for user in status.raw["players"]["sample"]]
         embed_value = f"""\
-        Server               : mc.gurkult.com
-        Server Latency       : {status.latency}ms
-        Gurkans Online       : {status.players.online}
+        Server: mc.gurkult.com
+        Server Latency: {status.latency}ms
+        Gurkans Online: {status.players.online}
         Gurkans Connected: {", ".join(players) if status.players.online else ""}\
         """
 
