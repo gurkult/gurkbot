@@ -10,7 +10,7 @@ from mcstatus import MinecraftServer
 class Minecraft(commands.Cog):
     """Minecraft Cog"""
 
-    def __init__(self, bot: Bot) -> NoReturn:
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
         self.server = MinecraftServer(MC_SERVER, MC_PORT)
 
