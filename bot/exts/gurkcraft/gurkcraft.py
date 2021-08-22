@@ -25,7 +25,7 @@ class Minecraft(commands.Cog):
 
         Gurkans Online       : {status.players.online}
 
-        {("Gurkans Connected : "+", ".join(players)) if status.players.online else ""}\
+        "Gurkans Connected: {", ".join(players) if status.players.online else ""}\
         """
 
         embed = discord.Embed(
