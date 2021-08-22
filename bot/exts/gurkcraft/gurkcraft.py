@@ -14,7 +14,7 @@ class Minecraft(commands.Cog):
         self.server = MinecraftServer("129.159.251.229", 25565)
 
     @commands.command()
-    async def mcstatus(self, ctx: discord.Context) -> NoReturn:
+    async def mcstatus(self, ctx: discord.Context) -> None:
         """Collects data from minecraft server"""
         status = self.server.status()
         players = [user["name"] for user in status.raw["players"]["sample"]]
