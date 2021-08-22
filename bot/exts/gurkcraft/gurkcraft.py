@@ -32,6 +32,6 @@ class Minecraft(commands.Cog):
         await ctx.send(embed=embed)
 
 
-def setup(bot: Bot) -> NoReturn:
+def setup(bot: Bot) -> None:
     """Loading the Minecraft cog."""
     bot.add_cog(Minecraft(bot))
