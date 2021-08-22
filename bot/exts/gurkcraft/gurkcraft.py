@@ -9,7 +9,6 @@ from mcstatus import MinecraftServer
 class Minecraft(commands.Cog):
     """Minecraft Cog"""
 
-
     def __init__(self, bot: Bot) -> NoReturn:
         self.bot = bot
         self.server = MinecraftServer("129.159.251.229", 25565)
