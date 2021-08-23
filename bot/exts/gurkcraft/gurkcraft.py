@@ -2,7 +2,7 @@ import discord
 from typing import NoReturn
 from discord.ext import commands
 from discord.ext.commands import Bot
-from ...constants import MC_SERVER, MC_PORT, Colours
+from bot.constants import MC_SERVER, MC_PORT, Colours
 
 from mcstatus import MinecraftServer
 
