@@ -7,8 +7,8 @@ from bot.constants import Colours, Minecraft
 from mcstatus import MinecraftServer
 
 
-class Minecraft(commands.Cog):
-    """Minecraft Cog"""
+class Gurkcraft(commands.Cog):
+    """Gurkcraft Cog"""
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
@@ -20,7 +20,7 @@ class Minecraft(commands.Cog):
         status = self.server.status()
         players = [user["name"] for user in status.raw["players"]["sample"]]
         embed = discord.Embed(
-            title="Gurkcraft", description=embed_value, color=Colours.green
+            title="Gurkcraft", color=Colours.green
         )
         embed.add_field(name="Server", value="mc.gurkult.com")
         embed.add_field(name="Server Latency", value=f"{status.latency}ms")
@@ -30,5 +30,5 @@ class Minecraft(commands.Cog):
 
 
 def setup(bot: Bot) -> None:
-    """Loading the Minecraft cog."""
-    bot.add_cog(Minecraft(bot))
+    """Loading the Gurkcraft cog."""
+    bot.add_cog(Gurkcraft(bot))
