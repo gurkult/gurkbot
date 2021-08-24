@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
-from bot.constants import MC_SERVER, MC_PORT, Colours
+from bot.constants import MC_SERVER_ADDRESS, Colours
 
 from mcstatus import MinecraftServer
 
@@ -11,7 +11,7 @@ class Minecraft(commands.Cog):
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
-        self.server = MinecraftServer(MC_SERVER, MC_PORT)
+        self.server = MinecraftServer.lookup(MC_SERVER_ADDRESS)
 
     @commands.command()
     async def mcstatus(self, ctx: commands.Context) -> None:
