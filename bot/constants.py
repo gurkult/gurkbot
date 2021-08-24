@@ -81,5 +81,5 @@ with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf8") as file
     POSITIVE_REPLIES = bot_replies["POSITIVE_REPLIES"]
     NEGATIVE_REPLIES = bot_replies["NEGATIVE_REPLIES"]
 
-# Minecraft Server and Port
-MC_SERVER_PORT = "mc.gurkult.com"
+# Minecraft Server
+MC_SERVER_ADDRESS = "mc.gurkult.com"
