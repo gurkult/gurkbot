@@ -82,4 +82,5 @@ with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf8") as file
     NEGATIVE_REPLIES = bot_replies["NEGATIVE_REPLIES"]
 
 # Minecraft Server
-MC_SERVER_ADDRESS = "mc.gurkult.com"
+class Minecraft(NamedTuple):
+    server_address = "mc.gurkult.com"
