@@ -1,14 +1,12 @@
 import discord
+from bot.constants import Colours, Minecraft
 from discord.ext import commands
 from discord.ext.commands import Bot
-
-from bot.constants import Colours, Minecraft
-
 from mcstatus import MinecraftServer
 
 
 class Gurkcraft(commands.Cog):
-    """Gurkcraft Cog"""
+    """Gurkcraft Cog."""
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
@@ -16,7 +14,7 @@ class Gurkcraft(commands.Cog):
 
     @commands.command()
     async def mcstatus(self, ctx: commands.Context) -> None:
-        """Collects data from minecraft server"""
+        """Collects data from minecraft server."""
         status = self.server.status()
         players = [user["name"] for user in status.raw["players"]["sample"]]
         embed = discord.Embed(
