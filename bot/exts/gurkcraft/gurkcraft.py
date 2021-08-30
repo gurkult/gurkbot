@@ -17,9 +17,7 @@ class Gurkcraft(commands.Cog):
         """Collects data from minecraft server."""
         status = self.server.status()
         players = [user["name"] for user in status.raw["players"]["sample"]]
-        embed = discord.Embed(
-            title="Gurkcraft", color=Colours.green
-        )
+        embed = discord.Embed(title="Gurkcraft", color=Colours.green)
         embed.add_field(name="Server", value="mc.gurkult.com")
         embed.add_field(name="Server Latency", value=f"{status.latency}ms")
         embed.add_field(name="Gurkans Online", value=status.players.online)
