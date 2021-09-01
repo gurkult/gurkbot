@@ -16,7 +16,10 @@ class Gurkcraft(commands.Cog):
     async def mcstatus(self, ctx: commands.Context) -> None:
         """Collects data from minecraft server."""
         status = self.server.status()
-        players = [user["name"] for user in status.raw["players"]["sample"]]
+        try:
+            players = [user["name"] for user in status.raw["players"]["sample"]]
+        except KeyError:
+            players = ["None"]
         embed = discord.Embed(title="Gurkcraft", color=Colours.green)
         embed.add_field(name="Server", value="mc.gurkult.com")
         embed.add_field(name="Server Latency", value=f"{status.latency}ms")
