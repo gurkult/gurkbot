@@ -2,7 +2,7 @@ from typing import Optional
 
 import discord
 from bot.constants import Channels, Colours, Minecraft
-from discord import TextChannel
+from discord import Embed, TextChannel
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from loguru import logger
@@ -28,7 +28,12 @@ class Gurkcraft(commands.Cog):
         except KeyError:
             players = ["None"]
         except OSError:
-            await ctx.send("The server is currently offline.")
+            await ctx.send(
+                embed=Embed(
+                    description="The server is currently offline.",
+                    colour=Colours.soft_red,
+                )
+            )
             return
 
         embed = discord.Embed(title="Gurkcraft", color=Colours.green)
