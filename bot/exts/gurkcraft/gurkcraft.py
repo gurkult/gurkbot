@@ -43,7 +43,7 @@ class Gurkcraft(commands.Cog):
         embed.add_field(name="Gurkans Connected", value=", ".join(players))
         await ctx.send(embed=embed)
 
-    @tasks.loop(minutes=2)
+    @tasks.loop(minutes=5)
     async def update_channel_description(self) -> None:
         """Collect informations about the server and update the description of the channel."""
         logger.debug("Updating topic of the #gurkcraft channel")
