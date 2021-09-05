@@ -75,13 +75,12 @@ class Gurkcraft(commands.Cog):
 
         if is_online:
             description = (
-                "No players currently online. \n"
+                "No players currently online."
                 if not players
                 else (
                     f"{status.players.online} player{'s' if len(players) > 1 else ''} "
-                    f"online: {', '.join(players)}. \n"
+                    f"online: {', '.join(players)}."
                 )
-                + f"Last server latency: {status.latency}ms"
             )
         else:
             description = "The server is currently offline :("
