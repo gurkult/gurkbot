@@ -9,6 +9,14 @@ from loguru import logger
 from mcstatus import MinecraftServer
 
 
+def _extract_users(status: dict) -> list:
+    """Extract the list of users connected to the server."""
+    try:
+        return [user["name"] for user in status.raw["players"]["sample"]]
+    except KeyError:
+        return []
+
+
 class Gurkcraft(commands.Cog):
     """Gurkcraft Cog."""
 
@@ -22,11 +30,8 @@ class Gurkcraft(commands.Cog):
     @commands.command()
     async def mcstatus(self, ctx: commands.Context) -> None:
         """Collects data from minecraft server."""
-        status = self.server.status()
         try:
-            players = [user["name"] for user in status.raw["players"]["sample"]]
-        except KeyError:
-            players = ["None"]
+            status = self.server.status()
         except OSError:
             await ctx.send(
                 embed=Embed(
@@ -35,12 +40,15 @@ class Gurkcraft(commands.Cog):
                 )
             )
             return
+        players = _extract_users(status)
 
         embed = discord.Embed(title="Gurkcraft", color=Colours.green)
         embed.add_field(name="Server", value="mc.gurkult.com")
         embed.add_field(name="Server Latency", value=f"{status.latency}ms")
         embed.add_field(name="Gurkans Online", value=status.players.online)
-        embed.add_field(name="Gurkans Connected", value=", ".join(players))
+        embed.add_field(
+            name="Gurkans Connected", value=", ".join(players) if players else "None"
+        )
         await ctx.send(embed=embed)
 
     @tasks.loop(minutes=5)
@@ -57,14 +65,13 @@ class Gurkcraft(commands.Cog):
                 )
                 return
 
-        status = self.server.status()
         is_online = True
         try:
-            players = [user["name"] for user in status.raw["players"]["sample"]]
-        except KeyError:
-            players = []
+            status = self.server.status()
+            players = _extract_users(status)
         except OSError:
             is_online = False
+            players = []
 
         if is_online:
             description = (
