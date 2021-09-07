@@ -51,6 +51,7 @@ class Colours:
 
 class Channels(NamedTuple):
     off_topic = int(os.getenv("CHANNEL_OFF_TOPIC", 789198156218892358))
+    gurkcraft = int(os.getenv("CHANNEL_GURKCRAFT", 878159594189381662))
 
     devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
     devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
