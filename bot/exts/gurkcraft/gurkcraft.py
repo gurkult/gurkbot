@@ -53,7 +53,7 @@ class Gurkcraft(commands.Cog):
 
     @tasks.loop(minutes=5)
     async def update_channel_description(self) -> None:
-        """Collect informations about the server and update the description of the channel."""
+        """Collect information about the server and update the description of the channel."""
         logger.debug("Updating topic of the #gurkcraft channel")
 
         if not self.gurkcraft:
