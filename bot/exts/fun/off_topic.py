@@ -103,6 +103,12 @@ class OffTopicNames(Cog):
     @off_topic_names.command(name="add", aliases=("a",))
     async def add_ot_name(self, ctx: Context, *, name: OT_Converter) -> None:
         """Add off topic channel name."""
+        # Migration freeze
+        await ctx.send(
+            ":x: Adding new names is currently disable due to an ongoing migration."
+        )
+        return
+
         if name in self.ot_names:
             await self._send_ot_embed(
                 ctx.channel, f":x:`{name}` already exists!", False
