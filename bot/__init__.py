@@ -6,7 +6,7 @@ import typing
 import loguru
 from loguru import logger
 
-from .constants import LOG_FILE
+from .constants import ENVIRONMENT, LOG_FILE
 
 
 def should_rotate(message: loguru.Message, file: typing.TextIO) -> bool:
@@ -22,5 +22,6 @@ def should_rotate(message: loguru.Message, file: typing.TextIO) -> bool:
     return False
 
 
-logger.add(LOG_FILE, rotation=should_rotate)
+if ENVIRONMENT != "production":
+    logger.add(LOG_FILE, rotation=should_rotate)
 logger.info("Logging Process Started")

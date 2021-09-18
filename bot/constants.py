@@ -4,7 +4,8 @@ from typing import NamedTuple
 
 import yaml
 
-if os.getenv("ENVIRONMENT") is None:
+ENVIRONMENT = os.getenv("ENVIRONMENT")
+if ENVIRONMENT is None:
     from dotenv import load_dotenv
 
     load_dotenv(dotenv_path=f"{os.getcwd()}/.env")
