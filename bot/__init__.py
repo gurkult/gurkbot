@@ -21,6 +21,6 @@ def should_rotate(message: loguru.Message, file: typing.TextIO) -> bool:
         return True
     return False
 
-if os.getenv("ENVIRONMENT) != "production":
+if os.getenv("ENVIRONMENT") != "production":
     logger.add(LOG_FILE, rotation=should_rotate)
 logger.info("Logging Process Started")
