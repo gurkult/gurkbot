@@ -73,10 +73,6 @@ class Reminder(Cog):
 
     async def send_reminder(self, reminder: Union[Record, dict]) -> None:
         """Send scheduled reminder."""
-        # During the migration no reminder will be sent,
-        # meaning they will all arrive once the migration is complete
-        return
-
         if (until := reminder["end_time"]) > datetime.utcnow():
             await sleep_until(until)
 
@@ -134,10 +130,6 @@ class Reminder(Cog):
             !remind 1hour30min workout
             !remind 20days1hour20min my birthday
         """
-        # Migration freeze
-        await ctx.send(
-            ":x: Adding new reminders is currently disable due to an ongoing migration."
-        )
         await self.remind_duration(ctx, duration, content=content)
 
     async def append_reminder(
