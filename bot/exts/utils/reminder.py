@@ -18,7 +18,7 @@ from discord.utils import sleep_until
 
 REMINDER_DESCRIPTION = (
     "**Reminder ID**: {reminder_id}\n"
-    "**Arrive in**: {arrive_in}\n"
+    "**Arrive in**: <t:{arrive_in}:R>\n"
     "\n**Content**:\n{content}"
 )
 
@@ -154,9 +154,7 @@ class Reminder(Cog):
         embed.title = "Reminder set"
         embed.description = REMINDER_DESCRIPTION.format(
             reminder_id=reminder_id,
-            arrive_in=humanize.precisedelta(
-                timestamp - datetime.utcnow(), format="%0.0f"
-            ),
+            arrive_in=humanize.timestamp - datetime.utcnow()
             content=content,
         )
         await ctx.send(embed=embed)
@@ -192,7 +190,7 @@ class Reminder(Cog):
 
         lines = [
             f"**{i}.** `ID: {reminder['reminder_id']}` - arrives in "
-            f"**{humanize.precisedelta(reminder['end_time'] - datetime.utcnow(), format='%0.0f')}**\n"
+            f"**{reminder['end_time'] - datetime.utcnow()}**\n"
             f"{reminder['content']}\n"
             for i, reminder in enumerate(reminders, start=1)
         ]
