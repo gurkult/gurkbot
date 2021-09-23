@@ -15,11 +15,11 @@ jobs:
       - name: Checks out repository
         uses: actions/checkout@v2
 
-      - name: Set up Python 3.9
+      - name: Set up Python 3.8
         id: python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.8
 
       # This step caches our Python dependencies. To make sure we
       # only restore a cache when the dependencies, the python version and
