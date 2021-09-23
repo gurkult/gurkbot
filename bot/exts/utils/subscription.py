@@ -18,6 +18,7 @@ class Subscription(Cog):
         return (
             ctx.guild.get_role(Roles.announcements),
             ctx.guild.get_role(Roles.polls),
+            ctx.guild.get_role(Roles.events),
         )
 
     @staticmethod
@@ -130,6 +131,11 @@ class Subscription(Cog):
         """Subscribe to polls notification, by assigning yourself the role."""
         await self.sub_unsub_helper(ctx, Roles.polls, self.apply_role, "Subscribed")
 
+    @subscribe_group.command(name="events", aliases=("event",))
+    async def events_subscribe(self, ctx: Context) -> None:
+        """Subscribe to events notification, by assigning yourself the role."""
+        await self.sub_unsub_helper(ctx, Roles.events, self.apply_role, "Subscribed")
+
     @group(name="unsubscribe", aliases=("unsub",), invoke_without_command=True)
     async def unsubscribe_group(self, ctx: Context) -> None:
         """Unsubscribe to announcements and polls notifications, by removing your roles."""
@@ -146,6 +152,11 @@ class Subscription(Cog):
     async def polls_unsubscribe(self, ctx: Context) -> None:
         """Unsubscribe to polls notification, by removing your role."""
         await self.sub_unsub_helper(ctx, Roles.polls, self.remove_role, "Unsubscribed")
+
+    @unsubscribe_group.command(name="events", aliases=("event",))
+    async def events_unsubscribe(self, ctx: Context) -> None:
+        """Unsubscribe to events notification, by removing your role."""
+        await self.sub_unsub_helper(ctx, Roles.events, self.remove_role, "Unsubscribed")
 
     @group(name="subscribelist", aliases=("sublist",), invoke_without_command=True)
     async def subscribelist(self, ctx: Context) -> None:

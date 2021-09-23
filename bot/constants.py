@@ -74,6 +74,7 @@ class Roles(NamedTuple):
 
     announcements = int(os.getenv("ANNOUNCEMENTS_ID", 789978290844598272))
     polls = int(os.getenv("POLLS_ID", 790043110360350740))
+    events = int(os.getenv("EVENTS_ID", 890656665328820224))
 
 
 # Bot replies
