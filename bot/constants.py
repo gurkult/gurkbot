@@ -50,6 +50,10 @@ class Colours:
     soft_red = 0xCD6D6D
 
 
+class Gurks:
+    gurks = ["gurk", "gurkan", "urkan"]
+
+
 class Channels(NamedTuple):
     off_topic = int(os.getenv("CHANNEL_OFF_TOPIC", 789198156218892358))
     gurkcraft = int(os.getenv("CHANNEL_GURKCRAFT", 878159594189381662))
@@ -74,6 +78,7 @@ class Roles(NamedTuple):
 
     announcements = int(os.getenv("ANNOUNCEMENTS_ID", 789978290844598272))
     polls = int(os.getenv("POLLS_ID", 790043110360350740))
+    events = int(os.getenv("EVENTS_ID", 890656665328820224))
 
 
 # Bot replies
