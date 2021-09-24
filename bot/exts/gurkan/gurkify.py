@@ -24,7 +24,6 @@ class Gurkify(commands.Cog):
                 color=Colours.soft_red,
             )
             await ctx.send(embed=embed)
-            return
         else:
             display_name += random.choice(Gurks.gurks)
             await ctx.author.edit(nick=display_name)
