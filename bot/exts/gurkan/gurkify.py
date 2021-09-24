@@ -11,7 +11,7 @@ class Gurkify(commands.Cog):
 
     @commands.command(name="gurkify")
     async def gurkify(self, ctx: commands.Context) -> None:
-        """Gurkifying users display name."""
+        """Gurkify user's display name."""
         display_name = ctx.author.display_name
 
         if len(display_name) > 26:
