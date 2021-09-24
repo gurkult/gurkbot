@@ -4,10 +4,19 @@ from typing import NamedTuple
 
 import yaml
 
+ENVIRONMENT = os.getenv("ENVIRONMENT")
+if ENVIRONMENT is None:
+    from dotenv import load_dotenv
+
+    load_dotenv(dotenv_path=f"{os.getcwd()}/.env")
+
 # env vars
-PREFIX = os.getenv("PREFIX") or "!"
+PREFIX = os.getenv("PREFIX", "!")
+
 TOKEN = os.getenv("TOKEN")
+
 BOT_REPO_URL = "https://github.com/gurkult/gurkbot"
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # paths
@@ -47,6 +56,7 @@ class Gurks:
 
 class Channels(NamedTuple):
     off_topic = int(os.getenv("CHANNEL_OFF_TOPIC", 789198156218892358))
+    gurkcraft = int(os.getenv("CHANNEL_GURKCRAFT", 878159594189381662))
 
     devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
     devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
@@ -68,6 +78,7 @@ class Roles(NamedTuple):
 
     announcements = int(os.getenv("ANNOUNCEMENTS_ID", 789978290844598272))
     polls = int(os.getenv("POLLS_ID", 790043110360350740))
+    events = int(os.getenv("EVENTS_ID", 890656665328820224))
 
 
 # Bot replies
@@ -76,3 +87,7 @@ with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf8") as file
     ERROR_REPLIES = bot_replies["ERROR_REPLIES"]
     POSITIVE_REPLIES = bot_replies["POSITIVE_REPLIES"]
     NEGATIVE_REPLIES = bot_replies["NEGATIVE_REPLIES"]
+
+# Minecraft Server
+class Minecraft(NamedTuple):
+    server_address = "mc.gurkult.com"

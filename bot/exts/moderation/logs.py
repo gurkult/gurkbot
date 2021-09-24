@@ -59,19 +59,21 @@ class ModerationLog(Cog):
         """Format and post a message to the #log channel."""
         logger.trace(f'Creating log "{actor.id} {action}"')
 
-        await self.post_message(
-            Embed(
-                title=(
-                    f"{actor} "
-                    f"{f'({actor.display_name}) ' if actor.display_name != actor.name else ''}"
-                    f"({actor.id}) {action}"
-                ),
-                description=body or "<no additional information provided>",
-                url=link,
-                colour=colour,
-                timestamp=datetime.utcnow(),
-            ).set_thumbnail(url=actor.avatar_url)
-        )
+        embed = Embed(
+            title=(
+                f"{actor} "
+                f"{f'({actor.display_name}) ' if actor.display_name != actor.name else ''}"
+                f"({actor.id}) {action}"
+            ),
+            description=body or "<no additional information provided>",
+            colour=colour,
+            timestamp=datetime.utcnow(),
+        ).set_thumbnail(url=actor.avatar_url)
+
+        if link:
+            embed.url = link
+
+        await self.post_message(embed=embed)
 
     @Cog.listener()
     async def on_raw_message_delete(self, payload: RawMessageDeleteEvent) -> None:
