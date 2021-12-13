@@ -5,8 +5,8 @@ from typing import Optional
 import asyncpg
 from aiohttp import ClientSession
 from bot.postgres import create_tables
-from discord import AllowedMentions, Embed, Intents, Object
-from discord.ext import commands
+from disnake import AllowedMentions, Embed, Intents, Object
+from disnake.ext import commands
 from loguru import logger
 
 from . import constants
@@ -105,7 +105,7 @@ class Bot(commands.Bot):
         """Announce presence to the devlog channel."""
         embed = Embed(description="Connected!")
         embed.set_author(
-            name="Gurkbot", url=constants.BOT_REPO_URL, icon_url=self.user.avatar_url
+            name="Gurkbot", url=constants.BOT_REPO_URL, icon_url=self.user.avatar.url
         )
         await self.get_channel(constants.Channels.devlog).send(embed=embed)
 

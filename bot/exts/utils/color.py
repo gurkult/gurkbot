@@ -3,8 +3,8 @@ from string import hexdigits
 
 from PIL import Image
 from bot.bot import Bot
-from discord import File
-from discord.ext.commands import Cog, Context, command
+from disnake import File
+from disnake.ext.commands import Cog, Context, command
 
 
 class Color(Cog):

@@ -3,8 +3,8 @@ from typing import Optional, Union
 from bot.bot import Bot
 from bot.constants import Emojis
 from bot.utils.is_gurkan import gurkan_check, gurkan_rate
-from discord import Color, Embed, Member
-from discord.ext.commands import Cog, Context, command
+from disnake import Color, Embed, Member
+from disnake.ext.commands import Cog, Context, command
 
 
 RATE_DICT = {

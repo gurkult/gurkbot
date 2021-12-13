@@ -1,10 +1,10 @@
 from typing import Optional
 
-import discord
+import disnake
 from bot.constants import Channels, Colours, Minecraft
-from discord import Embed, TextChannel
-from discord.ext import commands, tasks
-from discord.ext.commands import Bot
+from disnake import Embed, TextChannel
+from disnake.ext import commands, tasks
+from disnake.ext.commands import Bot
 from loguru import logger
 from mcstatus import MinecraftServer
 
@@ -42,7 +42,7 @@ class Gurkcraft(commands.Cog):
             return
         players = _extract_users(status)
 
-        embed = discord.Embed(title="Gurkcraft", color=Colours.green)
+        embed = disnake.Embed(title="Gurkcraft", color=Colours.green)
         embed.add_field(name="Server", value="mc.gurkult.com")
         embed.add_field(name="Server Latency", value=f"{status.latency}ms")
         embed.add_field(name="Gurkans Online", value=status.players.online)

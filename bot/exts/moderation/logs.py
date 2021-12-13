@@ -3,8 +3,8 @@ from typing import Callable, Optional
 
 from bot.bot import Bot
 from bot.constants import Channels, Colours
-from discord import Embed, Member, Message, RawMessageDeleteEvent, TextChannel, User
-from discord.ext.commands import Cog
+from disnake import Embed, Member, Message, RawMessageDeleteEvent, TextChannel, User
+from disnake.ext.commands import Cog
 from loguru import logger
 
 
@@ -68,7 +68,7 @@ class ModerationLog(Cog):
             description=body or "<no additional information provided>",
             colour=colour,
             timestamp=datetime.utcnow(),
-        ).set_thumbnail(url=actor.avatar_url)
+        ).set_thumbnail(url=actor.avatar.url)
 
         if link:
             embed.url = link
@@ -160,7 +160,7 @@ class ModerationLog(Cog):
                 description=message.content,
                 colour=Colours.green,
                 timestamp=datetime.utcnow(),
-            ).set_thumbnail(url=message.author.avatar_url)
+            ).set_thumbnail(url=message.author.avatar.url)
         )
 
 

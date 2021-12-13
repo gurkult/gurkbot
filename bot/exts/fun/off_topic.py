@@ -8,9 +8,9 @@ from bot.bot import Bot
 from bot.converters import OffTopicName as OT_Converter
 from bot.postgres.utils import db_execute, db_fetch
 from bot.utils.pagination import LinePaginator
-from discord import Embed, Reaction, TextChannel, User
-from discord.ext.commands import Cog, Context, group, has_any_role
-from discord.utils import sleep_until
+from disnake import Embed, Reaction, TextChannel, User
+from disnake.ext.commands import Cog, Context, group, has_any_role
+from disnake.utils import sleep_until
 from fuzzywuzzy import fuzz
 from loguru import logger
 

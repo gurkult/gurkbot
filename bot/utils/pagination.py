@@ -2,10 +2,10 @@ import asyncio
 import typing as t
 from contextlib import suppress
 
-import discord
+import disnake
 from bot import constants
-from discord.abc import User
-from discord.ext.commands import Context, Paginator
+from disnake.abc import User
+from disnake.ext.commands import Context, Paginator
 from loguru import logger
 
 
@@ -52,7 +52,7 @@ class LinePaginator(Paginator):
         max_lines: t.Optional[int] = None,
     ) -> None:
         """
-        This function overrides the Paginator.__init__ from inside discord.ext.commands.
+        This function overrides the Paginator.__init__ from inside disnake.ext.commands.
 
         It overrides in order to allow us to configure the maximum number of lines per page.
         """
@@ -164,7 +164,7 @@ class LinePaginator(Paginator):
         cls,
         lines: t.List[str],
         ctx: Context,
-        embed: discord.Embed,
+        embed: disnake.Embed,
         prefix: str = "",
         suffix: str = "",
         max_lines: t.Optional[int] = None,
@@ -176,7 +176,7 @@ class LinePaginator(Paginator):
         footer_text: str = None,
         url: str = None,
         allow_empty_lines: bool = False,
-    ) -> t.Optional[discord.Message]:
+    ) -> t.Optional[disnake.Message]:
         """
         Use a paginator and set of reactions to provide pagination over a set of lines.
 
@@ -190,12 +190,12 @@ class LinePaginator(Paginator):
 
         Example:
         >>> people = ["Guido van Rossum", "Linus Torvalds", "Gurkbot", "Bjarne Stroustrup"]
-        >>> e = discord.Embed()
+        >>> e = disnake.Embed()
         >>> e.set_author(name="Ain't these people just awesome?")
         >>> await LinePaginator.paginate(people, ctx, e)
         """
 
-        def event_check(reaction_: discord.Reaction, user_: discord.Member) -> bool:
+        def event_check(reaction_: disnake.Reaction, user_: disnake.Member) -> bool:
             """Make sure that this reaction is what we want to operate on."""
             return (
                 # Conditions for a successful pagination:
@@ -387,5 +387,5 @@ class LinePaginator(Paginator):
                 await message.edit(embed=embed)
 
         logger.debug("Ending pagination and clearing reactions.")
-        with suppress(discord.NotFound):
+        with suppress(disnake.NotFound):
             await message.clear_reactions()

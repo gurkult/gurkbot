@@ -1,9 +1,9 @@
-import discord
+import disnake
 from bot.bot import Bot
 from bot.constants import Roles
 from bot.utils.is_gurkan import gurkan_check
-from discord.ext import commands
-from discord.utils import get
+from disnake.ext import commands
+from disnake.utils import get
 
 
 class MakeGurkan(commands.Cog):
@@ -14,7 +14,7 @@ class MakeGurkan(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_update(
-        self, before: discord.Member, after: discord.Member
+        self, before: disnake.Member, after: disnake.Member
     ) -> None:
         """
         Adds/Removes the gurkan role on member update.
@@ -34,7 +34,7 @@ class MakeGurkan(commands.Cog):
                     await after.remove_roles(role)
 
     @commands.Cog.listener()
-    async def on_member_join(self, member: discord.Member) -> None:
+    async def on_member_join(self, member: disnake.Member) -> None:
         """Adds the gurkan role to new members who are classified as gurkans."""
         if member.bot:
             return

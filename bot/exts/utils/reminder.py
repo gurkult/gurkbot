@@ -4,16 +4,16 @@ from contextlib import suppress
 from datetime import datetime
 from typing import Optional, Union
 
-import discord
+import disnake
 import humanize
 from asyncpg import Record
 from bot.bot import Bot
 from bot.postgres.utils import db_execute, db_fetch
 from bot.utils.pagination import LinePaginator
 from bot.utils.parsers import parse_duration
-from discord import Embed
-from discord.ext.commands import Cog, Context, group
-from discord.utils import sleep_until
+from disnake import Embed
+from disnake.ext.commands import Cog, Context, group
+from disnake.utils import sleep_until
 
 
 REMINDER_DESCRIPTION = (
@@ -77,14 +77,14 @@ class Reminder(Cog):
             await sleep_until(until)
 
         await self.bot.wait_until_ready()
-        user: discord.User = self.bot.get_user(reminder["user_id"])
-        channel: discord.TextChannel = self.bot.get_channel(reminder["channel_id"])
+        user: disnake.User = self.bot.get_user(reminder["user_id"])
+        channel: disnake.TextChannel = self.bot.get_channel(reminder["channel_id"])
 
-        embed = discord.Embed(
+        embed = disnake.Embed(
             title=":alarm_clock: Reminder Arrived",
-            color=discord.Color.green(),
+            color=disnake.Color.green(),
         )
-        embed.set_thumbnail(url=user.avatar_url)
+        embed.set_thumbnail(url=user.avatar.url)
         embed.add_field(name="Content:", value=reminder["content"][:50], inline=False)
         embed.add_field(
             name="Original Message:",
@@ -94,7 +94,7 @@ class Reminder(Cog):
 
         embed.timestamp = datetime.utcnow()
 
-        # taken from discord.Message.raw_mentions()
+        # taken from disnake.Message.raw_mentions()
         mentions = [
             f"<@{x}>" for x in re.findall(r"<@!?([0-9]+)>", reminder["content"])
         ]
