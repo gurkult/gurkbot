@@ -68,7 +68,7 @@ class ModerationLog(Cog):
             description=body or "<no additional information provided>",
             colour=colour,
             timestamp=datetime.utcnow(),
-        ).set_thumbnail(url=actor.avatar.url)
+        ).set_thumbnail(url=actor.display_avatar.url)
 
         if link:
             embed.url = link
@@ -160,7 +160,7 @@ class ModerationLog(Cog):
                 description=message.content,
                 colour=Colours.green,
                 timestamp=datetime.utcnow(),
-            ).set_thumbnail(url=message.author.avatar.url)
+            ).set_thumbnail(url=message.author.display_avatar.url)
         )
 
 

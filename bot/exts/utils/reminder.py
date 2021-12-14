@@ -84,7 +84,7 @@ class Reminder(Cog):
             title=":alarm_clock: Reminder Arrived",
             color=disnake.Color.green(),
         )
-        embed.set_thumbnail(url=user.avatar.url)
+        embed.set_thumbnail(url=user.display_avatar.url)
         embed.add_field(name="Content:", value=reminder["content"][:50], inline=False)
         embed.add_field(
             name="Original Message:",

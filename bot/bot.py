@@ -105,7 +105,9 @@ class Bot(commands.Bot):
         """Announce presence to the devlog channel."""
         embed = Embed(description="Connected!")
         embed.set_author(
-            name="Gurkbot", url=constants.BOT_REPO_URL, icon_url=self.user.avatar.url
+            name="Gurkbot",
+            url=constants.BOT_REPO_URL,
+            icon_url=self.user.display_avatar.url,
         )
         await self.get_channel(constants.Channels.devlog).send(embed=embed)
 

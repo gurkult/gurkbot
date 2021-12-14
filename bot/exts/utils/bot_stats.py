@@ -32,7 +32,7 @@ class BotStats(commands.Cog):
             color=Colours.green,
         )
 
-        embed.set_thumbnail(url=self.bot.user.avatar.url)
+        embed.set_thumbnail(url=self.bot.user.display_avatar.url)
 
         uptime = humanize.precisedelta(
             datetime.utcnow().timestamp() - self.bot.launch_time
