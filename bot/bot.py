@@ -5,7 +5,7 @@ from typing import Optional
 import asyncpg
 from aiohttp import ClientSession
 from bot.postgres import create_tables
-from discord import Embed, Intents
+from discord import AllowedMentions, Embed, Intents, Object
 from discord.ext import commands
 from loguru import logger
 
@@ -22,8 +22,25 @@ class Bot(commands.Bot):
 
         self.http_session = ClientSession()
         self.db_pool: asyncpg.Pool = asyncpg.create_pool(constants.DATABASE_URL)
+        roles = [
+            Object(r)
+            for r in [
+                constants.Roles.steering_council,
+                constants.Roles.moderators,
+                constants.Roles.gurkult_lords,
+            ]
+        ]
 
-        super().__init__(command_prefix=constants.PREFIX, intents=intents)
+        super().__init__(
+            command_prefix=constants.PREFIX,
+            intents=intents,
+            allowed_mentions=AllowedMentions(
+                everyone=None,
+                users=True,
+                roles=roles,
+                replied_user=True,
+            ),
+        )
 
         self.loop.create_task(self._db_setup())
 
