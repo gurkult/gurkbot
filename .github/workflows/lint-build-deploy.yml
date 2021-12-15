@@ -39,6 +39,13 @@ jobs:
           pip install poetry
           poetry install
 
+      # We will not run `black` or `flake8` here, as we will use a separate
+      # black and flake8 action. As pre-commit does not support user installs,
+      # we set PIP_USER=0 to not do a user install.
+      - name: Run pre-commit hooks
+        id: pre-commit
+        run: export PIP_USER=0; SKIP="black,flake8" poetry run pre-commit run --all-files
+
       # Run flake8 and have it format the linting errors in the format of
       # the GitHub Workflow command to register error annotations. This
       # means that our flake8 output is automatically added as an error
@@ -48,11 +55,16 @@ jobs:
       # Format used:
       # ::error file={filename},line={line},col={col}::{message}
       - name: Run flake8
+        # this check ensures that black always runs if the pre-commit step ran
+        # Its best to only have to fix pre-commit once than twice
+        if: always() && (steps.pre-commit.outcome == 'success' || steps.pre-commit.outcome == 'failure')
         run: "poetry run flake8 \
         --format='::error file=%(path)s,line=%(row)d,col=%(col)d::[flake8] %(code)s: %(text)s'"
 
       # Run black
       - name: Run black
+        # see flake8's comment above
+        if: always() && (steps.pre-commit.outcome == 'success' || steps.pre-commit.outcome == 'failure')
         run: poetry run black . --check --diff
 
       # Prepare the Pull Request Payload artifact. If this fails, we
