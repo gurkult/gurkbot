@@ -51,7 +51,6 @@ class GithubInfo:
                 name="Followers",
                 value=f"[{user_data['followers']}]({user_data['html_url']}?tab=followers)",
             )
-            embed.add_field(name="\u200b", value="\u200b")
             embed.add_field(
                 name="Following",
                 value=f"[{user_data['following']}]({user_data['html_url']}?tab=following)",
@@ -60,17 +59,13 @@ class GithubInfo:
                 name="Public repos",
                 value=f"[{user_data['public_repos']}]({user_data['html_url']}?tab=repositories)",
             )
-            embed.add_field(name="\u200b", value="\u200b")
             embed.add_field(
                 name="Gists",
                 value=f"[{user_data['public_gists']}](https://gist.github.com/{username})",
             )
-            embed.add_field(
-                name="Organizations",
-                value=" | ".join(orgs) if orgs else "No Organizations",
-            )
-            embed.add_field(name="\u200b", value="\u200b")
             embed.add_field(name="Website", value=blog)
+            if orgs:
+                embed.add_field(name="Organizations", value=" | ".join(orgs))
 
             return embed
 
