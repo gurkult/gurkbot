@@ -18,6 +18,10 @@ from bot.utils.pagination import LinePaginator
 FUZZ_RATIO = 80
 FUZZ_PARTIAL_RATIO = 100
 OT_NAME_PREFIX = "ot｜"
+REFRESH_TIMES = [
+    datetime.time(hour=0, minute=0, second=0),
+    datetime.time(hour=12, minute=0, second=0),
+]
 
 
 class OffTopicNames(Cog):
@@ -188,7 +192,7 @@ class OffTopicNames(Cog):
         """List all Off Topic names."""
         await self._send_paginated_embed(ctx, self.ot_names.keys(), "Off Topic Names")
 
-    @tasks.loop(time=datetime.time(hour=0, minute=0, second=0))
+    @tasks.loop(time=REFRESH_TIMES)
     async def update_ot_channel_name(self) -> None:
         """Update ot-channel name everyday at midnight."""
         # await the cache method to ensure we pull from an up-to-date cache every time
@@ -229,7 +233,7 @@ class OffTopicNames(Cog):
         await self.ot_channel.edit(name=new_name)
 
         await self._send_ot_embed(
-            self.ot_channel, f"{new_name}", True, "Today's Off-Topic Name!"
+            self.ot_channel, f"{new_name}", True, "New Off-Topic Name!"
         )
         logger.info(f"Off-topic Channel name changed to {new_name}.")
 
