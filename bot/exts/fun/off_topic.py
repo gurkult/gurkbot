@@ -1,11 +1,11 @@
 import asyncio
+import datetime
 import random
-from datetime import datetime, time, timedelta
 from typing import Dict, Iterable, List
 
 from disnake import Embed, Reaction, TextChannel, User
+from disnake.ext import tasks
 from disnake.ext.commands import Cog, Context, group, has_any_role
-from disnake.utils import sleep_until
 from fuzzywuzzy import fuzz
 from loguru import logger
 
@@ -30,7 +30,11 @@ class OffTopicNames(Cog):
         self.ot_names: Dict[str:int] = ...
 
         self.bot.loop.create_task(self._cache())
-        self.bot.loop.create_task(self.update_ot_channel_name())
+        self.update_ot_channel_name.start()
+
+    def cog_unload(self) -> None:
+        """Cancels all tasks upon unload."""
+        self.update_ot_channel_name.cancel()
 
     async def _cache(self) -> None:
         """Get all off topic channel names."""
@@ -184,56 +188,50 @@ class OffTopicNames(Cog):
         """List all Off Topic names."""
         await self._send_paginated_embed(ctx, self.ot_names.keys(), "Off Topic Names")
 
+    @tasks.loop(time=datetime.time(hour=0, minute=0, second=0))
     async def update_ot_channel_name(self) -> None:
         """Update ot-channel name everyday at midnight."""
-        while not self.bot.is_closed():
-            now = datetime.utcnow()
-            midnight_datetime = datetime.combine(
-                now.date() + timedelta(days=1), time(0)
-            )
-            logger.info(
-                f"Waiting until {midnight_datetime} for re-naming off-topic channel name."
-            )
-            await sleep_until(midnight_datetime)
+        # await the cache method to ensure we pull from an up-to-date cache every time
+        # this also fixes a race condition where the cache wasn't populated
+        await self._cache()
+        # Algorithm to select next off topic name based on usage/number of times the name has been used.
+        # Least used names have a higher chance of being selected.
+        usage = set(self.ot_names.values())
+        distribution = [1 / (i + 1) for i in usage]
+        chosen_usage = random.choices(list(usage), distribution)[0]
 
-            # Algorithm to select next off topic name based on usage/number of times the name has been used.
-            # Least used names have a higher chance of being selected.
-            usage = set(self.ot_names.values())
-            distribution = [1 / (i + 1) for i in usage]
-            chosen_usage = random.choices(list(usage), distribution)[0]
+        chosen_ot_names = [
+            name for name, usage in self.ot_names.items() if usage == chosen_usage
+        ]
 
-            chosen_ot_names = [
-                name for name, usage in self.ot_names.items() if usage == chosen_usage
-            ]
+        def to_channel_name(ot_name: str) -> str:
+            """Append off topic name prefix."""
+            return f"{OT_NAME_PREFIX}{ot_name}"
 
-            def to_channel_name(ot_name: str) -> str:
-                """Append off topic name prefix."""
-                return f"{OT_NAME_PREFIX}{ot_name}"
+        def from_channel_name(ot_name: str) -> str:
+            """Detach off topic name prefix."""
+            return ot_name[len(OT_NAME_PREFIX) :]
 
-            def from_channel_name(ot_name: str) -> str:
-                """Detach off topic name prefix."""
-                return ot_name[len(OT_NAME_PREFIX) :]
+        current_name = from_channel_name(self.ot_channel.name)
+        new_name = current_name
 
-            current_name = from_channel_name(self.ot_channel.name)
-            new_name = current_name
+        while new_name == current_name:
+            new_name = random.choice(chosen_ot_names)
 
-            while new_name == current_name:
-                new_name = random.choice(chosen_ot_names)
+        self.ot_names[new_name] += 1
+        await db_execute(
+            self.bot.db_pool,
+            "UPDATE offtopicnames SET num_used=num_used+1 WHERE name=$1",
+            new_name,
+        )
 
-            self.ot_names[new_name] += 1
-            await db_execute(
-                self.bot.db_pool,
-                "UPDATE offtopicnames SET num_used=num_used+1 WHERE name=$1",
-                new_name,
-            )
+        new_name = to_channel_name(new_name)
+        await self.ot_channel.edit(name=new_name)
 
-            new_name = to_channel_name(new_name)
-            await self.ot_channel.edit(name=new_name)
-
-            await self._send_ot_embed(
-                self.ot_channel, f"{new_name}", True, "Today's Off-Topic Name!"
-            )
-            logger.info(f"Off-topic Channel name changed to {new_name}.")
+        await self._send_ot_embed(
+            self.ot_channel, f"{new_name}", True, "Today's Off-Topic Name!"
+        )
+        logger.info(f"Off-topic Channel name changed to {new_name}.")
 
     async def cog_check(self, ctx: Context) -> bool:
         """Check if user is gurkult lord or mod."""
