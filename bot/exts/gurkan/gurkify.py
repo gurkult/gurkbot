@@ -24,10 +24,7 @@ class Gurkify(commands.Cog):
                 ),
                 color=Colours.yellow,
             )
-            await ctx.send(content=ctx.author.mention, embed=embed)
-            return
-
-        if len(display_name) > 26:
+        elif len(display_name) > 26:
             embed = Embed(
                 title=random.choice(NEGATIVE_REPLIES),
                 description=(
@@ -36,26 +33,24 @@ class Gurkify(commands.Cog):
                 ),
                 color=Colours.soft_red,
             )
-            await ctx.send(content=ctx.author.mention, embed=embed)
-            return
-        display_name += random.choice(GurkanNameEndings.name_endings)
 
-        try:
-            await ctx.author.edit(nick=display_name)
-        except Forbidden:
-            embed = Embed(
-                title="You're too powerful!",
-                description="I can't change the names of users with top roles higher than mine.",
-                color=Colours.soft_red,
-            )
-            await ctx.send(content=ctx.author.mention, embed=embed)
-            return
+        else:  # No obvious issues with gurkifying were found
+            try:
+                display_name += random.choice(GurkanNameEndings.name_endings)
+                await ctx.author.edit(nick=display_name)
+            except Forbidden:
+                embed = Embed(
+                    title="You're too powerful!",
+                    description="I can't change the names of users with top roles higher than mine.",
+                    color=Colours.soft_red,
+                )
+            else:
+                embed = Embed(
+                    title=random.choice(POSITIVE_REPLIES),
+                    description="You nick name has been gurkified.",
+                    color=Colours.green,
+                )
 
-        embed = Embed(
-            title=random.choice(POSITIVE_REPLIES),
-            description="You nick name has been gurkified.",
-            color=Colours.green,
-        )
         await ctx.send(content=ctx.author.mention, embed=embed)
 
 

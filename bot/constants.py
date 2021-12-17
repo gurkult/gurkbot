@@ -50,8 +50,8 @@ class Colours:
     soft_red = 0xCD6D6D
 
 
-class Gurks:
-    gurks = ["gurk", "gurkan", "urkan"]
+class GurkanNameEndings:
+    name_endings = ["gurk", "gurkan", "urkan"]
 
 
 class Channels(NamedTuple):
