@@ -59,6 +59,3 @@ def get_timestamp(
     `format` must be an enum member of TimeStampEnum. Default style is SHORT_DATE_TIME
     """
     return f"<t:{int(timestamp.timestamp())}:{format.value}>"
-
-
-get_discord_formatted_timestamp = get_timestamp
