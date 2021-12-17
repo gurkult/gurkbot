@@ -50,6 +50,10 @@ class Colours:
     soft_red = 0xCD6D6D
 
 
+class GurkanNameEndings:
+    name_endings = ["gurk", "gurkan", "urkan"]
+
+
 class Channels(NamedTuple):
     off_topic = int(os.getenv("CHANNEL_OFF_TOPIC", 789198156218892358))
     gurkcraft = int(os.getenv("CHANNEL_GURKCRAFT", 878159594189381662))
