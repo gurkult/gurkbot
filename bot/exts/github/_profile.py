@@ -31,7 +31,7 @@ class GithubInfo:
             elif user_data["blog"]:  # Blog exists but the link is not complete
                 blog = f"https://{user_data['blog']}"
             else:
-                blog = "No website link available"
+                blog = "-"
 
             embed = discord.Embed(
                 title=f"{user_data['login']}'s GitHub profile info",
@@ -64,8 +64,9 @@ class GithubInfo:
                 value=f"[{user_data['public_gists']}](https://gist.github.com/{username})",
             )
             embed.add_field(name="Website", value=blog)
-            if orgs:
-                embed.add_field(name="Organizations", value=" | ".join(orgs))
+            embed.add_field(
+                name="Organizations", value=" | ".join(orgs) if orgs else "-"
+            )
 
             return embed
 
