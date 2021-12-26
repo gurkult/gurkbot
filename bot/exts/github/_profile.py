@@ -79,7 +79,7 @@ class GithubInfo:
             embed = discord.Embed(
                 title=choice(ERROR_REPLIES),
                 description=f"The profile for `{username}` was not found.",
-                url=None,
+                url=Embed.Empty,
                 colour=discord.Colour.red(),
             )
             return embed
