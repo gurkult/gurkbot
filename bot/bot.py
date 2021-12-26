@@ -22,7 +22,7 @@ class Bot(commands.Bot):
 
         self.http_session = ClientSession()
         self.db_pool: asyncpg.Pool = asyncpg.create_pool(constants.DATABASE_URL)
-        roles = [
+        allowed_mention_roles = [
             Object(r)
             for r in [
                 constants.Roles.steering_council,
@@ -37,7 +37,7 @@ class Bot(commands.Bot):
             allowed_mentions=AllowedMentions(
                 everyone=None,
                 users=True,
-                roles=roles,
+                roles=allowed_mention_roles,
                 replied_user=True,
             ),
         )
