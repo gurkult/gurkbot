@@ -39,8 +39,8 @@ class BotStats(commands.Cog):
         )
 
         fields = {
-            "Python Version": python_version(),
-            "disnake Version": __version__,
+            "Python version": python_version(),
+            "Disnake version": __version__,
             "Uptime": uptime,
         }
 
