@@ -1,11 +1,11 @@
 from random import choice
 from typing import Optional
 
-import discord
+import disnake
 from aiohttp import ClientSession
 from bot.constants import Channels, ERROR_REPLIES, Emojis
-from discord import Embed
-from discord.ext import commands
+from disnake import Embed
+from disnake.ext import commands
 from loguru import logger
 
 BAD_RESPONSE = {
@@ -28,23 +28,23 @@ class Issues:
         self.http_session = http_session
 
     @staticmethod
-    def get_repo(channel: discord.TextChannel) -> Optional[str]:
+    def get_repo(channel: disnake.TextChannel) -> Optional[str]:
         """Get repository for the particular channel."""
         return REPO_CHANNEL_MAP.get(channel.id, "gurkbot")
 
     @staticmethod
     def error_embed(error_msg: str) -> Embed:
         """Generate Error Embed for Issues command."""
-        embed = discord.Embed(
+        embed = disnake.Embed(
             title=choice(ERROR_REPLIES),
-            color=discord.Color.red(),
+            color=disnake.Color.red(),
             description=error_msg,
         )
         return embed
 
     async def issue(
         self,
-        channel: discord.TextChannel,
+        channel: disnake.TextChannel,
         numbers: commands.Greedy[int],
         repository: Optional[str],
         user: str,
@@ -104,8 +104,8 @@ class Issues:
                 )
             )
 
-        resp = discord.Embed(
-            colour=discord.Color.green(),
+        resp = disnake.Embed(
+            colour=disnake.Color.green(),
             description="\n".join("{0} [{1}]({2})".format(*link) for link in links),
         )
         resp.set_author(name="GitHub", url=f"https://github.com/{user}/{repository}")

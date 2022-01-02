@@ -4,9 +4,9 @@ from concurrent import futures
 from io import BytesIO
 from typing import Dict
 
-import discord
+import disnake
 from PIL import Image, ImageDraw, ImageFile, ImageSequence
-from discord.ext import commands
+from disnake.ext import commands
 from loguru import logger
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -97,9 +97,9 @@ class Bonk(commands.Cog):
 
     @commands.command()
     @commands.max_concurrency(3)
-    async def bonk(self, ctx: commands.Context, member: discord.User) -> None:
+    async def bonk(self, ctx: commands.Context, member: disnake.User) -> None:
         """Sends gif of mentioned member being "bonked" by Yoda."""
-        pfp = await member.avatar_url.read()
+        pfp = await member.display_avatar.read()
         created_at = ctx.message.created_at.strftime("%Y-%m-%d_%H-%M")
         out_filename = f"bonk_{member.id}_{created_at}.gif"
         func = functools.partial(self._generate_gif, pfp)
@@ -109,7 +109,7 @@ class Bonk(commands.Cog):
                 out_gif = await asyncio.get_running_loop().run_in_executor(pool, func)
 
             out_gif.seek(0)
-            await ctx.send(file=discord.File(out_gif, out_filename))
+            await ctx.send(file=disnake.File(out_gif, out_filename))
 
 
 def setup(bot: commands.Bot) -> None:

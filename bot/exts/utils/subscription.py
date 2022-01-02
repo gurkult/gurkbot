@@ -2,8 +2,8 @@ from typing import Callable
 
 from bot.bot import Bot
 from bot.constants import Colours, Emojis, Roles
-from discord import Embed, Role
-from discord.ext.commands import Cog, Context, group
+from disnake import Embed, Role
+from disnake.ext.commands import Cog, Context, group
 
 
 class Subscription(Cog):

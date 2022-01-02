@@ -2,10 +2,10 @@ import math
 import random
 from typing import Optional
 
-import discord
+import disnake
 from bot.constants import Channels, Colours, ERROR_REPLIES
-from discord import Embed, Message
-from discord.ext import commands
+from disnake import Embed, Message
+from disnake.ext import commands
 from loguru import logger
 
 
@@ -140,7 +140,7 @@ class CommandErrorHandler(commands.Cog):
             )
             try:
                 dev_alerts = await self.bot.fetch_channel(Channels.devalerts)
-            except discord.HTTPException as discord_exc:
+            except disnake.HTTPException as discord_exc:
                 logger.exception("Fetch failed", exc_info=discord_exc)
                 return
 

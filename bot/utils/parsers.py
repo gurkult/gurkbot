@@ -2,7 +2,7 @@ import re
 from datetime import datetime, timedelta
 from typing import Optional
 
-from discord.ext.commands import BadArgument
+from disnake.ext.commands import BadArgument
 
 
 DURATION_REGEX = re.compile(

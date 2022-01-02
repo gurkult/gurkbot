@@ -9,9 +9,9 @@ from typing import Tuple
 from bot.bot import Bot
 from bot.constants import Colours
 from bot.utils.pagination import LinePaginator
-from discord import Embed, utils
-from discord.ext.commands import Cog, Context, command
-from discord.ext.commands.errors import BadArgument
+from disnake import Embed, utils
+from disnake.ext.commands import Cog, Context, command
+from disnake.ext.commands.errors import BadArgument
 
 
 class Utils(Cog):

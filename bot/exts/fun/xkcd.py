@@ -6,9 +6,9 @@ from typing import Dict, Optional, Union
 
 from bot.bot import Bot
 from bot.constants import Colours
-from discord import Embed
-from discord.ext import tasks
-from discord.ext.commands import Cog, Context, command
+from disnake import Embed
+from disnake.ext import tasks
+from disnake.ext.commands import Cog, Context, command
 
 log = logging.getLogger(__name__)
 

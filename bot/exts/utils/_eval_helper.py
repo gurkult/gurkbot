@@ -6,9 +6,9 @@ from io import BytesIO
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import aiohttp
-from discord import Embed
-from discord.ext import commands
-from discord.ext.commands import Context
+from disnake import Embed
+from disnake.ext import commands
+from disnake.ext.commands import Context
 from loguru import logger
 
 to_bytes = partial(bytes, encoding="utf-8")

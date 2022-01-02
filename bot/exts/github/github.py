@@ -1,9 +1,9 @@
 import typing
 
 from bot.constants import BOT_REPO_URL
-from discord import Embed
-from discord.ext import commands
-from discord.ext.commands.cooldowns import BucketType
+from disnake import Embed
+from disnake.ext import commands
+from disnake.ext.commands.cooldowns import BucketType
 
 from . import _issues, _profile, _source
 
@@ -71,7 +71,7 @@ class Github(commands.Cog):
         if source_item is None:
             embed = Embed(title="Gurkbot's GitHub Repository")
             embed.add_field(name="Repository", value=f"[Go to GitHub]({BOT_REPO_URL})")
-            embed.set_thumbnail(url=self.bot.user.avatar_url)
+            embed.set_thumbnail(url=self.bot.user.display_avatar.url)
             await ctx.send(embed=embed)
             return
         elif not ctx.bot.get_command(source_item):
@@ -79,7 +79,9 @@ class Github(commands.Cog):
                 f"Unable to convert `{source_item}` to valid command or Cog."
             )
 
-        github_source = _source.Source(self.bot.http_session, self.bot.user.avatar_url)
+        github_source = _source.Source(
+            self.bot.http_session, self.bot.user.display_avatar.url
+        )
         embed = await github_source.inspect(cmd=ctx.bot.get_command(source_item))
 
         await ctx.send(embed=embed)

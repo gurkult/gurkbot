@@ -4,8 +4,8 @@ from platform import python_version
 import humanize
 from bot.bot import Bot
 from bot.constants import Colours
-from discord import Embed, __version__
-from discord.ext import commands
+from disnake import Embed, __version__
+from disnake.ext import commands
 
 
 class BotStats(commands.Cog):
@@ -32,15 +32,15 @@ class BotStats(commands.Cog):
             color=Colours.green,
         )
 
-        embed.set_thumbnail(url=self.bot.user.avatar_url)
+        embed.set_thumbnail(url=self.bot.user.display_avatar.url)
 
         uptime = humanize.precisedelta(
             datetime.utcnow().timestamp() - self.bot.launch_time
         )
 
         fields = {
-            "Python Version": python_version(),
-            "discord.py Version": __version__,
+            "Python version": python_version(),
+            "Disnake version": __version__,
             "Uptime": uptime,
         }
 

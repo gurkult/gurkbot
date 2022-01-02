@@ -1,4 +1,4 @@
-from discord.ext.commands import BadArgument, Context, Converter
+from disnake.ext.commands import BadArgument, Context, Converter
 
 
 class OffTopicName(Converter):

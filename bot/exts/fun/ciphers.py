@@ -3,8 +3,8 @@ import logging
 
 from bot.bot import Bot
 from bot.constants import Colours
-from discord import Embed
-from discord.ext.commands import BadArgument, Cog, Context, group
+from disnake import Embed
+from disnake.ext.commands import BadArgument, Cog, Context, group
 
 logger = logging.getLogger(__name__)
 
