@@ -1,6 +1,6 @@
 from typing import Optional
 
-from discord.ext.commands import CheckFailure
+from disnake.ext.commands import CheckFailure
 
 
 class InWhitelistCheckFailure(CheckFailure):

@@ -1,24 +1,21 @@
-FROM python:3.8-slim
+FROM python:3.9-slim
 
 # Create the working directory
 WORKDIR /bot
 
-# Set pip to have cleaner logs and no saved cache
-ENV PIP_NO_CACHE_DIR=false \
-    PIPENV_HIDE_EMOJIS=1 \
-    PIPENV_IGNORE_VIRTUALENVS=1 \
-    PIPENV_NOSPIN=1
+# Set necessary environment variables
+ENV PIP_NO_CACHE_DIR=false
 
 # Set the start command
-ENTRYPOINT ["python3"]
-CMD ["-m", "bot"]
+ENTRYPOINT ["python"]
+CMD ["-m" , "bot"]
 
-# Install pipenv
-RUN pip install -U pipenv
+# Install the latest version of poetry
+RUN pip install -U poetry
 
-# Install project dependencies
-COPY Pipfile* ./
-RUN pipenv install --system --deploy
+# Install production dependencies using poetry
+COPY poetry.lock pyproject.toml ./
+RUN poetry config virtualenvs.create false && poetry install --no-dev --no-root
 
 # Copy the source code in last to optimize rebuilding the image
 COPY . .

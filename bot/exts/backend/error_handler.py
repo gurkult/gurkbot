@@ -2,10 +2,10 @@ import math
 import random
 from typing import Optional
 
-import discord
-from bot.constants import Channels, Colours, ERROR_REPLIES, NEGATIVE_REPLIES
-from discord import Embed, Message
-from discord.ext import commands
+import disnake
+from bot.constants import Channels, Colours, ERROR_REPLIES
+from disnake import Embed, Message
+from disnake.ext import commands
 from loguru import logger
 
 
@@ -68,23 +68,21 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, commands.CommandOnCooldown):
             mins, secs = divmod(math.ceil(error.retry_after), 60)
             embed = self.error_embed(
-                f"This command is on cooldown:\nPlease retry in **{mins} minutes {secs} seconds**.",
-                NEGATIVE_REPLIES,
+                f"This command is on cooldown:\nPlease retry in **{mins} minutes {secs} seconds**."
             )
             await ctx.send(embed=embed, delete_after=10)
 
         elif isinstance(error, commands.DisabledCommand):
-            await ctx.send(
-                embed=self.error_embed(
-                    "This command has been disabled.", NEGATIVE_REPLIES
-                )
-            )
+            await ctx.send(embed=self.error_embed("This command has been disabled."))
 
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send(
-                embed=self.error_embed(
-                    "This command can only be used in the server.", NEGATIVE_REPLIES
-                )
+                embed=self.error_embed("This command can only be used in the server.")
+            )
+
+        elif isinstance(error, commands.CheckFailure):
+            await ctx.send(
+                embed=self.error_embed("You aren't allowed to use this command.")
             )
 
         elif isinstance(error, commands.BadArgument):
@@ -142,15 +140,16 @@ class CommandErrorHandler(commands.Cog):
             )
             try:
                 dev_alerts = await self.bot.fetch_channel(Channels.devalerts)
-            except discord.HTTPException as discord_exc:
+            except disnake.HTTPException as discord_exc:
                 logger.exception("Fetch failed", exc_info=discord_exc)
                 return
 
-        await dev_alerts.send(embed=push_alert)
+        # Trigger the logger before trying to use Discord in case that's the issue
         logger.error(
             f"Error executing command invoked by {ctx.message.author}: {ctx.message.content}",
             exc_info=error,
         )
+        await dev_alerts.send(embed=push_alert)
 
 
 def setup(bot: commands.Bot) -> None:

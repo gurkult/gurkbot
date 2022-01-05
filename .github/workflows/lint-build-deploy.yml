@@ -1,0 +1,153 @@
+name: Lint, Build & Deploy
+
+on: [push, pull_request]
+concurrency: lint-build-push-${{ github.sha }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    env:
+      PIP_CACHE_DIR: /tmp/pip-cache-dir
+      POETRY_CACHE_DIR: /tmp/pip-cache-dir
+
+    steps:
+      - name: Checks out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.9
+        id: python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+
+      # This step caches our Python dependencies. To make sure we
+      # only restore a cache when the dependencies, the python version and
+      # the runner operating system we create a cache key
+      # that is a composite of those states.
+      # Only when the context is exactly the same, we will restore the cache.
+      - name: Restore pip cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.PIP_CACHE_DIR }}
+          key: "python-0-${{ runner.os }}-\
+          ${{ steps.python.outputs.python-version }}-\
+          ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
+
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install
+
+      # We will not run `black` or `flake8` here, as we will use a separate
+      # black and flake8 action. As pre-commit does not support user installs,
+      # we set PIP_USER=0 to not do a user install.
+      - name: Run pre-commit hooks
+        id: pre-commit
+        run: export PIP_USER=0; SKIP="black,flake8" poetry run pre-commit run --all-files
+
+      # Run flake8 and have it format the linting errors in the format of
+      # the GitHub Workflow command to register error annotations. This
+      # means that our flake8 output is automatically added as an error
+      # annotation to both the run result and in the "Files" tab of a
+      # pull request.
+      #
+      # Format used:
+      # ::error file={filename},line={line},col={col}::{message}
+      - name: Run flake8
+        # this check ensures that black always runs if the pre-commit step ran
+        # Its best to only have to fix pre-commit once than twice
+        if: always() && (steps.pre-commit.outcome == 'success' || steps.pre-commit.outcome == 'failure')
+        run: "poetry run flake8 \
+        --format='::error file=%(path)s,line=%(row)d,col=%(col)d::[flake8] %(code)s: %(text)s'"
+
+      # Run black
+      - name: Run black
+        # see flake8's comment above
+        if: always() && (steps.pre-commit.outcome == 'success' || steps.pre-commit.outcome == 'failure')
+        run: poetry run black . --check --diff
+
+      # Prepare the Pull Request Payload artifact. If this fails, we
+      # we fail silently using the `continue-on-error` option. It's
+      # nice if this succeeds, but if it fails for any reason, it
+      # does not mean that our lint-test checks failed.
+      - name: Prepare Pull Request Payload artifact
+        id: prepare-artifact
+        if: always() && github.event_name == 'pull_request'
+        continue-on-error: true
+        run: cat $GITHUB_EVENT_PATH | jq '.pull_request' > pull_request_payload.json
+
+      # This only makes sense if the previous step succeeded. To
+      # get the original outcome of the previous step before the
+      # `continue-on-error` conclusion is applied, we use the
+      # `.outcome` value. This step also fails silently.
+      - name: Upload a Build Artifact
+        if: always() && steps.prepare-artifact.outcome == 'success'
+        continue-on-error: true
+        uses: actions/upload-artifact@v2
+        with:
+          name: pull-request-payload
+          path: pull_request_payload.json
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - lint
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      # Create a commit SHA-based tag for the container repositories
+      - name: Create SHA Container Tag
+        id: sha_tag
+        run: |
+          tag=$(cut -c 1-7 <<< $GITHUB_SHA)
+          echo "::set-output name=tag::$tag"
+
+      # Check out the current repository in the `gurkbot` subdirectory
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          path: gurkbot
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build and push the container to the GitHub Container
+      # Repository. The container will be tagged as "latest"
+      # and with the short SHA of the commit.
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: gurkbot/
+          file: gurkbot/Dockerfile
+          push: true
+          cache-from: type=registry,ref=ghcr.io/gurkult/gurkbot:latest
+          cache-to: type=inline
+          tags: |
+            ghcr.io/gurkult/gurkbot:latest
+            ghcr.io/gurkult/gurkbot:${{ steps.sha_tag.outputs.tag }}
+          build-args: |
+            git_sha=${{ github.sha }}
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      # Save the kubeconfig to a file to be used by kubectl, and roll the deployment
+      - name: Deploy using Kubectl
+        run: |
+          echo "$KUBECONFIG" > .kubeconfig
+          KUBECONFIG=.kubeconfig kubectl rollout restart deployment gurkbot
+        env:
+          KUBECONFIG: ${{ secrets.KISSLAND_KUBECONFIG }}

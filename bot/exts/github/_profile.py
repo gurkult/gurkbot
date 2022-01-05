@@ -2,10 +2,10 @@ from datetime import datetime
 from random import choice
 from typing import Optional
 
-import discord
+import disnake
 from aiohttp import ClientSession
 from bot.constants import ERROR_REPLIES
-from discord import Embed
+from disnake import Embed
 
 
 class GithubInfo:
@@ -31,14 +31,15 @@ class GithubInfo:
             elif user_data["blog"]:  # Blog exists but the link is not complete
                 blog = f"https://{user_data['blog']}"
             else:
-                blog = "No website link available"
+                blog = "-"
 
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 title=f"{user_data['login']}'s GitHub profile info",
                 description=f"```{user_data['bio']}```\n"
                 if user_data["bio"] is not None
                 else "",
-                colour=discord.Colour.green(),
+                colour=disnake.Colour.green(),
+                url=user_data["html_url"],
                 timestamp=datetime.strptime(
                     user_data["created_at"], "%Y-%m-%dT%H:%M:%SZ"
                 ),
@@ -50,7 +51,6 @@ class GithubInfo:
                 name="Followers",
                 value=f"[{user_data['followers']}]({user_data['html_url']}?tab=followers)",
             )
-            embed.add_field(name="\u200b", value="\u200b")
             embed.add_field(
                 name="Following",
                 value=f"[{user_data['following']}]({user_data['html_url']}?tab=following)",
@@ -59,17 +59,14 @@ class GithubInfo:
                 name="Public repos",
                 value=f"[{user_data['public_repos']}]({user_data['html_url']}?tab=repositories)",
             )
-            embed.add_field(name="\u200b", value="\u200b")
             embed.add_field(
                 name="Gists",
                 value=f"[{user_data['public_gists']}](https://gist.github.com/{username})",
             )
-            embed.add_field(
-                name="Organizations",
-                value=" | ".join(orgs) if orgs else "No Organizations",
-            )
-            embed.add_field(name="\u200b", value="\u200b")
             embed.add_field(name="Website", value=blog)
+            embed.add_field(
+                name="Organizations", value=" | ".join(orgs) if orgs else "-"
+            )
 
             return embed
 
@@ -79,10 +76,11 @@ class GithubInfo:
 
         # User_data will not have a message key if the user exists
         if user_data.get("message") is not None:
-            embed = discord.Embed(
+            embed = disnake.Embed(
                 title=choice(ERROR_REPLIES),
                 description=f"The profile for `{username}` was not found.",
-                colour=discord.Colour.red(),
+                url=Embed.Empty,
+                colour=disnake.Colour.red(),
             )
             return embed
 

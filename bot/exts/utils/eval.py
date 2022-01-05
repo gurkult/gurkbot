@@ -5,10 +5,10 @@ from typing import Optional
 
 import aiohttp
 from bot.bot import Bot
-from discord import Embed, Message
-from discord.ext import commands, tasks
-from discord.ext.commands import Cog, Context, command
-from discord.utils import escape_mentions
+from disnake import Embed, Message
+from disnake.ext import commands, tasks
+from disnake.ext.commands import Cog, Context, command
+from disnake.utils import escape_mentions
 from loguru import logger
 from yaml import safe_load
 
