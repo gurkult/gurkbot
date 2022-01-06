@@ -33,14 +33,13 @@ class WolframCommands(commands.Cog):
 
     async def web_request(self, url: str, params: dict) -> Union[URL, str]:
         """Web request handler for wolfram group of commands."""
-        async with self.bot.http_session as session:
-            async with session.get(url=url, params=params) as resp:
-                if resp.status == 200:
-                    return resp.url
-                elif resp.status == 501:
-                    return "Sorry, the API could not understand your input"
-                elif resp.status == 400:
-                    return "Sorry, the API did not find any input to interpret"
+        async with self.bot.http_session.get(url=url, params=params) as resp:
+            if resp.status == 200:
+                return resp.url
+            elif resp.status == 501:
+                return "Sorry, the API could not understand your input"
+            elif resp.status == 400:
+                return "Sorry, the API did not find any input to interpret"
 
     @commands.slash_command(guild_ids=[793864455527202847])
     async def wolfram(self, inter: disnake.ApplicationCommandInteraction) -> None:
