@@ -43,8 +43,6 @@ class Emojis(NamedTuple):
     CROSS_MARK_EMOJI = "\U0000274C"
     MAG_RIGHT_EMOJI = "\U0001f50e"
 
-    wolfram_emoji = "<:wolfram:818541879314350131>"
-
 
 class Colours:
     green = 0x1F8B4C

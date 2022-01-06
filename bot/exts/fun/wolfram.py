@@ -3,7 +3,7 @@ from typing import Union
 from urllib import parse
 
 import disnake
-from bot.constants import ERROR_REPLIES, Emojis, Tokens
+from bot.constants import Colours, ERROR_REPLIES, Tokens
 from disnake import Embed
 from disnake.ext import commands
 from yarl import URL
@@ -58,15 +58,15 @@ class WolframCommands(commands.Cog):
         """
         await inter.response.defer()
 
-        self.params["i"] = query
-
-        response = await self.web_request(url=self.image_url, params=self.params)
+        response = await self.web_request(
+            url=self.image_url, params=self.params | {"i": query}
+        )
 
         if isinstance(response, str):
             embed = Embed(title=random.choice(ERROR_REPLIES), description=response)
         else:
             original_url = parse.quote_plus(query)
-            embed = Embed(title=f"{Emojis.wolfram_emoji} Wolfram Alpha")
+            embed = Embed(title="Wolfram Alpha", colour=Colours.green)
             embed.set_image(url=str(response))
             embed.add_field(
                 name="Cannot see image?",
