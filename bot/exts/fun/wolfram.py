@@ -41,7 +41,7 @@ class WolframCommands(commands.Cog):
             elif resp.status == 400:
                 return "Sorry, the API did not find any input to interpret"
 
-    @commands.slash_command(guild_ids=[793864455527202847])
+    @commands.slash_command()
     async def wolfram(self, inter: disnake.ApplicationCommandInteraction) -> None:
         """Commands for wolfram."""
 
