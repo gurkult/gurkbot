@@ -35,6 +35,7 @@ services:
       - CHANNEL_LOGS
       - ROLE_STEERING_COUNCIL
       - ROLE_MODERATORS
+      - WOLFRAM_TOKEN
 
     volumes:
       - .:/bot

@@ -43,7 +43,7 @@ class Emojis(NamedTuple):
     CROSS_MARK_EMOJI = "\U0000274C"
     MAG_RIGHT_EMOJI = "\U0001f50e"
 
-    wolfram_emoji = "<:wolfram:818541752351719477>"
+    wolfram_emoji = "<:wolfram:818541879314350131>"
 
 
 class Colours:
@@ -84,7 +84,7 @@ class Roles(NamedTuple):
 
 
 class Tokens(NamedTuple):
-    wolfram_id = os.getenv("WOLFRAM_TOKEN") or None
+    wolfram_token = os.getenv("WOLFRAM_TOKEN")
 
 
 # Bot replies
@@ -93,6 +93,7 @@ with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf8") as file
     ERROR_REPLIES = bot_replies["ERROR_REPLIES"]
     POSITIVE_REPLIES = bot_replies["POSITIVE_REPLIES"]
     NEGATIVE_REPLIES = bot_replies["NEGATIVE_REPLIES"]
+
 
 # Minecraft Server
 class Minecraft(NamedTuple):

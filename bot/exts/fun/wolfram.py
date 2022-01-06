@@ -1,10 +1,11 @@
-from random import choice
+import random
 from typing import Union
+from urllib import parse
 
-from aiohttp import ClientSession
+import disnake
 from bot.constants import ERROR_REPLIES, Emojis, Tokens
-from discord import Embed
-from discord.ext import commands
+from disnake import Embed
+from disnake.ext import commands
 from yarl import URL
 
 
@@ -20,9 +21,9 @@ class WolframCommands(commands.Cog):
 
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.image_url = "http://api.wolframalpha.com/v1/simple"
+        self.image_url = "https://api.wolframalpha.com/v1/simple"
         self.params = {
-            "appid": Tokens.wolfram_id,
+            "appid": Tokens.wolfram_token,
             "background": "2F3136",
             "foreground": "white",
             "layout": "labelbar",
@@ -30,10 +31,9 @@ class WolframCommands(commands.Cog):
             "width": "700",
         }
 
-    @staticmethod
-    async def web_request(url: str, params: dict) -> Union[URL, str]:
+    async def web_request(self, url: str, params: dict) -> Union[URL, str]:
         """Web request handler for wolfram group of commands."""
-        async with ClientSession() as session:
+        async with self.bot.http_session as session:
             async with session.get(url=url, params=params) as resp:
                 if resp.status == 200:
                     return resp.url
@@ -42,32 +42,39 @@ class WolframCommands(commands.Cog):
                 elif resp.status == 400:
                     return "Sorry, the API did not find any input to interpret"
 
-    @commands.group(name="wolfram", aliases=("wa",), invoke_without_command=True)
-    async def wolfram_group(self, ctx: commands.Context) -> None:
+    @commands.slash_command(guild_ids=[793864455527202847])
+    async def wolfram(self, inter: disnake.ApplicationCommandInteraction) -> None:
         """Commands for wolfram."""
-        await ctx.send_help(ctx.command)
 
-    @wolfram_group.command(name="image")
-    async def wolfram_image(self, ctx: commands.Context, *, query: str) -> None:
-        """Sends wolfram image corresponding to the given query."""
+    @wolfram.sub_command()
+    async def image(
+        self, inter: disnake.ApplicationCommandInteraction, query: str
+    ) -> None:
+        """
+        Send wolfram image corresponding to the given query.
+
+        Parameters
+        ----------
+        query: The user query.
+        """
+        await inter.response.defer()
+
         self.params["i"] = query
 
-        async with ctx.typing():
-            response = await WolframCommands.web_request(
-                url=self.image_url, params=self.params
+        response = await self.web_request(url=self.image_url, params=self.params)
+
+        if isinstance(response, str):
+            embed = Embed(title=random.choice(ERROR_REPLIES), description=response)
+        else:
+            original_url = parse.quote_plus(query)
+            embed = Embed(title=f"{Emojis.wolfram_emoji} Wolfram Alpha")
+            embed.set_image(url=str(response))
+            embed.add_field(
+                name="Cannot see image?",
+                value=f"[Click here](https://www.wolframalpha.com/input/?i={original_url})",
             )
 
-            if isinstance(response, str):
-                embed = Embed(title=choice(ERROR_REPLIES), description=response)
-            else:
-                embed = Embed(title=f"{Emojis.wolfram_emoji} Wolfram Alpha").set_image(
-                    url=response
-                )
-                embed.add_field(
-                    name="Cannot see image?",
-                    value=f"[Click here](https://www.wolframalpha.com/input/?i={query.replace(' ', '+')})",
-                )
-            await ctx.send(ctx.author.mention, embed=embed)
+        await inter.edit_original_message(embed=embed)
 
 
 def setup(bot: commands.Bot) -> None:
