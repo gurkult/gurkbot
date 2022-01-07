@@ -8,6 +8,7 @@ import disnake
 import humanize
 from asyncpg import Record
 from bot.bot import Bot
+from bot.constants import Colours
 from bot.postgres.utils import db_execute, db_fetch
 from bot.utils.pagination import LinePaginator
 from bot.utils.parsers import parse_duration
@@ -16,11 +17,7 @@ from disnake.ext.commands import Cog, Context, group
 from disnake.utils import sleep_until
 
 
-REMINDER_DESCRIPTION = (
-    "**Reminder ID**: {reminder_id}\n"
-    "**Arrive in**: {arrive_in}\n"
-    "\n**Content**:\n{content}"
-)
+REMINDER_DESCRIPTION = "**Arrives in**: {arrive_in}\n"
 
 
 class Reminder(Cog):
@@ -80,16 +77,21 @@ class Reminder(Cog):
         user: disnake.User = self.bot.get_user(reminder["user_id"])
         channel: disnake.TextChannel = self.bot.get_channel(reminder["channel_id"])
 
+        message_id = int(reminder["jump_url"].split("/")[-1])
+        jump_url = f"\n[Jump to original message]({reminder['jump_url']})"
+        try:
+            message = await channel.fetch_message(message_id)
+            jump_url = ""
+        except disnake.NotFound:
+            message = None
+            jump_url = ""
+        except (disnake.Forbidden, disnake.HTTPException):
+            message = None
+
         embed = disnake.Embed(
-            title=":alarm_clock: Reminder Arrived",
-            color=disnake.Color.green(),
-        )
-        embed.set_thumbnail(url=user.display_avatar.url)
-        embed.add_field(name="Content:", value=reminder["content"][:50], inline=False)
-        embed.add_field(
-            name="Original Message:",
-            value=f"[here]({reminder['jump_url']}).",
-            inline=False,
+            title=":alarm_clock:  Reminder arrived",
+            color=Colours.green,
+            description=f"\n{reminder['content'][:50]}{jump_url}",
         )
 
         embed.timestamp = datetime.utcnow()
@@ -101,7 +103,10 @@ class Reminder(Cog):
         mentions.append(user.mention)
         mentions = ", ".join(mentions)
 
-        await channel.send(content=mentions, embed=embed)
+        if message is not None:
+            await message.reply(embed=embed)
+        else:
+            await channel.send(content=mentions, embed=embed)
 
         await db_execute(
             self.bot.db_pool,
@@ -150,15 +155,16 @@ class Reminder(Cog):
                 content,
             )
 
-        embed = Embed()
-        embed.title = "Reminder set"
-        embed.description = REMINDER_DESCRIPTION.format(
-            reminder_id=reminder_id,
-            arrive_in=humanize.precisedelta(
-                timestamp - datetime.utcnow(), format="%0.0f"
+        embed = Embed(
+            title=":white_check_mark:  Reminder set",
+            color=Colours.green,
+            description=REMINDER_DESCRIPTION.format(
+                arrive_in=humanize.precisedelta(
+                    timestamp - datetime.utcnow(), format="%0.0f"
+                ),
             ),
-            content=content,
         )
+        embed.set_footer(text=f"ID: {reminder_id}")
         await ctx.send(embed=embed)
         self.reminders[reminder_id] = {
             "reminder_id": reminder_id,
@@ -191,14 +197,15 @@ class Reminder(Cog):
         ]
 
         lines = [
-            f"**{i}.** `ID: {reminder['reminder_id']}` - arrives in "
-            f"**{humanize.precisedelta(reminder['end_time'] - datetime.utcnow(), format='%0.0f')}**\n"
-            f"{reminder['content']}\n"
+            f"**Arrives in {humanize.precisedelta(reminder['end_time'] - datetime.utcnow(), format='%0.0f')}"
+            f"** (ID: {reminder['reminder_id']})\n{reminder['content']}\n"
             for i, reminder in enumerate(reminders, start=1)
         ]
-        embed = Embed()
-        embed.title = f"Your {len(reminders)} reminders :hourglass:"
-        embed.timestamp = datetime.utcnow()
+        embed = Embed(
+            title=f":hourglass:  Active reminders ({len(lines)})",
+            timestamp=datetime.utcnow(),
+            color=Colours.green,
+        )
 
         await LinePaginator.paginate(
             lines,
@@ -221,7 +228,7 @@ class Reminder(Cog):
             if self.current_scheduled == reminder_id:
                 await self.cancel_reminder_task()
                 await self.schedule_reminder(self.get_recent_reminder())
-            await ctx.send("reminder deleted successfully !")
+            await ctx.send("Reminder deleted successfully!")
 
         else:
             await ctx.send(f"Reminder with ID: {reminder_id} not found!")
