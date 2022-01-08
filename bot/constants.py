@@ -24,6 +24,10 @@ EXTENSIONS = pathlib.Path("bot/exts/")
 LOG_FILE = pathlib.Path("log/gurkbot.log")
 
 
+if TEST_GUILDS := os.getenv("TEST_GUILDS"):
+    TEST_GUILDS = [int(x.strip()) for x in TEST_GUILDS.split(",")]
+
+
 class Emojis(NamedTuple):
     issue_emoji = "<:IssueOpen:794834041450266624>"
     issue_closed_emoji = "<:IssueClosed:794834041240289321>"
