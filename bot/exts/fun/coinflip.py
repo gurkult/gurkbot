@@ -1,4 +1,3 @@
-
 import disnake
 from disnake import ApplicationCommandInteraction
 from disnake.ext import commands
