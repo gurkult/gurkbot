@@ -38,6 +38,10 @@ pre-commit = "^2.13.0"
 taskipy = "^1.8.1"
 python-dotenv = "^0.18.0"
 
+[tool.isort]
+profile = "black"
+line_length = 110
+
 [tool.taskipy.tasks]
 bot = { cmd = "python -m bot", help = "Runs Bot"}
 lint = { cmd = "pre-commit run --all-files", help = "Lints project" }
