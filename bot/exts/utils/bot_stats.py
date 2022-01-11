@@ -2,10 +2,11 @@ from datetime import datetime
 from platform import python_version
 
 import humanize
-from bot.bot import Bot
-from bot.constants import Colours
 from disnake import Embed, __version__
 from disnake.ext import commands
+
+from bot.bot import Bot
+from bot.constants import Colours
 
 
 class BotStats(commands.Cog):

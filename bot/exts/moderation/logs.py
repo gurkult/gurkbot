@@ -1,11 +1,12 @@
 from datetime import datetime
 from typing import Callable, Optional
 
-from bot.bot import Bot
-from bot.constants import Channels, Colours
 from disnake import Embed, Member, Message, RawMessageDeleteEvent, TextChannel, User
 from disnake.ext.commands import Cog
 from loguru import logger
+
+from bot.bot import Bot
+from bot.constants import Channels, Colours
 
 
 def get_post_message(bot: Bot) -> Callable:

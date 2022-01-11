@@ -4,13 +4,14 @@ from pathlib import Path
 from typing import Optional
 
 import aiohttp
-from bot.bot import Bot
 from disnake import Embed, Message
 from disnake.ext import commands, tasks
 from disnake.ext.commands import Cog, Context, command
 from disnake.utils import escape_mentions
 from loguru import logger
 from yaml import safe_load
+
+from bot.bot import Bot
 
 from ._eval_helper import EvalHelper, FormatOutput, Tio
 

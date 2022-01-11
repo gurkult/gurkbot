@@ -1,9 +1,10 @@
 from typing import Callable
 
-from bot.bot import Bot
-from bot.constants import Colours, Emojis, Roles
 from disnake import Embed, Role
 from disnake.ext.commands import Cog, Context, group
+
+from bot.bot import Bot
+from bot.constants import Colours, Emojis, Roles
 
 
 class Subscription(Cog):
