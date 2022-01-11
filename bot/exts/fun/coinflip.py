@@ -1,13 +1,15 @@
 
 import disnake
 from bot.bot import Bot
+import random
+
 from disnake.ext import commands
 from disnake.ext.commands import Context
 
-import random
-
 
 class Choice(disnake.ui.View):
+    """Choosing heads or tails"""
+
     def __init__(self):
         super().__init__()
         self.choice = None
@@ -15,14 +17,17 @@ class Choice(disnake.ui.View):
     @disnake.ui.button(label="Heads", style=disnake.ButtonStyle.blurple)
     async def confirm(
         self, button: disnake.ui.Button, interaction: disnake.MessageInteraction
-    ):
+    ) -> None:
+        """Heads button."""
+
         self.choice = button.label.lower()
         self.stop()
 
     @disnake.ui.button(label="Tails", style=disnake.ButtonStyle.blurple)
     async def cancel(
         self, button: disnake.ui.Button, interaction: disnake.MessageInteraction
-    ):
+    ) -> None:
+        """tails button."""
         self.choice = button.label.lower()
         self.stop()
 
@@ -40,12 +45,12 @@ async def coinflip(self, context: Context):
     if buttons.choice == result:
 
         embed = disnake.Embed(
-            description=f"You are good at predictions! your guess was`{buttons.choice}` and I flipped the coin to `{result}`.",
+            description=f"Correct guess. I flipped the coin to `{result}`.",
             color=0x00AB4C,
         )
     else:
         embed = disnake.Embed(
-            description=f"Better luck next time. Your guess was `{buttons.choice}` and I flipped the coin to `{result}`.",
+            description=f"Better luck next time. I flipped the coin to `{result}`.",
             color=0xE02B2B,
         )
     await message.edit(embed=embed, view=None)
