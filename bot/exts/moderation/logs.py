@@ -1,8 +1,7 @@
 from datetime import datetime
 from typing import Callable, Optional
 
-from disnake import (Embed, Member, Message, RawMessageDeleteEvent,
-                     TextChannel, User)
+from disnake import Embed, Member, Message, RawMessageDeleteEvent, TextChannel, User
 from disnake.ext.commands import Cog
 from loguru import logger
 

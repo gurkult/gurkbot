@@ -4,8 +4,7 @@ from disnake import Embed, Forbidden
 from disnake.ext import commands
 
 from bot.bot import Bot
-from bot.constants import (NEGATIVE_REPLIES, POSITIVE_REPLIES, Colours,
-                           GurkanNameEndings)
+from bot.constants import NEGATIVE_REPLIES, POSITIVE_REPLIES, Colours, GurkanNameEndings
 from bot.utils.is_gurkan import gurkan_check
 
 
