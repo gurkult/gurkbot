@@ -4,10 +4,11 @@ from typing import Optional
 
 import asyncpg
 from aiohttp import ClientSession
-from bot.postgres import create_tables
 from disnake import AllowedMentions, Embed, Intents, Object
 from disnake.ext import commands
 from loguru import logger
+
+from bot.postgres import create_tables
 
 from . import constants
 

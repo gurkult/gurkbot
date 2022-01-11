@@ -3,11 +3,11 @@ import typing as t
 from contextlib import suppress
 
 import disnake
-from bot import constants
 from disnake.abc import User
 from disnake.ext.commands import Context, Paginator
 from loguru import logger
 
+from bot import constants
 
 FIRST_EMOJI = "\u23EE"  # [:track_previous:]
 LEFT_EMOJI = "\u2B05"  # [:arrow_left:]

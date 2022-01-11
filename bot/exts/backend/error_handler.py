@@ -3,10 +3,11 @@ import random
 from typing import Optional
 
 import disnake
-from bot.constants import Channels, Colours, ERROR_REPLIES
 from disnake import Embed, Message
 from disnake.ext import commands
 from loguru import logger
+
+from bot.constants import ERROR_REPLIES, Channels, Colours
 
 
 class CommandErrorHandler(commands.Cog):

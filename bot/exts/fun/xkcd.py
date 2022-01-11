@@ -4,11 +4,12 @@ from datetime import datetime
 from random import randint
 from typing import Dict, Optional, Union
 
-from bot.bot import Bot
-from bot.constants import Colours
 from disnake import Embed
 from disnake.ext import tasks
 from disnake.ext.commands import Cog, Context, command
+
+from bot.bot import Bot
+from bot.constants import Colours
 
 log = logging.getLogger(__name__)
 

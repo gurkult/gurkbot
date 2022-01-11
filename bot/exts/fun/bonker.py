@@ -5,9 +5,9 @@ from io import BytesIO
 from typing import Dict
 
 import disnake
-from PIL import Image, ImageDraw, ImageFile, ImageSequence
 from disnake.ext import commands
 from loguru import logger
+from PIL import Image, ImageDraw, ImageFile, ImageSequence
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 

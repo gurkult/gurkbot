@@ -7,15 +7,15 @@ from typing import Optional, Union
 import disnake
 import humanize
 from asyncpg import Record
+from disnake import Embed
+from disnake.ext.commands import Cog, Context, group
+from disnake.utils import sleep_until
+
 from bot.bot import Bot
 from bot.constants import Colours
 from bot.postgres.utils import db_execute, db_fetch
 from bot.utils.pagination import LinePaginator
 from bot.utils.parsers import parse_duration
-from disnake import Embed
-from disnake.ext.commands import Cog, Context, group
-from disnake.utils import sleep_until
-
 
 REMINDER_DESCRIPTION = "**Arrives in**: {arrive_in}\n"
 

@@ -1,9 +1,10 @@
 import typing
 
-from bot.constants import BOT_REPO_URL
 from disnake import Embed
 from disnake.ext import commands
 from disnake.ext.commands.cooldowns import BucketType
+
+from bot.constants import BOT_REPO_URL
 
 from . import _issues, _profile, _source
 
