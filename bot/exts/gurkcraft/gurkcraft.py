@@ -1,12 +1,13 @@
 from typing import Optional
 
 import disnake
-from bot.constants import Channels, Colours, Minecraft
 from disnake import Embed, TextChannel
 from disnake.ext import commands, tasks
 from disnake.ext.commands import Bot
 from loguru import logger
 from mcstatus import MinecraftServer
+
+from bot.constants import Channels, Colours, Minecraft
 
 
 def _extract_users(status: dict) -> list:

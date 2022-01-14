@@ -1,10 +1,11 @@
 from io import BytesIO
 from string import hexdigits
 
-from PIL import Image
-from bot.bot import Bot
 from disnake import File
 from disnake.ext.commands import Cog, Context, command
+from PIL import Image
+
+from bot.bot import Bot
 
 
 class Color(Cog):

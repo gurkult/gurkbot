@@ -1,9 +1,10 @@
 import disnake
+from disnake.ext import commands
+from disnake.utils import get
+
 from bot.bot import Bot
 from bot.constants import Roles
 from bot.utils.is_gurkan import gurkan_check
-from disnake.ext import commands
-from disnake.utils import get
 
 
 class MakeGurkan(commands.Cog):

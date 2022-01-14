@@ -1,11 +1,11 @@
 from typing import Optional, Union
 
-from bot.bot import Bot
-from bot.constants import Emojis
-from bot.utils.is_gurkan import gurkan_check, gurkan_rate
 from disnake import Color, Embed, Member
 from disnake.ext.commands import Cog, Context, command
 
+from bot.bot import Bot
+from bot.constants import Emojis
+from bot.utils.is_gurkan import gurkan_check, gurkan_rate
 
 RATE_DICT = {
     range(1, 10): "pathetic",
