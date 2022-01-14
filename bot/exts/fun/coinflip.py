@@ -8,7 +8,7 @@ from disnake.ext.commands import Context
 
 
 class Choice(disnake.ui.View):
-    """Choosing heads or tails"""
+    """Choosing heads or tails."""
 
     def __init__(self):
         super().__init__()
@@ -19,7 +19,6 @@ class Choice(disnake.ui.View):
         self, button: disnake.ui.Button, interaction: disnake.MessageInteraction
     ) -> None:
         """Heads button."""
-
         self.choice = button.label.lower()
         self.stop()
 
@@ -27,7 +26,7 @@ class Choice(disnake.ui.View):
     async def cancel(
         self, button: disnake.ui.Button, interaction: disnake.MessageInteraction
     ) -> None:
-        """tails button."""
+        """Tails button."""
         self.choice = button.label.lower()
         self.stop()
 
@@ -36,8 +35,10 @@ class Choice(disnake.ui.View):
     name="coinflip",
     description="The bot tosses a coin and you predict the outcome beforehand.",
 )
-async def coinflip(self, context: Context):
+async def coinflip(self, context: Context) -> None:
+    """The bot tosses a coin and you predict the outcome beforehand."""
     buttons = Choice()
+
     embed = disnake.Embed(description="Choose heads or tails.", color=0x1F85DE)
     message = await context.send(embed=embed, view=buttons)
     await buttons.wait()
