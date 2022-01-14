@@ -32,6 +32,7 @@ class OffTopicNames(Cog):
 
         self.ot_channel: TextChannel = ...
         self.ot_names: Dict[str:int] = ...
+        """Key is off-topic channel name, value is times used."""
 
         self.bot.loop.create_task(self._cache())
         self.update_ot_channel_name.start()
@@ -194,7 +195,7 @@ class OffTopicNames(Cog):
 
     @tasks.loop(time=REFRESH_TIMES)
     async def update_ot_channel_name(self) -> None:
-        """Update ot-channel name everyday at midnight."""
+        """Update ot-channel name everyday at `REFRESH_TIMES`."""
         # await the cache method to ensure we pull from an up-to-date cache every time
         # this also fixes a race condition where the cache wasn't populated
         await self._cache()
@@ -204,9 +205,9 @@ class OffTopicNames(Cog):
         distribution = [1 / (i + 1) for i in usage]
         chosen_usage = random.choices(list(usage), distribution)[0]
 
-        chosen_ot_names = [
+        chosen_ot_names = {
             name for name, usage in self.ot_names.items() if usage == chosen_usage
-        ]
+        }
 
         def to_channel_name(ot_name: str) -> str:
             """Append off topic name prefix."""
@@ -214,13 +215,12 @@ class OffTopicNames(Cog):
 
         def from_channel_name(ot_name: str) -> str:
             """Detach off topic name prefix."""
-            return ot_name[len(OT_NAME_PREFIX) :]
+            return ot_name.removeprefix(OT_NAME_PREFIX)
 
         current_name = from_channel_name(self.ot_channel.name)
-        new_name = current_name
 
-        while new_name == current_name:
-            new_name = random.choice(chosen_ot_names)
+        chosen_ot_names.discard(current_name)
+        new_name = random.choice(chosen_ot_names)
 
         self.ot_names[new_name] += 1
         await db_execute(
@@ -229,11 +229,11 @@ class OffTopicNames(Cog):
             new_name,
         )
 
-        new_name = to_channel_name(new_name)
-        await self.ot_channel.edit(name=new_name)
+        new_name_with_prefix = to_channel_name(new_name)
+        await self.ot_channel.edit(name=new_name_with_prefix)
 
         await self._send_ot_embed(
-            self.ot_channel, f"{new_name}", True, "New Off-Topic Name!"
+            self.ot_channel, new_name, True, "New Off-Topic Name!"
         )
         logger.info(f"Off-topic Channel name changed to {new_name}.")
 
