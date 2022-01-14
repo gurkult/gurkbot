@@ -35,7 +35,7 @@ class Choice(disnake.ui.View):
     name="coinflip",
     description="The bot tosses a coin and you predict the outcome beforehand.",
 )
-async def coinflip(self, context: Context) -> None:
+async def coinflip(context: Context) -> None:
     """The bot tosses a coin and you predict the outcome beforehand."""
     buttons = Choice()
 
