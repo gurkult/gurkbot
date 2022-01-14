@@ -1,7 +1,8 @@
+import random
 
 import disnake
+
 from bot.bot import Bot
-import random
 
 from disnake.ext import commands
 from disnake.ext.commands import Context
