@@ -59,3 +59,4 @@ async def coinflip(self, context: Context):
 def setup(bot: Bot) -> None:
     """Loading the coinflip cog."""
     bot.add_cog(Choice(bot))
+
