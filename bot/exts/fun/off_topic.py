@@ -203,7 +203,7 @@ class OffTopicNames(Cog):
         # Least used names have a higher chance of being selected.
         usage = set(self.ot_names.values())
         distribution = [1 / (i + 1) for i in usage]
-        chosen_usage = random.choices(list(usage), distribution)[0]
+        chosen_usage = random.choices(tuple(usage), distribution)[0]
 
         chosen_ot_names: set[str] = {
             name for name, usage in self.ot_names.items() if usage == chosen_usage
@@ -220,7 +220,7 @@ class OffTopicNames(Cog):
         current_name = from_channel_name(self.ot_channel.name)
 
         chosen_ot_names.discard(current_name)
-        new_name = random.choice(list(chosen_ot_names))
+        new_name = random.choice(tuple(chosen_ot_names))
 
         self.ot_names[new_name] += 1
         await db_execute(
