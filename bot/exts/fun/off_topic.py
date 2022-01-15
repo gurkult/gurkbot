@@ -220,7 +220,7 @@ class OffTopicNames(Cog):
         current_name = from_channel_name(self.ot_channel.name)
 
         chosen_ot_names.discard(current_name)
-        new_name = chosen_ot_names.pop()
+        new_name = random.choice(list(chosen_ot_names))
 
         self.ot_names[new_name] += 1
         await db_execute(
