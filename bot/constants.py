@@ -25,7 +25,7 @@ LOG_FILE = pathlib.Path("log/gurkbot.log")
 
 
 if TEST_GUILDS := os.getenv("TEST_GUILDS"):
-    TEST_GUILDS = [int(x.strip()) for x in TEST_GUILDS.split(",")]
+    TEST_GUILDS = [int(x) for x in TEST_GUILDS.split(",")]
 
 
 class Emojis(NamedTuple):
