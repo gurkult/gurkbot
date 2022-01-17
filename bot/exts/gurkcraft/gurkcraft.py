@@ -9,7 +9,7 @@ from mcstatus import MinecraftServer
 
 from bot.constants import Channels, Colours, Minecraft
 
-CHAT_HEADER = f"Our gurkan Minecraft server. Join: {Minecraft.server_address} ! \n"
+CHAT_HEADER = f"Our gurkan Minecraft server. Join: {Minecraft.server_address}! \n"
 RELAY_HEADER = "The live chat of our gurkan Minecraft server. \n"
 
 
@@ -59,7 +59,7 @@ class Gurkcraft(commands.Cog):
     @tasks.loop(minutes=5)
     async def update_channel_description(self) -> None:
         """Collect information about the server and update the description of the channel."""
-        logger.debug("Updating topic of the #gurkcraft and #gurkcraft-relay channel")
+        logger.debug("Updating topic of the #gurkcraft and #gurkcraft-relay channels")
 
         if not self.gurkcraft:
             self.gurkcraft = await self.bot.fetch_channel(Channels.gurkcraft)
