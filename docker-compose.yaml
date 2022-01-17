@@ -19,22 +19,12 @@ services:
     init: true
 
     restart: on-failure
+    env_file:
+      - .env
 
     environment:
       - ENVIRONMENT=DOCKER-DEVELOPMENT
       - DATABASE_URL=postgres://gurkbotdb:gurkbotdb@postgres:5432/gurkbot
-      - CHANNEL_OFF_TOPIC
-      - TOKEN
-      - PREFIX
-      - CHANNEL_DEVLOG
-      - CHANNEL_DEVALERTS
-      - CHANNEL_DEV_GURKBOT
-      - CHANNEL_DEV_REAGURK
-      - CHANNEL_DEV_GURKLANG
-      - CHANNEL_DEV_BRANDING
-      - CHANNEL_LOGS
-      - ROLE_STEERING_COUNCIL
-      - ROLE_MODERATORS
 
     volumes:
       - .:/bot
