@@ -9,7 +9,7 @@ from mcstatus import MinecraftServer
 
 from bot.constants import Channels, Colours, Minecraft
 
-CHAT_HEADER = "Our gurkan Minecraft server. Join: {Minecraft.server_address} ! \n"
+CHAT_HEADER = f"Our gurkan Minecraft server. Join: {Minecraft.server_address} ! \n"
 RELAY_HEADER = "The live chat of our gurkan Minecraft server. \n"
 
 
