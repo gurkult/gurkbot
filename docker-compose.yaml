@@ -22,6 +22,10 @@ services:
     env_file:
       - .env
 
+    environment:
+      - ENVIRONMENT=DOCKER-DEVELOPMENT
+      - DATABASE_URL=postgres://gurkbotdb:gurkbotdb@postgres:5432/gurkbot
+
     volumes:
       - .:/bot
 
