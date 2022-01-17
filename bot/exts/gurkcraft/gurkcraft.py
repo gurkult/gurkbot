@@ -9,6 +9,9 @@ from mcstatus import MinecraftServer
 
 from bot.constants import Channels, Colours, Minecraft
 
+CHAT_HEADER = "Our gurkan Minecraft server. Join: {Minecraft.server_address} ! \n"
+RELAY_HEADER = "The live chat of our gurkan Minecraft server. \n"
+
 
 def _extract_users(status: dict) -> list:
     """Extract the list of users connected to the server."""
@@ -25,6 +28,7 @@ class Gurkcraft(commands.Cog):
         self.bot = bot
         self.server = MinecraftServer.lookup(Minecraft.server_address)
         self.gurkcraft: Optional[TextChannel] = None
+        self.gurkcraft_relay: Optional[TextChannel] = None
 
         self.update_channel_description.start()
 
@@ -55,7 +59,7 @@ class Gurkcraft(commands.Cog):
     @tasks.loop(minutes=5)
     async def update_channel_description(self) -> None:
         """Collect information about the server and update the description of the channel."""
-        logger.debug("Updating topic of the #gurkcraft channel")
+        logger.debug("Updating topic of the #gurkcraft and #gurkcraft-relay channel")
 
         if not self.gurkcraft:
             self.gurkcraft = await self.bot.fetch_channel(Channels.gurkcraft)
@@ -63,6 +67,16 @@ class Gurkcraft(commands.Cog):
             if not self.gurkcraft:
                 logger.warning(
                     f"Failed to retrieve #gurkcraft channel {Channels.gurkcraft}. Aborting."
+                )
+                return
+        if not self.gurkcraft_relay:
+            self.gurkcraft_relay = await self.bot.fetch_channel(
+                Channels.gurkcraft_relay
+            )
+
+            if not self.gurkcraft_relay:
+                logger.warning(
+                    f"Failed to retrieve #gurkcraft_relay channel {Channels.gurkcraft_relay}. Aborting."
                 )
                 return
 
@@ -86,9 +100,8 @@ class Gurkcraft(commands.Cog):
         else:
             description = "The server is currently offline :("
 
-        await self.gurkcraft.edit(
-            topic=f"Our gurkan Minecraft server. Join: {Minecraft.server_address} ! \n{description}"
-        )
+        await self.gurkcraft.edit(topic=CHAT_HEADER + description)
+        await self.gurkcraft_relay.edit(topic=RELAY_HEADER + description)
 
 
 def setup(bot: Bot) -> None:
