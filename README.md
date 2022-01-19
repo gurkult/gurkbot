@@ -31,7 +31,7 @@ Create a `.env` file with following contents:
    ```text
     TOKEN = <Your token> # See Discord Setup above
     PREFIX = "!" # the prefix the bot should use, will default to "!" if this is not present
-   
+
     # Optional
     CHANNEL_DEVLOG=""
     CHANNEL_DEV_GURKBOT=""
@@ -59,20 +59,20 @@ Create a `.env` file with following contents:
    ```sh
    # Build image and start project
    docker-compose up --build
-  
+
    # Start project
    # use -d flag for detached mode
    docker-compose up
-   
+
    # Stop project
    # Use ctrl+C if not in detached mode
    docker-compose stop
-   
+
    # Delete containers
    # Use -v or --volumes flag to remove volumes
    docker-compose down
    ```
-  
+
 ## Running manually (without docker)
 ### Prerequisites
 - Python 3.9
@@ -91,4 +91,3 @@ Create a `.env` file with following contents:
 
     poetry run task bot - Runs the discord bot.
     ```
-
