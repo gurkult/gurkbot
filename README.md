@@ -32,6 +32,10 @@ Create a `.env` file with following contents:
     TOKEN = <Your token> # See Discord Setup above
     PREFIX = "!" # the prefix the bot should use, will default to "!" if this is not present
 
+	# This is required if you do not want to wait up to an hour for commands to sync
+	# Example: TEST_GUILDS=789192517375623228,793864455527202847
+	TEST_GUILDS=
+
     # Optional
     CHANNEL_DEVLOG=""
     CHANNEL_DEV_GURKBOT=""
