@@ -26,29 +26,9 @@ Then navigate to the directory `cd gurkbot/`
 
 
 ## Environment variable setup
-Create a `.env` file with following contents:
+Create a `.env` file in the project root folder.
+Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/main/.env-example) file into your `.env` file and fill up the fields with your `bot token` and `server details`.
 
-   ```text
-    TOKEN = <Your token> # See Discord Setup above
-    PREFIX = "!" # the prefix the bot should use, will default to "!" if this is not present
-
-	# This is required if you do not want to wait up to an hour for commands to sync
-	# Example: TEST_GUILDS=789192517375623228,793864455527202847
-	TEST_GUILDS=
-
-    # Optional
-    CHANNEL_DEVLOG=""
-    CHANNEL_DEV_GURKBOT=""
-    CHANNEL_DEV_REAGURK=""
-    CHANNEL_DEV_GURKLANG=""
-    CHANNEL_DEV_BRANDING=""
-    CHANNEL_LOG=""
-
-    EMOJI_TRASHCAN=""
-
-    ROLE_STEERING_COUNCIL=""
-    ROLE_MODERATORS=""
-   ```
 
 ## Docker setup (recommended)
 ### Prerequisites
@@ -57,32 +37,63 @@ Create a `.env` file with following contents:
 
 
 ### Running with Docker
-1. pre-requisites: Docker
-2. Install docker-compose: `pip install docker-compose`
-3. Running and stopping the project
-   ```sh
-   # Build image and start project
-   docker-compose up --build
+1. Pre-requisites
+    - [Docker](https://docs.docker.com/engine/install/)
+    - [Docker Compose](https://docs.docker.com/compose/install/)
+4. Running and stopping the project
+    ```SH
+    # Build image and start project
+    # This will start both the Postgres database and the bot.
+    # Running this the first time will build the image.
+    docker-compose up --build
 
-   # Start project
-   # use -d flag for detached mode
-   docker-compose up
+    # Start/create the postgres database and the bot containers.
+    docker-compose up
 
-   # Stop project
-   # Use ctrl+C if not in detached mode
-   docker-compose stop
+    # Use -d flag for detached mode
+    # This will free the terminal for other uses.
+    docker-compose up -d
 
-   # Delete containers
-   # Use -v or --volumes flag to remove volumes
-   docker-compose down
-   ```
+    # Stop project
+    # Use ctrl+C if not in detached mode
+    docker-compose stop
+
+    # Stop and remove containers.
+    docker-compose down
+
+    # Use -v or --volumes flag to remove volumes
+    docker-compose down --volumes
+
+    # Alternativily, `docker-compose` can be
+    # replaced with `docker compose` (without the hyphen).
+    ```
+
 
 ## Running manually (without docker)
 ### Prerequisites
 - Python 3.9
 - [Poetry](https://python-poetry.org/docs/#installation)
+- Postgres database
+    - [Download](https://www.postgresql.org/download/)
 
-1. Add `DATABASE_URL` variable to `.env` file.
+1. Database setup
+    - Open terminal/cmd and enter psql
+    ```SH
+    psql -U postgres -d postgres
+    ```
+    - Create user and database
+    ```SH
+    CREATE USER gurkbotdb WITH SUPERUSER PASSWORD 'gurkbotdb';
+    CREATE DATABASE gurkbot WITH OWNER gurkbotdb;
+    ```
+2. Add `DATABASE_URL` variable to `.env` file.
+    ```
+    DATABASE_URL = postgres://gurkbotdb:gurkbotdb@localhost:5432/gurkbot
+    ```
+    #### About the URL
+    - format: `postgres://<username>:<password>@<host>:<port>/<database>`
+    - If you have changed any of the parameters such has `port`, `username`, `password` or `database` during installation or in psql, reflect those changes in the `DATABASE_URL`.
+    - The host will be `localhost` unless you want to connect to a database which is not hosted on your machine.
 
 3. Command to run the bot: `poetry run task bot`
 4. Commands to remember:
@@ -91,7 +102,7 @@ Create a `.env` file with following contents:
 
     poetry run task format - Formats the project with black
 
-    poetry run task lint- Runs pre-commit across the project, formatting and linting files.
+    poetry run task lint - Runs pre-commit across the project, formatting and linting files.
 
     poetry run task bot - Runs the discord bot.
     ```
