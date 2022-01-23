@@ -70,13 +70,13 @@ Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/
 
 
 ## Running manually (without docker)
-### Prerequisites
-- Python 3.9
-- [Poetry](https://python-poetry.org/docs/#installation)
-- Postgres database
-    - [Download](https://www.postgresql.org/download/)
+1. Prerequisites
+    - Python 3.9
+    - [Poetry](https://python-poetry.org/docs/#installation)
+    - Postgres database
+        - [Download](https://www.postgresql.org/download/)
 
-1. Database setup
+2. Database setup
     - Open terminal/cmd and enter psql
     ```SH
     psql -U postgres -d postgres
@@ -86,7 +86,7 @@ Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/
     CREATE USER gurkbotdb WITH SUPERUSER PASSWORD 'gurkbotdb';
     CREATE DATABASE gurkbot WITH OWNER gurkbotdb;
     ```
-2. Add `DATABASE_URL` variable to `.env` file.
+3. Add `DATABASE_URL` variable to `.env` file.
     ```
     DATABASE_URL = postgres://gurkbotdb:gurkbotdb@localhost:5432/gurkbot
     ```
@@ -95,13 +95,13 @@ Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/
     - If you have changed any of the parameters such has `port`, `username`, `password` or `database` during installation or in psql, reflect those changes in the `DATABASE_URL`.
     - The host will be `localhost` unless you want to connect to a database which is not hosted on your machine.
 
-3. Command to run the bot: `poetry run task bot`
-4. Commands to remember:
+4. Command to run the bot: `poetry run task bot`
+5. Commands to remember:
     ```SH
-    # Installs the pre-commit git hook
+    # Installs the pre-commit git hook.
     poetry run task precommit
 
-    # Formats the project with black
+    # Formats the project with black.
     poetry run task format
 
     # Runs pre-commit across the project, formatting and linting files.
