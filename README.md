@@ -97,12 +97,16 @@ Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/
 
 3. Command to run the bot: `poetry run task bot`
 4. Commands to remember:
-    ```
-    poetry run task precommit - Installs the pre-commit git hook
+    ```SH
+    # Installs the pre-commit git hook
+    poetry run task precommit
 
-    poetry run task format - Formats the project with black
+    # Formats the project with black
+    poetry run task format
 
-    poetry run task lint - Runs pre-commit across the project, formatting and linting files.
+    # Runs pre-commit across the project, formatting and linting files.
+    poetry run task lint
 
-    poetry run task bot - Runs the discord bot.
+    # Runs the discord bot.
+    poetry run task bot
     ```
