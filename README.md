@@ -31,12 +31,7 @@ Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/
 
 
 ## Docker setup (recommended)
-### Prerequisites
-- Docker
-- Docker-compose
 
-
-### Running with Docker
 1. Pre-requisites
     - [Docker](https://docs.docker.com/engine/install/)
     - [Docker Compose](https://docs.docker.com/compose/install/)
@@ -67,11 +62,20 @@ Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/
     # Alternativily, `docker-compose` can be
     # replaced with `docker compose` (without the hyphen).
     ```
+5. Running only database with docker
+    ```SH
+    docker-compose up postgres
+    ```
+
+5. Running only bot with docker
+    ```SH
+    docker-compose up gurkbot --no-deps
+    ```
 
 
 ## Running manually (without docker)
 1. Prerequisites
-    - Python 3.9
+    - [Python 3.9](https://www.python.org/downloads/)
     - [Poetry](https://python-poetry.org/docs/#installation)
     - Postgres database
         - [Download](https://www.postgresql.org/download/)
