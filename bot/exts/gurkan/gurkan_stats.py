@@ -4,7 +4,7 @@ from disnake import Embed, Member
 from disnake.ext.commands import Cog, Context, command
 
 from bot.bot import Bot
-from bot.constants import Emojis, Colours
+from bot.constants import Colours, Emojis
 from bot.utils.is_gurkan import gurkan_check, gurkan_rate
 
 RATE_DICT = {
