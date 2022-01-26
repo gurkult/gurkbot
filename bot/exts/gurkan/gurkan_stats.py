@@ -1,10 +1,10 @@
 from typing import Optional, Union
 
-from disnake import Color, Embed, Member
+from disnake import Embed, Member
 from disnake.ext.commands import Cog, Context, command
 
 from bot.bot import Bot
-from bot.constants import Emojis
+from bot.constants import Colours, Emojis
 from bot.utils.is_gurkan import gurkan_check, gurkan_rate
 
 RATE_DICT = {
@@ -50,17 +50,17 @@ class GurkanStats(Cog):
 
         if rate == 100:
             title = f"Whoa!! All {gurkans} members are gurkans!"
-            color = Color.green()
+            color = Colours.green
 
         elif rate == 0:
             title = "No one is a gurkan?! That's lame."
-            color = Color.red()
+            color = Colours.soft_red
 
         else:
             rate_m = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
 
             title = f"{Emojis.cucumber_emoji} {gurkans} members"
-            color = Color.green()
+            color = Colours.green
             description = f"About {rate}% ({gurkans}/ {len(members)}) of members are gurkans, that's {rate_m}"
 
         count_emb.title = title
@@ -95,10 +95,10 @@ class GurkanStats(Cog):
         rate_embed = Embed(description=f"{user}'s gurk rate is {gurk_rate}%")
 
         if not gurk_state:
-            color = Color.red()
+            color = Colours.soft_red
             title = f"{Emojis.invalid_emoji} Not gurkan"
         else:
-            color = Color.green()
+            color = Colours.green
             title = f"{Emojis.cucumber_emoji} Gurkan"
 
         rate_embed.color = color
