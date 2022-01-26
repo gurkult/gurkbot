@@ -60,7 +60,7 @@ class GurkanStats(Cog):
             rate_m = [RATE_DICT[r] for r in RATE_DICT if rate in r][0]
 
             title = f"{Emojis.cucumber_emoji} {gurkans} members"
-            color = Color.green()
+            color = Colours.green
             description = f"About {rate}% ({gurkans}/ {len(members)}) of members are gurkans, that's {rate_m}"
 
         count_emb.title = title
@@ -95,10 +95,10 @@ class GurkanStats(Cog):
         rate_embed = Embed(description=f"{user}'s gurk rate is {gurk_rate}%")
 
         if not gurk_state:
-            color = Color.red()
+            color = Colours.soft_red
             title = f"{Emojis.invalid_emoji} Not gurkan"
         else:
-            color = Color.green()
+            color = Colours.green
             title = f"{Emojis.cucumber_emoji} Gurkan"
 
         rate_embed.color = color
