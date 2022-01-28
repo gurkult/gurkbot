@@ -151,7 +151,7 @@ class DevOps(Cog):
         logger.info(f"Evaluating the following snippet:\n{code}")
         self.ln += 1
 
-        if == "exit":
+        if code == "exit":
             self.ln = 0
             self.env = {}
             return await ctx.send("```Reset history!```")
