@@ -18,7 +18,7 @@ class Eightball(commands.Cog, name="eightball"):
         name="8ball",
         description="Ask any question to the bot.",
     )
-    async def eight_ball(self, context: Context, *, question: str) -> None:
+    async def eight_ball(self, ctx: Context, *, question: str) -> None:
         """Sends an embed with an answer to the user's question."""
         replies = [
             "It is certain",
