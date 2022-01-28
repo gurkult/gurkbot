@@ -23,7 +23,6 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 EXTENSIONS = pathlib.Path("bot/exts/")
 LOG_FILE = pathlib.Path("log/gurkbot.log")
 
-
 if TEST_GUILDS := os.getenv("TEST_GUILDS"):
     TEST_GUILDS = [int(x) for x in TEST_GUILDS.split(",")]
 
@@ -87,11 +86,13 @@ class Roles(NamedTuple):
 
 
 # Bot replies
-with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf8") as file:
+with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf-8") as file:
     bot_replies = yaml.safe_load(file)
     ERROR_REPLIES = bot_replies["ERROR_REPLIES"]
     POSITIVE_REPLIES = bot_replies["POSITIVE_REPLIES"]
     NEGATIVE_REPLIES = bot_replies["NEGATIVE_REPLIES"]
+    BALL_REPLIES = bot_replies["EIGHTBALL_ANSWERS"]
+
 
 # Minecraft Server
 class Minecraft(NamedTuple):
