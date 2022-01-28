@@ -8,7 +8,7 @@ from bot.bot import Bot
 from bot.constants import Colours
 
 
-class Eightball(commands.Cog, name="eightball"):
+class EightBall(commands.Cog):
     """Cog for asking a question to the  8ball."""
 
     def __init__(self, bot: Bot) -> None:
