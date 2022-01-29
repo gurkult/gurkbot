@@ -1,4 +1,5 @@
 import random
+from io import BytesIO
 from typing import Union
 from urllib import parse
 
@@ -6,7 +7,6 @@ import disnake
 from bot.constants import Colours, ERROR_REPLIES, Tokens
 from disnake import Embed
 from disnake.ext import commands
-from yarl import URL
 
 
 class WolframCommands(commands.Cog):
@@ -29,13 +29,16 @@ class WolframCommands(commands.Cog):
             "layout": "labelbar",
             "fontsize": "23",
             "width": "700",
+            "location": "the moon",
+            "latlong": "0.0,0.0",
+            "ip": "1.1.1.1",
         }
 
-    async def web_request(self, url: str, params: dict) -> Union[URL, str]:
+    async def web_request(self, url: str, params: dict) -> Union[bytes, str]:
         """Web request handler for wolfram group of commands."""
         async with self.bot.http_session.get(url=url, params=params) as resp:
             if resp.status == 200:
-                return resp.url
+                return await resp.read()
             elif resp.status == 501:
                 return "Sorry, the API could not understand your input"
             elif resp.status == 400:
@@ -66,8 +69,10 @@ class WolframCommands(commands.Cog):
             embed = Embed(title=random.choice(ERROR_REPLIES), description=response)
         else:
             original_url = parse.quote_plus(query)
+            file = disnake.File(BytesIO(response), filename="image.png")
+
             embed = Embed(title="Wolfram Alpha", colour=Colours.green)
-            embed.set_image(url=str(response))
+            embed.set_image(file=file)
             embed.add_field(
                 name="Cannot see image?",
                 value=f"[Click here](https://www.wolframalpha.com/input/?i={original_url})",
