@@ -30,5 +30,5 @@ class EightBall(commands.Cog):
 
 
 def setup(bot: commands.Bot) -> None:
-    """Load the Eightball cog."""
+    """Load the EightBall cog."""
     bot.add_cog(EightBall(bot))
