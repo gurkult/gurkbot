@@ -27,7 +27,7 @@ Then navigate to the directory `cd gurkbot/`
 
 ## Environment variable setup
 Create a `.env` file in the project root folder.
-Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/main/.env-example) file into your `.env` file and fill up the fields with your `bot token` and `server details`.
+Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/main/.env-example) file into your `.env` file and fill up the fields with your bot token and server details.
 
 
 ## Docker setup (recommended)
