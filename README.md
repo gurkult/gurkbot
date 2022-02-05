@@ -15,7 +15,6 @@ If you want to contribute, report a problem, add or suggest a new fix or feature
 To get a **token**, go to [Discord Developer Portal](https://discord.com/developers/applications). Create an application and add a bot.
 
 ## Dev Installation
-
 1. Clone the repository:
 - Traditional way: `git clone https://github.com/gurkult/gurkbot.git` or `git clone git@github.com:gurkult/gurkbot.git`.
 
@@ -25,37 +24,93 @@ Then navigate to the directory `cd gurkbot/`
 
 2. Create a new branch by `git checkout -b <name of new local branch> main` or `git switch -c <name of new local branch> main`. Make sure the new branch name is related to the feature or the fix you have in mind.
 
-3. Create a `.env` file with following contents:
 
-   ```text
-   TOKEN = <Your token> # See Discord Setup above
-   PREFIX = "!" # the prefix the bot should use, will default to "!" if this is not present
-   ```
+## Environment variable setup
+Create a `.env` file in the project root folder.
+Copy the contents from [`.env-example`](https://github.com/gurkult/gurkbot/blob/main/.env-example) file into your `.env` file and fill up the fields with your bot token and server details.
 
-4. Install poetry: `pip install -U poetry` and run the following:
 
-   ```sh
-   # This will install the development and project dependencies.
-   poetry install
+## Docker setup (recommended)
 
-   # This will install the pre-commit hooks.
-   poetry run task precommit
+1. Pre-requisites
+    - [Docker](https://docs.docker.com/engine/install/)
+    - [Docker Compose](https://docs.docker.com/compose/install/)
+4. Running and stopping the project
+    ```SH
+    # Build image and start project
+    # This will start both the Postgres database and the bot.
+    # Running this the first time will build the image.
+    docker-compose up --build
 
-   # Optionally: run pre-commit hooks to initialize them.
-   # You can start working on the feature after this.
-   poetry run task lint
+    # Start/create the postgres database and the bot containers.
+    docker-compose up
 
-   # Run the bot
-   poetry run task bot
+    # Use -d flag for detached mode
+    # This will free the terminal for other uses.
+    docker-compose up -d
 
-   ```
-5. Lint and format your code properly using `poetry run task lint`, and push changes `git push -u origin <name of new remote branch>`
+    # Stop project
+    # Use ctrl+C if not in detached mode
+    docker-compose stop
 
-## Commands to Remember
-`poetry run task precommit` - Installs the pre-commit git hook
+    # Stop and remove containers.
+    docker-compose down
 
-`poetry run task format` - Formats the project with black
+    # Use -v or --volumes flag to remove volumes
+    docker-compose down --volumes
 
-`poetry run task lint`- Runs pre-commit across the project, formatting and linting files.
+    # Alternativily, `docker-compose` can be
+    # replaced with `docker compose` (without the hyphen).
+    ```
+5. Running only database with docker
+    ```SH
+    docker-compose up postgres
+    ```
 
-`poetry run task bot` - Runs the discord bot.
+5. Running only bot with docker
+    ```SH
+    docker-compose up gurkbot --no-deps
+    ```
+
+
+## Running manually (without docker)
+1. Prerequisites
+    - [Python 3.9](https://www.python.org/downloads/)
+    - [Poetry](https://python-poetry.org/docs/#installation)
+    - Postgres database
+        - [Download](https://www.postgresql.org/download/)
+
+2. Database setup
+    - Open terminal/cmd and enter psql
+    ```SH
+    psql -U postgres -d postgres
+    ```
+    - Create user and database
+    ```SH
+    CREATE USER gurkbotdb WITH SUPERUSER PASSWORD 'gurkbotdb';
+    CREATE DATABASE gurkbot WITH OWNER gurkbotdb;
+    ```
+3. Add `DATABASE_URL` variable to `.env` file.
+    ```
+    DATABASE_URL = postgres://gurkbotdb:gurkbotdb@localhost:5432/gurkbot
+    ```
+    #### About the URL
+    - format: `postgres://<username>:<password>@<host>:<port>/<database>`
+    - If you have changed any of the parameters such has `port`, `username`, `password` or `database` during installation or in psql, reflect those changes in the `DATABASE_URL`.
+    - The host will be `localhost` unless you want to connect to a database which is not hosted on your machine.
+
+4. Command to run the bot: `poetry run task bot`
+5. Commands to remember:
+    ```SH
+    # Installs the pre-commit git hook.
+    poetry run task precommit
+
+    # Formats the project with black.
+    poetry run task format
+
+    # Runs pre-commit across the project, formatting and linting files.
+    poetry run task lint
+
+    # Runs the discord bot.
+    poetry run task bot
+    ```
