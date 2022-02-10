@@ -91,8 +91,7 @@ with pathlib.Path("bot/resources/bot_replies.yml").open(encoding="utf-8") as fil
     ERROR_REPLIES = bot_replies["ERROR_REPLIES"]
     POSITIVE_REPLIES = bot_replies["POSITIVE_REPLIES"]
     NEGATIVE_REPLIES = bot_replies["NEGATIVE_REPLIES"]
-    BALL_REPLIES = bot_replies["EIGHTBALL_ANSWERS"]
-
+   
 
 # Minecraft Server
 class Minecraft(NamedTuple):
