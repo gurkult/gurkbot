@@ -18,7 +18,7 @@ class CoinFlip(commands.Cog):
         name="coinflip",
         description="Toss a coin.",
     )
-    async def eight_ball(
+    async def coin_flip(
         self,
         ctx: Context,
     ) -> None:
