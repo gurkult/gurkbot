@@ -16,7 +16,7 @@ class CoinFlip(commands.Cog):
 
     @commands.command(
         name="coinflip",
-        description="Ask any question to the bot.",
+        description="Toss a coin.",
     )
     async def eight_ball(
         self,
