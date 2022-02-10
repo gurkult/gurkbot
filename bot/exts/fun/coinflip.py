@@ -34,5 +34,5 @@ class CoinFlip(commands.Cog):
 
 
 def setup(bot: commands.Bot) -> None:
-    """Load the Eightball cog."""
+    """Load the CoinFlip cog."""
     bot.add_cog(CoinFlip(bot))
