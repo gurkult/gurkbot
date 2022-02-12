@@ -1,6 +1,6 @@
 import random
 from io import BytesIO
-from typing import Union
+from typing import Literal, Union
 from urllib import parse
 
 import disnake
@@ -50,7 +50,10 @@ class WolframCommands(commands.Cog):
 
     @wolfram.sub_command()
     async def image(
-        self, inter: disnake.ApplicationCommandInteraction, query: str
+        self,
+        inter: disnake.ApplicationCommandInteraction,
+        query: str,
+        theme: Literal["light", "dark"] = "dark",
     ) -> None:
         """
         Send wolfram image corresponding to the given query.
@@ -58,11 +61,17 @@ class WolframCommands(commands.Cog):
         Parameters
         ----------
         query: The user query.
+        theme: The theme of the image generated. dark by default.
         """
         await inter.response.defer()
 
+        params = self.params
+
+        if theme == "light":
+            params |= {"background": "white", "foreground": "2F3136"}
+
         response = await self.web_request(
-            url=self.image_url, params=self.params | {"i": query}
+            url=self.image_url, params=params | {"i": query}
         )
 
         if isinstance(response, str):
