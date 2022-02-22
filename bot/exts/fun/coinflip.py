@@ -24,7 +24,7 @@ class CoinFlip(commands.Cog):
         ctx: Context,
     ) -> None:
         """Flips a coin and sends an embed with the outcome."""
-        coin_choice = ["Heads 🪙", "Tails 🪙"]
+        coin_choice = ["Heads", "Tails"]
         embed = disnake.Embed(
             title="**Coin Toss Outcome:**",
             description=random.choice(coin_choice),
