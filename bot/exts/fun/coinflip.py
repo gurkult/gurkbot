@@ -1,3 +1,4 @@
+import asyncio
 import random
 
 import disnake
@@ -29,7 +30,8 @@ class CoinFlip(commands.Cog):
             description=random.choice(coin_choice),
             color=Colours.green,
         )
-
+        await ctx.trigger_typing()
+        await asyncio.sleep(1)
         await ctx.send(embed=embed)
 
 
