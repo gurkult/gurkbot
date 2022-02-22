@@ -1,4 +1,3 @@
-import asyncio
 import random
 
 import disnake
@@ -7,6 +6,8 @@ from disnake.ext.commands import Context
 
 from bot.bot import Bot
 from bot.constants import Colours
+
+COIN_CHOICE = ("Heads", "Tails")
 
 
 class CoinFlip(commands.Cog):
@@ -24,10 +25,9 @@ class CoinFlip(commands.Cog):
         ctx: Context,
     ) -> None:
         """Flips a coin and sends an embed with the outcome."""
-        coin_choice = ["Heads", "Tails"]
         embed = disnake.Embed(
-            title="**Coin toss outcome 🪙**",
-            description=random.choice(coin_choice),
+            title="**Coin toss outcome  \N{coin}**",
+            description=random.choice(COIN_CHOICE),
             color=Colours.green,
         )
         await ctx.send(embed=embed)
