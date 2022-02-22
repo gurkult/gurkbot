@@ -1,12 +1,11 @@
-from datetime import datetime
 from platform import python_version
 
-import humanize
 from disnake import Embed, __version__
 from disnake.ext import commands
 
 from bot.bot import Bot
 from bot.constants import Colours
+from bot.utils.time import TimeStampEnum, get_timestamp
 
 
 class BotStats(commands.Cog):
@@ -35,9 +34,7 @@ class BotStats(commands.Cog):
 
         embed.set_thumbnail(url=self.bot.user.display_avatar.url)
 
-        uptime = humanize.precisedelta(
-            datetime.utcnow().timestamp() - self.bot.launch_time
-        )
+        uptime = get_timestamp(self.bot.launch_time, format=TimeStampEnum.RELATIVE_TIME)
 
         fields = {
             "Python version": python_version(),

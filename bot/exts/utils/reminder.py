@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import Optional, Union
 
 import disnake
-import humanize
 from asyncpg import Record
 from disnake import Embed
 from disnake.ext.commands import Cog, Context, group
@@ -14,10 +13,13 @@ from disnake.utils import sleep_until
 from bot.bot import Bot
 from bot.constants import Colours
 from bot.postgres.utils import db_execute, db_fetch
+from bot.utils import time
 from bot.utils.pagination import LinePaginator
 from bot.utils.parsers import parse_duration
 
 REMINDER_DESCRIPTION = "**Arrives in**: {arrive_in}\n"
+
+TIMESTAMP_FORMAT = time.TimeStampEnum.RELATIVE_TIME
 
 
 class Reminder(Cog):
@@ -159,8 +161,9 @@ class Reminder(Cog):
             title=":white_check_mark:  Reminder set",
             color=Colours.green,
             description=REMINDER_DESCRIPTION.format(
-                arrive_in=humanize.precisedelta(
-                    timestamp - datetime.utcnow(), format="%0.0f"
+                arrive_in=time.get_timestamp(
+                    timestamp,
+                    format=TIMESTAMP_FORMAT,
                 ),
             ),
         )
@@ -197,7 +200,7 @@ class Reminder(Cog):
         ]
 
         lines = [
-            f"**Arrives in {humanize.precisedelta(reminder['end_time'] - datetime.utcnow(), format='%0.0f')}"
+            f"**Arrives in {time.get_timestamp(reminder['end_time'], format=TIMESTAMP_FORMAT)}**"
             f"** (ID: {reminder['reminder_id']})\n{reminder['content']}\n"
             for i, reminder in enumerate(reminders, start=1)
         ]
