@@ -5,11 +5,11 @@ from disnake.ext import commands
 from disnake.ext.commands import Context
 
 from bot.bot import Bot
-from bot.constants import BALL_REPLIES, Colours
+from bot.constants import EIGHTBALL_REPLIES, Colours
 
 
 class EightBall(commands.Cog):
-    """Cog for asking a question to the  8ball."""
+    """Cog for asking a question to the 8ball."""
 
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
@@ -22,7 +22,7 @@ class EightBall(commands.Cog):
         """Sends an embed with an answer to the user's question."""
         embed = disnake.Embed(
             title="**My Answer:**",
-            description=random.choice(BALL_REPLIES),
+            description=random.choice(EIGHTBALL_REPLIES),
             color=Colours.green,
         )
         embed.set_footer(text=f"You asked: {question}")
