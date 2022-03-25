@@ -150,4 +150,4 @@ jobs:
           echo "$KUBECONFIG" > .kubeconfig
           KUBECONFIG=.kubeconfig kubectl rollout restart deployment gurkbot
         env:
-          KUBECONFIG: ${{ secrets.KISSLAND_KUBECONFIG }}
+          KUBECONFIG: ${{ secrets.STARLAKE_KUBECONFIG }}

@@ -4,7 +4,6 @@ from typing import Optional
 
 from disnake.ext.commands import BadArgument
 
-
 DURATION_REGEX = re.compile(
     r"^((?P<days>[0-9]+)(d|day|days))?"
     r"((?P<hours>[0-9]+)(h|hour|hours))?"

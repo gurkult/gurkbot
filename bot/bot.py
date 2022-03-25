@@ -4,10 +4,11 @@ from typing import Optional
 
 import asyncpg
 from aiohttp import ClientSession
-from bot.postgres import create_tables
 from disnake import AllowedMentions, Embed, Intents, Object
 from disnake.ext import commands
 from loguru import logger
+
+from bot.postgres import create_tables
 
 from . import constants
 
@@ -31,9 +32,15 @@ class Bot(commands.Bot):
             ]
         ]
 
+        test_guilds = None
+        if constants.TEST_GUILDS:
+            logger.warning("Loading with test guilds.")
+            test_guilds = constants.TEST_GUILDS
+
         super().__init__(
             command_prefix=constants.PREFIX,
             intents=intents,
+            test_guilds=test_guilds,
             allowed_mentions=AllowedMentions(
                 everyone=None,
                 users=True,

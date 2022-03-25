@@ -3,10 +3,11 @@ from typing import Optional
 
 import disnake
 from aiohttp import ClientSession
-from bot.constants import Channels, ERROR_REPLIES, Emojis
 from disnake import Embed
 from disnake.ext import commands
 from loguru import logger
+
+from bot.constants import ERROR_REPLIES, Channels, Emojis
 
 BAD_RESPONSE = {
     404: "Issue/pull request not located! Please enter a valid number!",

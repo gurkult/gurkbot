@@ -1,10 +1,11 @@
 import random
 
-from bot.bot import Bot
-from bot.constants import Colours, GurkanNameEndings, NEGATIVE_REPLIES, POSITIVE_REPLIES
-from bot.utils.is_gurkan import gurkan_check
 from disnake import Embed, Forbidden
 from disnake.ext import commands
+
+from bot.bot import Bot
+from bot.constants import NEGATIVE_REPLIES, POSITIVE_REPLIES, Colours, GurkanNameEndings
+from bot.utils.is_gurkan import gurkan_check
 
 
 class Gurkify(commands.Cog):

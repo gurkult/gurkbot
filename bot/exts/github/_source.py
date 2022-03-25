@@ -5,8 +5,9 @@ from typing import Optional
 
 import disnake
 from aiohttp import ClientSession
-from bot import constants
 from disnake.ext.commands import Command
+
+from bot import constants
 
 doc_reg_class = r'("""|\'\'\')([\s\S]*?)(\1\s*)'
 

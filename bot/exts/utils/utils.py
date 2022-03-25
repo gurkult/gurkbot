@@ -6,12 +6,13 @@ import re
 import unicodedata
 from typing import Tuple
 
-from bot.bot import Bot
-from bot.constants import Colours
-from bot.utils.pagination import LinePaginator
 from disnake import Embed, utils
 from disnake.ext.commands import Cog, Context, command
 from disnake.ext.commands.errors import BadArgument
+
+from bot.bot import Bot
+from bot.constants import Colours
+from bot.utils.pagination import LinePaginator
 
 
 class Utils(Cog):

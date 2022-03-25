@@ -24,6 +24,10 @@ EXTENSIONS = pathlib.Path("bot/exts/")
 LOG_FILE = pathlib.Path("log/gurkbot.log")
 
 
+if TEST_GUILDS := os.getenv("TEST_GUILDS"):
+    TEST_GUILDS = [int(x) for x in TEST_GUILDS.split(",")]
+
+
 class Emojis(NamedTuple):
     issue_emoji = "<:IssueOpen:794834041450266624>"
     issue_closed_emoji = "<:IssueClosed:794834041240289321>"
@@ -57,6 +61,7 @@ class GurkanNameEndings:
 class Channels(NamedTuple):
     off_topic = int(os.getenv("CHANNEL_OFF_TOPIC", 789198156218892358))
     gurkcraft = int(os.getenv("CHANNEL_GURKCRAFT", 878159594189381662))
+    gurkcraft_relay = int(os.getenv("CHANNEL_GURKCRAFT_RELAY", 932334985053102101))
 
     devalerts = int(os.getenv("CHANNEL_DEVALERTS", 796695123177766982))
     devlog = int(os.getenv("CHANNEL_DEVLOG", 789431367167377448))
@@ -75,6 +80,7 @@ class Roles(NamedTuple):
     steering_council = int(os.getenv("ROLE_STEERING_COUNCIL", 789213682332598302))
     moderators = int(os.getenv("ROLE_MODERATORS", 818107766585163808))
     gurkult_lords = int(os.getenv("ROLE_GURKULT_LORDS", 789197216869777440))
+    devops = int(os.getenv("ROLE_DEVOPS", 918880926606430308))
 
     announcements = int(os.getenv("ANNOUNCEMENTS_ID", 789978290844598272))
     polls = int(os.getenv("POLLS_ID", 790043110360350740))

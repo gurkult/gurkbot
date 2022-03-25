@@ -4,8 +4,9 @@ from typing import Optional
 
 import disnake
 from aiohttp import ClientSession
-from bot.constants import ERROR_REPLIES
 from disnake import Embed
+
+from bot.constants import ERROR_REPLIES
 
 
 class GithubInfo:
