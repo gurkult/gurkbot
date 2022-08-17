@@ -4,9 +4,10 @@ from typing import Literal, Union
 from urllib import parse
 
 import disnake
-from bot.constants import Colours, ERROR_REPLIES, Tokens
 from disnake import Embed
 from disnake.ext import commands
+
+from bot.constants import ERROR_REPLIES, Colours, Tokens
 
 
 class WolframCommands(commands.Cog):
@@ -14,9 +15,7 @@ class WolframCommands(commands.Cog):
     Wolfram Category cog, containing commands related to the WolframAlpha API.
 
     Commands
-        ├ image         Fetch the response to a query in the form of an image.
-        ├ text          Fetch the response to a query in a short phrase.
-        └ chat          Fetch the response of the Wolfram AI based on the given question/statement.
+        └ image         Fetch the response to a query in the form of an image.
     """
 
     def __init__(self, bot: commands.Bot) -> None:
