@@ -3,14 +3,14 @@ import typing as t
 from collections import defaultdict
 from enum import Enum
 
-from bot import constants
-from bot.bot import Bot
-from bot.utils.extensions import EXTENSIONS, unqualify
-from bot.utils.pagination import LinePaginator
 from disnake import AllowedMentions, Colour, Embed
 from disnake.ext import commands
 from loguru import logger
 
+from bot import constants
+from bot.bot import Bot
+from bot.utils.extensions import EXTENSIONS, unqualify
+from bot.utils.pagination import LinePaginator
 
 BLACKLIST = [__name__]
 

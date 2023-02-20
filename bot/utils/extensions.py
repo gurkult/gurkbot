@@ -2,8 +2,6 @@ import os
 from typing import Generator
 
 from bot import constants
-from loguru import logger
-
 
 EXTENSIONS: list[str] = []  # All extensions.
 
