@@ -13,7 +13,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9.0"
-disnake = "^2.3"
+disnake = "^2.8"
 loguru = "^0.5.3"
 PyYAML = "^5.4.1"
 Pillow = "^9.0.1"
