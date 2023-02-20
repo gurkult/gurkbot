@@ -7,8 +7,8 @@ from bot import constants
 from bot.bot import Bot
 from bot.utils.extensions import EXTENSIONS, unqualify
 from bot.utils.pagination import LinePaginator
-from discord import AllowedMentions, Colour, Embed
-from discord.ext import commands
+from disnake import AllowedMentions, Colour, Embed
+from disnake.ext import commands
 from loguru import logger
 
 
