@@ -28,7 +28,7 @@ class ExtensionConverter(commands.Converter):
     """
     Fully qualify the name of an extension and ensure it exists.
 
-    The * value bypasses this when used with an extension manger command.
+    The * value bypasses this when used with an extension manager command.
     """
 
     source_list = EXTENSIONS

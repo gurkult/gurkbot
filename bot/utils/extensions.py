@@ -5,8 +5,7 @@ from bot import constants
 from loguru import logger
 
 
-EXTENSIONS: list[str] = []
-"""All extensions."""
+EXTENSIONS: list[str] = []  # All extensions.
 
 
 def unqualify(name: str) -> str:
@@ -21,4 +20,3 @@ def walk_extensions() -> Generator[str, None, None]:
             continue  # ignore files starting with _
         dot_path = str(extension).replace(os.sep, ".")[:-3]  # remove the .py
         yield dot_path
-        logger.info(f"Successfully loaded extension:  {dot_path}")
