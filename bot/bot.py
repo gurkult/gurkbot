@@ -20,6 +20,7 @@ class Bot(commands.Bot):
         intents = Intents.default()
         intents.members = True
         intents.presences = True
+        intents.message_content = True
 
         self.http_session = ClientSession()
         self.db_pool: asyncpg.Pool = asyncpg.create_pool(constants.DATABASE_URL)

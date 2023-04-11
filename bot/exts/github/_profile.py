@@ -80,7 +80,7 @@ class GithubInfo:
             embed = disnake.Embed(
                 title=choice(ERROR_REPLIES),
                 description=f"The profile for `{username}` was not found.",
-                url=Embed.Empty,
+                url=None,
                 colour=disnake.Colour.red(),
             )
             return embed
