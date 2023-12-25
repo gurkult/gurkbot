@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 from typing import Optional
 
@@ -11,6 +10,7 @@ from loguru import logger
 from bot.postgres import create_tables
 
 from . import constants
+from .utils.extensions import EXTENSIONS, walk_extensions
 
 
 class Bot(commands.Bot):
@@ -85,12 +85,10 @@ class Bot(commands.Bot):
     def load_extensions(self) -> None:
         """Load all the extensions in the exts/ folder."""
         logger.info("Start loading extensions from ./exts/")
-        for extension in constants.EXTENSIONS.glob("*/*.py"):
-            if extension.name.startswith("_"):
-                continue  # ignore files starting with _
-            dot_path = str(extension).replace(os.sep, ".")[:-3]  # remove the .py
-            self.load_extension(dot_path)
-            logger.info(f"Successfully loaded extension:  {dot_path}")
+        for ext in walk_extensions():
+            self.load_extension(ext)
+            EXTENSIONS.append(ext)
+            logger.info(f"Successfully loaded extension:  {ext}")
 
     def run(self) -> None:
         """Run the bot with the token in constants.py/.env ."""
